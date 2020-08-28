@@ -5,7 +5,7 @@
 -- Function: T2 logical unit to perform logic AND, NAND, OR, NOR, XOR, XNOR
 -- Input: R1, R2 (32-bit)
 -- Output: Y (32-bit)
--- Architecture: rtl
+-- Architecture: structural
 -- Library/package: ieee.std_logic_ll64
 -- Date: 05/08/2020
 ----------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ entity LOGIC is
   );
 end entity;
 
-architecture RTL of LOGIC is
+architecture STRUCTURAL of LOGIC is
   -- Components
   component IVX
   port(

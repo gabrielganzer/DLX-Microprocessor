@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------------------
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
--- Design units: NAND4
--- Function: 4-input nand gate
--- Input: A,B,C,D (1-bit)
+-- Design units: NAND3
+-- Function: 3-input nand gate
+-- Input: A,B,C (1-bit)
 -- Output: Y (1-bit)
 -- Architecture: structural
 -- Library/package: ieee.std_logic_ll64
@@ -14,8 +14,8 @@ use ieee.std_logic_1164.all;
 
 entity NAND3 is
   port(
-    A,B,C,D : in  std_logic;
-    Y 	: out std_logic
+    A,B,C : in  std_logic;
+    Y 	   : out std_logic
   );
 end entity;
 
@@ -34,11 +34,9 @@ architecture STRUCTURAL of NAND3 is
   );
   end component;
   -- Signals
-  signal E, F, G, H: std_logic;
+  signal D, E: std_logic;
 begin
-  NAND_E  : NAND2 port map (A, B, E);
-  NAND_F  : NAND2 port map (C, D, F);
-  IVX_G   : IVX port map (E, G);
-  IVX_H   : IVX port map (F, H);
-  NAND_Y  : NAND2 port map (G, H, Y);
+  NAND_D  : NAND2 port map (A, B, D);
+  IVX_E   : IVX port map (D, E);
+  NAND_Y  : NAND2 port map (E, C, Y);
 end architecture;
