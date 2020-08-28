@@ -11,10 +11,9 @@
 ----------------------------------------------------------------------------------
 library IEEE; 
 use IEEE.std_logic_1164.all;
-use work.CONSTANTS.all; 
 
 entity RCA is
-    generic (NBIT: integer := STEP);
+    generic (NBIT: integer := 4);
     port (A:    in	std_logic_vector(NBIT-1 downto 0);
           B:    in	std_logic_vector(NBIT-1 downto 0);
           Ci:   in	std_logic;

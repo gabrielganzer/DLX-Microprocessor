@@ -12,7 +12,6 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
-use work.CONSTANTS.all;
 
 
 entity MUX21_GENERIC is
