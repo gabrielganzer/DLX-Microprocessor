@@ -9,6 +9,10 @@ use IEEE.STD_LOGIC_1164.all;
 
 package GLOBALS is
   
+  -- Types
+  subtype reg is std_logic_vector(16 downto 0); -- a byte 
+        type reg_array is array ((16/2)-1 downto 0) of reg; -- array of bytes 
+  
   -- Functions
  	-- Division between the two parameters, the result is an integer rounded by excess	
 	function divide (n:integer; m:integer) return integer;

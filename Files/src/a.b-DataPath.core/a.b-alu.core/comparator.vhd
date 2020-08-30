@@ -20,35 +20,11 @@ entity COMPARATOR is
 end entity;
 
 architecture RTL of COMPARATOR is
-  -- Components
-  component IVX
-  port(
-    A : in  std_logic;
-    Y : out std_logic
-  );
-  end component;
-  component AND2
-  port(
-    A, B : in  std_logic;
-    Y 	  : out std_logic
-  );
-  end component;
-  component OR2
-  port(
-    A, B : in  std_logic;
-    Y 	  : out std_logic
-  );
-  end component;
-  -- Signals
-  signal negZ, negC: std_logic;
 begin
-  -- Component instantiation
-  IVX_Z: IVX port map (Z, negZ);
-  IVX_C: IVX port map (C, negC);
-  OR_LE: OR2 port map (negC, Z, LE);
-  AND_GT: AND2 port map (C, negZ, GT);
   -- Output assignment
-  LT <= negC;
+  LE <= ((not C) or Z);
+  LT <= not C;
   GE <= C;
+  GT <= (C and (not Z));
   EQ <= Z;
 end architecture;
