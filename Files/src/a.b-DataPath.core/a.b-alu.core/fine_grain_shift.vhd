@@ -15,16 +15,18 @@ use ieee.std_logic_1164.all;
 entity FINE_SHIFT is
   port (
     -- Inputs
-    op      : in std_logic_vector(38 downto 0); -- Operand
-    sel     : in std_logic_vector(2 downto 0);
+    op      : in std_logic_vector(38 downto 0); -- Operand to be shifted R1
+    sel     : in std_logic_vector(2 downto 0);  -- Number of bits to shift R2
     -- Output
-    shifted : out std_logic_vector(31 downto 0)
+    shifted : out std_logic_vector(31 downto 0) -- Result
   );
 end entity;
 
 architecture BEHAVIORAL of FINE_SHIFT is
 begin 
 
+  -- Shift bit by bit according to select signal, extracted
+  -- from the operand R2
   BITWISE_SHIFT: process(sel, op)
 	begin
 		case sel is
@@ -45,7 +47,7 @@ begin
 			when "111" => 
 				shifted <= op(31 downto 0);
 			when others => 
-			  shifted <= (others => 'X');
+			  shifted <= (others => '0');
 		end case;
 	end process;
 

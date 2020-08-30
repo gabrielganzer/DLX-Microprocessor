@@ -2,7 +2,10 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: COARSE_SHIFT
--- Function: T2 shifter 2nd level coarse grain shift, mask select
+-- Function: T2 shifter 2nd level coarse grain shift, mask select (32-bit)
+-- 00 SLL SLLI
+-- 01 SRL SRLI
+-- 10 SRA SRAI
 -- Input: sel (2-bit), mask00, mask08, mask16 (39-bit)
 -- Output: y (39-bit)
 -- Architecture: behavioral
@@ -27,6 +30,8 @@ end entity;
 architecture BEHAVIORAL of COARSE_SHIFT is
 begin 
 
+  -- Select appropriate mask according to select signal, extracted
+  -- from the operand R2
   MASK_SELECTION: process(sel, mask00, mask08, mask16)
 	begin		
 		case sel is
@@ -37,7 +42,7 @@ begin
 			when "10" =>
 				y <= mask16;
 			when others => 
-			  y <= x"000000000" & "000";
+			  y <= (others => '0');
 		end case;
 	end process;
 	

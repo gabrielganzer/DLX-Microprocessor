@@ -2,7 +2,10 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: SHIFTER
--- Function: T2 3-level shifter
+-- Function: T2 3-level shifter (32-bit)
+-- 00 SLL SLLI
+-- 01 SRL SRLI
+-- 10 SRA SRAI
 -- Input: R1, R2 (32-bit), SEL (2-bit)
 -- Output: Y (32-bit)
 -- Architecture: structural
@@ -52,6 +55,7 @@ architecture STRUCTURAL of SHIFTER is
   end component;
   -- Signals
   signal m0, m8, m16, y2 : std_logic_vector(38 downto 0);
+  signal s2: std_logic_vector(1 downto 0);
   signal s3: std_logic_vector(2 downto 0);
 
 begin
@@ -59,7 +63,7 @@ begin
 	SEL_3: process(SEL, s3, R2, R1)
 	begin
 		case SEL is
-		  when "00" => s3 <= R2(2 downto 0);
+		  when "00" => s3 <= (R2(2 downto 0));
 		  when "01" => s3 <= not(R2(2 downto 0));
 		  when "10" => s3 <= not(R2(2 downto 0));
 		  when others => s3 <= "XXX";
