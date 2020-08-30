@@ -1,7 +1,19 @@
-library ieee;
-use ieee.std_logic_1164.all;
+----------------------------------------------------------------------------------
+-- Engineer: GANZER Gabriel
+-- Company: Politecnico di Torino
+-- Descriptions: set of constants, subtypes, and functions
+-- Date: 28/07/2020
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
 
-package globals is
+package GLOBALS is
+  
+  -- Functions
+ 	-- Division between the two parameters, the result is an integer rounded by excess	
+	function divide (n:integer; m:integer) return integer;
+	-- Log base 2 of the number n, the result is an integer rounded by excess
+	function log2 (n:integer) return integer;
 
   -- Datapath constants
   constant instruction_size  : integer := 32;
@@ -54,7 +66,7 @@ package globals is
   constant I_LW   : std_logic_vector(op_size - 1 downto 0) :=  "100011";    -- LW RS1,RD ,INP2 -- R[RD] = MEM[R[RS1]+INP2] (0x23)
   constant I_SW   : std_logic_vector(op_size - 1 downto 0) :=  "101011";    -- SW (0x2B)
 
--- R-Type instruction -> FUNC field
+  -- R-Type instruction -> FUNC field
   constant R_ADD : std_logic_vector(function_size - 1 downto 0) :=  "00000100000";    -- ADD RS1,RS2,RD
   constant R_SUB : std_logic_vector(function_size - 1 downto 0) :=  "00000100010";    -- SUB RS1,RS2,RD
   constant R_AND : std_logic_vector(function_size - 1 downto 0) :=  "00000100100";    -- AND RS1,RS2,RD
@@ -68,3 +80,22 @@ package globals is
   constant R_SNE : std_logic_vector(function_size - 1 downto 0) :=  "00000101001";    -- SNE
 
 end package;
+
+package body GLOBALS is
+	function divide (n:integer; m:integer) return integer is
+	begin
+		if (n mod m) = 0 then
+			return n/m;
+		else
+			return (n/m) + 1;
+		end if;
+	end divide;
+	function log2 (n:integer) return integer is
+	begin
+		if n <=2 then
+			return 1;
+		else
+			return 1 + log2(divide(n,2));
+		end if;
+	end log2;	
+end package body;

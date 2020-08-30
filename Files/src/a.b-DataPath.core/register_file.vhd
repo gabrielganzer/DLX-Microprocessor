@@ -12,18 +12,17 @@
 --                  work.constants, work.functions
 -- Date: 05/05/2020
 ----------------------------------------------------------------------------------
-library IEEE;
-library WORK;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-use WORK.functions.all; 
-use WORK.constants.all;
+library ieee;
+library work;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.globals.all;
 
 entity REGISTER_FILE is
   generic (
-    NBIT: integer:= WIDTH;
-    NREG: integer:= DEPTH;
-    NADDR: integer:= log2(DEPTH)
+    WIDTH: integer:= 32;
+    DEPTH: integer:= 32;
+    LENGTH: integer:= log2(32)
   );
   port(
     -- Synchronous reset, active-high enable
@@ -35,24 +34,23 @@ entity REGISTER_FILE is
     RD2     :IN std_logic;
     WR      :IN std_logic;
     -- Single write port
-    DATAIN  :IN std_logic_vector(NBIT-1 downto 0);
+    DATAIN  :IN std_logic_vector(WIDTH-1 downto 0);
     -- Double read ports
-    OUT1    :OUT std_logic_vector(NBIT-1 downto 0);
-    OUT2    :OUT std_logic_vector(NBIT-1 downto 0);
+    OUT1    :OUT std_logic_vector(WIDTH-1 downto 0);
+    OUT2    :OUT std_logic_vector(WIDTH-1 downto 0);
     -- Ports addresses 
-    ADD_WR  :IN std_logic_vector(NADDR-1 downto 0);
-    ADD_RD1 :IN std_logic_vector(NADDR-1 downto 0);
-    ADD_RD2 :IN std_logic_vector(NADDR-1 downto 0)
+    ADD_WR  :IN std_logic_vector(LENGTH-1 downto 0);
+    ADD_RD1 :IN std_logic_vector(LENGTH-1 downto 0);
+    ADD_RD2 :IN std_logic_vector(LENGTH-1 downto 0)
   );
 end entity;
 
 architecture BEHAVIORAL of REGISTER_FILE is
 
   -- Internal registers
-  subtype REG_ADDR is natural range 0 to NREG-1; -- using natural type
-  type REG_ARRAY is array(REG_ADDR) of std_logic_vector(NBIT-1 downto 0); 
-  signal REGISTERS : REG_ARRAY;
-	-- 
+  subtype REG_ADDR is natural range 0 to DEPTH-1; -- using natural type
+  type REG_ARRAY is array(REG_ADDR) of std_logic_vector(WIDTH-1 downto 0); 
+  signal REGISTERS: REG_ARRAY;
 	
 begin
  
