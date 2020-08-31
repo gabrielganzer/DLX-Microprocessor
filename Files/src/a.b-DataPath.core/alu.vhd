@@ -1,159 +1,167 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-use work.functions.all;
-use work.all;
+----------------------------------------------------------------------------------
+-- Engineer: GANZER Gabriel
+-- Company: Politecnico di Torino
+-- Design units: ALU
+-- Function: DLX arithmetic logic unit
+-- Input: A, B (32-bit)
+--        OP (6-bit)
+-- Output: Y (32-bit)
+--         Co (1-bit)
+-- Architecture: structural
+-- Library/package: ieee.std_logic_ll64, work.globals
+-- Date: 12/08/2020
+----------------------------------------------------------------------------------
+library IEEE;
+library work;
+use IEEE.std_logic_1164.all;
+use work.globals.all;
 
-entity alu is
-  generic(nbit : integer := 32);
-  port (
-    a, b      : in  std_logic_vector(nbit - 1 downto 0);
-    unit_sel  : in  std_logic_vector(3 downto 0);
-    y         : out std_logic_vector(nbit - 1 downto 0)
-  );
+entity ALU is
+    generic (
+      WIDTH: integer:= word_size;
+      RADIX: integer:= radix_size;
+      OPCODE: integer:= op_size
+    );
+    port (A  :  in	std_logic_vector(WIDTH-1 downto 0);   -- Operand A
+          B  :  in	std_logic_vector(WIDTH-1 downto 0);   -- Operand B
+          OP :  in	aluOp;                                -- Opcode
+          Y  :  out	std_logic_vector(WIDTH-1 downto 0)); -- Result
 end entity;
 
-architecture structural of alu is
-
-  component barrel_shifter_left is
-    generic(
-      n : integer := 2  -- number of bits
-    );
-    port(
-      -- Inputs
-      x   : in  std_logic_vector(n - 1 downto 0);
-      pos : in  std_logic_vector(log2(n) - 1 downto 0); -- number of shifts
-      -- Outputs
-      y   : out std_logic_vector(n - 1 downto 0)
-    );
+architecture STRUCTURAL of ALU is
+  
+  -- Components
+  -- Adder/Subtractor
+  component ADDER_SUBTRACTOR
+    generic (WIDTH: integer:= word_size; RADIX: integer:= radix_size);
+    port (A:    in	std_logic_vector(WIDTH-1 downto 0);
+          B:    in	std_logic_vector(WIDTH-1 downto 0);
+          Ci:   in	std_logic;
+          S:    out	std_logic_vector(WIDTH-1 downto 0);
+          Co:   out std_logic);
   end component;
-
-  component barrel_shifter_right is
-    generic(
-      n : integer := 2
-    );
-    port (
-      -- Inputs
-      x          : in  std_logic_vector(n - 1 downto 0);
-      pos        : in  std_logic_vector(log2(n) - 1 downto 0); -- number of shifts
-      shift_type : in  std_logic;                              -- logic or arithmetic
-      -- Outputs
-      y          : out std_logic_vector(n - 1 downto 0)
-    );
+  -- Logic Unit
+  component LOGIC
+    generic (WIDTH: integer := 32);
+    port (R1, R2         : in  std_logic_vector(WIDTH-1 downto 0);
+          S0, S1, S2, S3 : in  std_logic;
+          Y              : out std_logic_vector(WIDTH-1 downto 0));
   end component;
-
-  component p4 is
-    generic(n : integer := 4);
-    port (
-      -- inputs
-      a, b : in  std_logic_vector(n - 1 downto 0);
-      cin  : in std_logic;
-      -- outputs
-      s    : out std_logic_vector(n - 1 downto 0);
-      cout : out std_logic
-    );
+  -- Comparator
+  component COMPARATOR
+    port (Z, C              : in  std_logic;
+          LE, LT, GE, GT, EQ: out std_logic);
   end component;
-
-  component subtractor is
-  generic(n : integer := 2);
-  port (
-    -- inputs
-    a    : in  std_logic_vector (n - 1 downto 0);
-    b    : in  std_logic_vector (n - 1 downto 0);
-    cin  : in  std_logic;
-    -- outputs
-    y    : out std_logic_vector (n - 1 downto 0);
-    cout : out std_logic
-  );
-  end component; -- subtractor
-
-  component comparator is
-  generic(
-    n : integer := 2
-  );
-  port (
-    a, b : in  std_logic_vector(n - 1 downto 0);
-    cout : out std_logic;
-    z    : out std_logic
-  );
+  -- Shifter
+  component SHIFTER
+    generic (WIDTH: integer := 32);
+    port (R1, R2 : in  std_logic_vector(WIDTH-1 downto 0);
+          SEL    : in std_logic_vector(1 downto 0);
+          Y      : out std_logic_vector(WIDTH-1 downto 0));
   end component;
-
-  component encoder is
-    generic(n : integer := 2);
-    port (
-      out_add     : in  std_logic_vector(n - 1 downto 0);
-      out_sub     : in  std_logic_vector(n - 1 downto 0);
-      out_sl      : in  std_logic_vector(n - 1 downto 0);
-      out_sr      : in  std_logic_vector(n - 1 downto 0);
-      out_log     : in  std_logic_vector(n - 1 downto 0);
-      out_cmp     : in  std_logic_vector(n - 1 downto 0);
-      out_eq      : in  std_logic_vector(n - 1 downto 0);
-      sel         : in  std_logic_vector(3 downto 0);
-      o           : out std_logic_vector(n - 1 downto 0)
-    );
+  -- Zero Detector
+  component ZERO_DETECTOR
+    generic (WIDTH : integer:= word_size);
+    port (A : in  std_logic_vector(WIDTH-1 downto 0);
+          Y : out std_logic);
   end component;
-
-  component logic_n is
-    generic (n : integer := 2);
-    port (
-      -- inputs
-      r1, r2         : in  std_logic_vector(n - 1 downto 0); -- operands
-      s0, s1, s2, s3 : in  std_logic; -- signal for select the operation
-      -- output
-      y              : out std_logic_vector(n - 1 downto 0)
-    );
-  end component;
-
-  component xor_2 is
-    port(
-      a, b : in  std_logic;
-      y    : out std_logic
-    );
-  end component;
-
-  signal out_add, out_sub, out_sl, out_sr, out_log : std_logic_vector(nbit - 1 downto 0);
-  signal type_sr                                   : std_logic;
-  signal pos_s                                     : std_logic_vector(log2(nbit) - 1 downto 0);
-  signal cmp_out, eq_out                           : std_logic_vector(nbit - 1 downto 0) := (others => '0');
-  signal cmp_bit, eq_bit                           : std_logic;
-
+  
+  -- Signals
+  signal s_ADD_SUB : std_logic;
+  signal s_Z       : std_logic;
+  signal s_LE      : std_logic; 
+  signal s_LT      : std_logic; 
+  signal s_GE      : std_logic; 
+  signal s_GT      : std_logic; 
+  signal s_EQ      : std_logic;
+  signal s_Co      : std_logic; 
+  signal s_LOGIC   : std_logic_vector(3 downto 0);
+  signal s_SHIFT   : std_logic_vector(1 downto 0);
+  signal s_OUT     : std_logic_vector(WIDTH-1 downto 0);
+  signal s_LOG     : std_logic_vector(WIDTH-1 downto 0);
+  signal s_SHI     : std_logic_vector(WIDTH-1 downto 0);
+  signal s_B       : std_logic_vector(WIDTH-1 downto 0);
+  
 begin
-
-  pos_s <= b(log2(nbit) - 1 downto 0);
-
-
-  add : p4
-  generic map(nbit)
-  port map(a, b, '0', out_add);
-
-  sub : subtractor
-  generic map(nbit)
-  port map(a, b, '0', out_sub);
-
-  sl : barrel_shifter_left
-  generic map(nbit)
-  port map(a, pos_s, out_sl);
-
-  sr : barrel_shifter_right
-  generic map(nbit)
-  port map(a, pos_s, type_sr, out_sl);
-
-  comp : comparator
-  generic map(nbit)
-  port map(a, b, cmp_bit, eq_bit);
-
-  cmp_out(0) <= cmp_bit;
-  eq_out(0) <= eq_bit;
-
-  sh : xor_2
-  port map(unit_sel(2), unit_sel(0), type_sr);
-
-  logi : logic_n
-  generic map(nbit)
-  port map(a, b, unit_sel(0), unit_sel(1), unit_sel(2), unit_sel(3), out_log);
-
-  enc : encoder
-  generic map(nbit)
-  port map(out_add, out_sub, out_sl, out_sr, out_log, cmp_out, eq_out, unit_sel, y);
-
+  
+  -- XOR between operand B and Ci to be used in subtractions
+  SUB_PROC: process (B)
+  begin
+    SUB: for i in 0 to WIDTH-1 loop
+      s_B(i) <= B(i) xor s_ADD_SUB; 
+    end loop;
+  end process;
+  
+  -- Select which component will execute according to the opcode signal
+  SEL_PROC: process (OP)
+  begin
+    case OP is
+      -- Adder/Subtractor
+      when addOp  => s_ADD_SUB <= '0'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+      when subOp  => s_ADD_SUB <= '1'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+      -- Logic Unit
+      when andOp  => s_ADD_SUB <= '0'; s_LOGIC <= "1000"; s_SHIFT <= "11";
+      when nandOp => s_ADD_SUB <= '0'; s_LOGIC <= "0111"; s_SHIFT <= "11";
+      when orOp   => s_ADD_SUB <= '0'; s_LOGIC <= "1110"; s_SHIFT <= "11";
+      when norOp  => s_ADD_SUB <= '0'; s_LOGIC <= "0001"; s_SHIFT <= "11";
+      when xorOp  => s_ADD_SUB <= '0'; s_LOGIC <= "0110"; s_SHIFT <= "11";
+      when xnorOp => s_ADD_SUB <= '0'; s_LOGIC <= "1001"; s_SHIFT <= "11";
+      -- Shifter
+      when sllOp  => s_ADD_SUB <= '0'; s_LOGIC <= "1111"; s_SHIFT <= "00";
+      when srlOp  => s_ADD_SUB <= '0'; s_LOGIC <= "1111"; s_SHIFT <= "01";
+      when sraOp  => s_ADD_SUB <= '0'; s_LOGIC <= "1111"; s_SHIFT <= "10";
+      -- Comparator
+      when gtOp   => s_ADD_SUB <= '1'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+      when geOp   => s_ADD_SUB <= '1'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+      when ltOp   => s_ADD_SUB <= '1'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+      when leOp   => s_ADD_SUB <= '1'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+      when eqOp   => s_ADD_SUB <= '1'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+      when others => s_ADD_SUB <= '0'; s_LOGIC <= "1111"; s_SHIFT <= "11";
+    end case;
+  end process;
+  
+  -- Select the correct output according to the opcode signal
+  OUT_PROC: process (OP, s_OUT, s_LOG, s_SHI, s_GT, s_GE, s_LT, s_LE, s_EQ)
+  begin
+    case OP is
+      when addOp  => Y <= s_OUT;
+      when subOp  => Y <= s_OUT;
+      when andOp  => Y <= s_LOG;
+      when nandOp => Y <= s_LOG;
+      when orOp   => Y <= s_LOG;
+      when norOp  => Y <= s_LOG;
+      when xorOp  => Y <= s_LOG;
+      when xnorOp => Y <= s_LOG;
+      when sllOp  => Y <= s_SHI;
+      when srlOp  => Y <= s_SHI;
+      when sraOp  => Y <= s_SHI;
+      when gtOp   => Y <= (WIDTH-1 downto 1 => '0') & s_GT;
+      when geOp   => Y <= (WIDTH-1 downto 1 => '0') & s_GE;
+      when ltOp   => Y <= (WIDTH-1 downto 1 => '0') & s_LT;
+      when leOp   => Y <= (WIDTH-1 downto 1 => '0') & s_LE;
+      when eqOp   => Y <= (WIDTH-1 downto 1 => '0') & s_EQ;
+      when others => Y <= (others => '0');
+    end case;
+  end process;
+  
+  -- Component assignment
+  ADD_SUB: ADDER_SUBTRACTOR
+    generic map (WIDTH, RADIX)
+    port map (A, s_B, s_ADD_SUB, s_OUT, s_Co);
+  
+  BIG_XNOR: ZERO_DETECTOR
+    generic map (WIDTH)
+    port map (s_OUT, s_Z);
+    
+  LOGICALS: LOGIC
+    generic map (WIDTH)
+    port map (A, B, s_LOGIC(0), s_LOGIC(1), s_LOGIC(2), s_LOGIC(3), s_LOG);
+    
+  COMP: COMPARATOR
+    port map (s_Z, s_Co, s_LE, s_LT, s_GE, s_GT, s_EQ);
+  
+  SHIFT: SHIFTER
+    generic map (WIDTH)
+    port map (A, B, s_SHIFT, s_SHI);
+  
 end architecture;

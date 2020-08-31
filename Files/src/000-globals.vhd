@@ -9,10 +9,6 @@ use IEEE.STD_LOGIC_1164.all;
 
 package GLOBALS is
   
-  -- Types
-  subtype reg is std_logic_vector(16 downto 0); -- a byte 
-        type reg_array is array ((16/2)-1 downto 0) of reg; -- array of bytes 
-  
   -- Functions
  	-- Division between the two parameters, the result is an integer rounded by excess	
 	function divide (n:integer; m:integer) return integer;
@@ -23,6 +19,7 @@ package GLOBALS is
   constant instruction_size  : integer := 32;
   constant word_size         : integer := 32;
   constant add_size          : integer := 5;
+  constant radix_size        : integer := 4;
 
   constant opcode_up         : integer :=  31;
   constant opcode_down       : integer :=  26;
@@ -60,7 +57,7 @@ package GLOBALS is
   constant I_SUBI : std_logic_vector(op_size - 1 downto 0) :=  "001010";    -- SUBI  RS1,RD,INP2 (0x0A)
   constant I_ANDI : std_logic_vector(op_size - 1 downto 0) :=  "001100";    -- ANDI  RS1,RD,INP2 (0xC)
   constant I_ORI  : std_logic_vector(op_size - 1 downto 0) :=  "001101";    -- ORI   RS1,RD,INP2 (0xD)
-  constant I_XOR  : std_logic_vector(op_size - 1 downto 0) :=  "001110";    -- XOR   RS1,RD,INP2 (0xE)
+  constant I_XORI : std_logic_vector(op_size - 1 downto 0) :=  "001110";    -- XOR   RS1,RD,INP2 (0xE)
   constant I_SLLI : std_logic_vector(op_size - 1 downto 0) :=  "010100";    -- SLLI (0x14)
   constant I_SRLI : std_logic_vector(op_size - 1 downto 0) :=  "010110";    -- SRLI (0x16)
   constant I_SRAI : std_logic_vector(op_size - 1 downto 0) :=  "010111";    -- SRAI (0x17)
@@ -82,7 +79,11 @@ package GLOBALS is
   constant R_SRL : std_logic_vector(function_size - 1 downto 0) :=  "00000000110";    -- SRL
   constant R_SRA : std_logic_vector(function_size - 1 downto 0) :=  "00000000111";    -- SRA
   constant R_SNE : std_logic_vector(function_size - 1 downto 0) :=  "00000101001";    -- SNE
-
+  
+  -- Types
+  type mul_array is array (((word_size/2)/2)-1 downto 0) of std_logic_vector((word_size/2) downto 0); -- array of bytes
+ 	type aluOp is (nopOp, addOp, subOp, andOp, nandOp, orOp, norOp, xorOp, xnorOp, sllOp, srlOp, sraOp, gtOp, geOp, ltOp, leOp, eqOp);
+  
 end package;
 
 package body GLOBALS is

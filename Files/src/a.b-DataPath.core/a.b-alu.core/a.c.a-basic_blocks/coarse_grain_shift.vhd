@@ -17,13 +17,11 @@ use ieee.std_logic_1164.all;
 
 entity COARSE_SHIFT is
   port (
-    -- Inputs
-    sel    : in std_logic_vector(1 downto 0);
-    mask00 : in std_logic_vector(38 downto 0);
-    mask08 : in std_logic_vector(38 downto 0);
-    mask16 : in std_logic_vector(38 downto 0);
-    -- Output
-    y      : out std_logic_vector(38 downto 0)
+    SEL    : in std_logic_vector(1 downto 0);
+    MASK00 : in std_logic_vector(38 downto 0);
+    MASK08 : in std_logic_vector(38 downto 0);
+    MASK16 : in std_logic_vector(38 downto 0);
+    Y      : out std_logic_vector(38 downto 0)
   );
 end entity;
 
@@ -32,17 +30,17 @@ begin
 
   -- Select appropriate mask according to select signal, extracted
   -- from the operand R2
-  MASK_SELECTION: process(sel, mask00, mask08, mask16)
+  MASK_SELECTION: process(SEL, MASK00, MASK08, MASK16)
 	begin		
-		case sel is
+		case SEL is
 			when "00" =>
-				y <= mask00;
+				Y <= MASK00;
 			when "01" =>
-				y <= mask08;
+				Y <= MASK08;
 			when "10" =>
-				y <= mask16;
+				Y <= MASK16;
 			when others => 
-			  y <= (others => '0');
+			  Y <= (others => '0');
 		end case;
 	end process;
 	

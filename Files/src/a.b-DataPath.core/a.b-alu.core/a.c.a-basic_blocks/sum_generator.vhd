@@ -9,21 +9,25 @@
 -- Library/package: ieee.std_logic_ll64
 -- Date: 14/04/2020
 ----------------------------------------------------------------------------------
-library IEEE; 
-use IEEE.std_logic_1164.all; 
+library IEEE;
+library work; 
+use IEEE.std_logic_1164.all;
+use work.globals.all;
  
 entity SUM_GENERATOR is
-    generic (NBIT: integer;
-             RADIX: integer); 
-    port (A:    in	std_logic_vector(NBIT-1 downto 0);
-          B:    in	std_logic_vector(NBIT-1 downto 0);
-          Ci:   in	std_logic_vector((NBIT/RADIX)-1 downto 0);
-          S:    out	std_logic_vector(NBIT-1 downto 0));
+    generic (
+      WIDTH: integer:= word_size;
+      RADIX: integer:= radix_size
+    ); 
+    port (A:    in	std_logic_vector(WIDTH-1 downto 0);
+          B:    in	std_logic_vector(WIDTH-1 downto 0);
+          Ci:   in	std_logic_vector((WIDTH/RADIX)-1 downto 0);
+          S:    out	std_logic_vector(WIDTH-1 downto 0));
 end entity; 
 
 architecture STRUCTURAL of SUM_GENERATOR is
     -- Components
-    component CSB is
+    component CARRY_SELECT_BLOCK is
         generic (RADIX: integer);
         port (A:    in	std_logic_vector(RADIX-1 downto 0);
               B:    in	std_logic_vector(RADIX-1 downto 0);
@@ -31,8 +35,8 @@ architecture STRUCTURAL of SUM_GENERATOR is
               S:    out	std_logic_vector(RADIX-1 downto 0));
     end component;
 begin    
-    CSB_i: for i in (NBIT/RADIX)-1 downto 0 generate     
-            GENi: CSB
+    CSB_i: for i in (WIDTH/RADIX)-1 downto 0 generate     
+            GENi: CARRY_SELECT_BLOCK
               generic map (RADIX)
               port map ( 
                 A((3+RADIX*i) downto (RADIX*i)), B((3+RADIX*i) downto (RADIX*i)), Ci(i), S((3+RADIX*i) downto (RADIX*i)));

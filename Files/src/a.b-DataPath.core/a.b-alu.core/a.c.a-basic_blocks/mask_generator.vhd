@@ -15,7 +15,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity MASK_GEN is
+entity MASK_GENERATOR is
   port (
     -- Inputs
     op     : in std_logic_vector(31 downto 0);  -- Operand to be shifted
@@ -27,7 +27,7 @@ entity MASK_GEN is
   );
 end entity;
 
-architecture BEHAVIORAL of MASK_GEN is
+architecture BEHAVIORAL of MASK_GENERATOR is
 begin 
 
   MASK_GENERATION: process(sel, op)

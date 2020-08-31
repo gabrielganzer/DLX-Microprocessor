@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
--- Design units: FA
+-- Design units: FULL_ADDER
 -- Function: full-adder circuit
 -- Input: A, B, Ci (1-bit)
 -- Output: S, Co (1-bit)
@@ -12,15 +12,15 @@
 library IEEE; 
 use IEEE.std_logic_1164.all; 
 
-entity FA is 
+entity FULL_ADDER is 
     port (A:	in	std_logic;
           B:	in	std_logic;
           Ci:	in	std_logic;
           S:	out	std_logic;
           Co:	out	std_logic);
-end FA; 
+end FULL_ADDER; 
 
-architecture BEHAVIORAL of FA is
+architecture BEHAVIORAL of FULL_ADDER is
 begin
   S <= A xor B xor Ci;
   Co <= (A and B) or (B and Ci) or (A and Ci);  

@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
--- Design units: ENC
+-- Design units: BOOTH_ENCODER
 -- Function: Booth's encoder + MUX circuit
 -- Input: A (N-bit), b (3-bit)
 -- Output: vp (N-bit)
@@ -16,16 +16,17 @@ use IEEE.std_logic_arith.all;
 use IEEE.std_logic_signed.all;
 use work.globals.all;
 
-entity ENC is
-    port (A:    in std_logic_vector(15 downto 0);
+entity BOOTH_ENCODER is
+    generic (WIDTH: integer := word_size/2);
+    port (A:    in std_logic_vector(WIDTH-1 downto 0);
           b:    in std_logic_vector(2 downto 0);
-          vp:   out std_logic_vector(16 downto 0));
+          vp:   out std_logic_vector(WIDTH downto 0));
 end entity;
 
-architecture RTL of ENC is 
-	signal notA : std_logic_vector(15 downto 0);
-	signal multA : std_logic_vector(16 downto 0);
-	signal multNotA : std_logic_vector(16 downto 0);
+architecture RTL of BOOTH_ENCODER is 
+	signal notA : std_logic_vector(WIDTH-1 downto 0);
+	signal multA : std_logic_vector(WIDTH downto 0);
+	signal multNotA : std_logic_vector(WIDTH downto 0);
 begin
     -- 2's complement of A
 	notA		<= (not A) + '1';
