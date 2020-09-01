@@ -18,8 +18,9 @@ package GLOBALS is
   -- Datapath constants
   constant instruction_size  : integer := 32;
   constant word_size         : integer := 32;
-  constant add_size          : integer := 5;
+  constant addr_size         : integer := 5;
   constant radix_size        : integer := 4;
+  constant mem_size          : integer := 128;
 
   constant opcode_up         : integer :=  31;
   constant opcode_down       : integer :=  26;

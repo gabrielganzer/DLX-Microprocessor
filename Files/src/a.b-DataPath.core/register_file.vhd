@@ -20,10 +20,8 @@ use work.globals.all;
 
 entity REGISTER_FILE is
   generic (
-    WIDTH: integer:= 32;
-    DEPTH: integer:= 32;
-    LENGTH: integer:= log2(32)
-  );
+    WIDTH: integer:= word_size;
+    LENGTH: integer:= addr_size);
   port(
     -- Synchronous reset, active-high enable
     CLK     :IN std_logic;
@@ -48,7 +46,7 @@ end entity;
 architecture BEHAVIORAL of REGISTER_FILE is
 
   -- Internal registers
-  subtype REG_ADDR is natural range 0 to DEPTH-1; -- using natural type
+  subtype REG_ADDR is natural range 0 to (2**LENGTH)-1; -- using natural type
   type REG_ARRAY is array(REG_ADDR) of std_logic_vector(WIDTH-1 downto 0); 
   signal REGISTERS: REG_ARRAY;
 	

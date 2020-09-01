@@ -10,17 +10,20 @@
 -- Date: 05/08/2020
 ----------------------------------------------------------------------------------
 library ieee;
+library work;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.globals.all;
 
 entity PC_INCREMENT is
+  generic (WIDTH : integer:= instruction_size);
   port (
-    PC  : in std_logic_vector(31 downto 0);    
-    NPC : out std_logic_vector(31 downto 0)
+    PC  : in std_logic_vector(WIDTH-1 downto 0);    
+    NPC : out std_logic_vector(WIDTH-1 downto 0)
   );
 end entity;
 
 architecture RTL of PC_INCREMENT is
 begin
-  NPC <= std_logic_vector(unsigned(PC) + x"00000004");
+  NPC <= std_logic_vector(unsigned(PC) + 4);
 end architecture;
