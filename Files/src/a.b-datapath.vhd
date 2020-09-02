@@ -26,8 +26,9 @@ entity DATAPATH is
       CLK             : in  std_logic;
       RST             : in  std_logic; -- Synchronous, active-high
       -- Stage 1: instruction fetch
+      IRAM_LATCH_EN   : in std_logic;  -- Instruction Memory Latch Enable
       IR_LATCH_EN     : in std_logic;  -- Instruction Register Latch Enable
-      NPC_LATCH_EN    : in std_logic;  -- New Program Counter Latch Enable
+      NPC_LATCH_EN    : in std_logic;  -- Next Program Counter Register Latch Enable
       -- Stage 2: instruction decode/register fetch
       RF_LATCH_EN     : in std_logic;  -- New Program Counter Latch Enable
       RegA_LATCH_EN   : in std_logic;  -- Register A Latch Enable
@@ -40,13 +41,16 @@ entity DATAPATH is
       EQ_COND         : in std_logic;  -- Branch if (not) Equal to Zero
       ALU_OPCODE      : in aluOp;      -- Implicit coding
       -- Stage 4: memory access
+      DRAM_LATCH_EN   : in std_logic;  -- Data Memory Latch Enable
       DRAM_WE         : in std_logic;  -- Data RAM Write Enable
       LMD_LATCH_EN    : in std_logic;  -- LMD Register Latch Enable
       JUMP_EN         : in std_logic;  -- JUMP Enable Signal for PC input MUX
       PC_LATCH_EN     : in std_logic;  -- Program Counter Latch Enable
       -- Stage 5: write-back
       WB_MUX_SEL      : in std_logic;  -- Write Back MUX Sel
-      RF_WE           : in std_logic   -- Register File Write Enable
+      RF_WE           : in std_logic;  -- Register File Write Enable
+      -- Instruction Register
+      IR_OUT          : out  std_logic_vector(WIDTH - 1 downto 0)
     ); 
 end entity;
 
@@ -173,34 +177,13 @@ architecture STRUCTURAL of DATAPATH is
   
 begin
   -------------------------------------------------------------------------------
-  --                                  Stage 1                                  --
+  --                           RTL SIGNAL ASSIGNMENT                           --
   -------------------------------------------------------------------------------
-  -- Program Counter (PC)
-  PC: REGISTER_GENERIC
-    generic map(WIDTH)
-    port map(CLK, RST, PC_LATCH_EN, w_MEM_MUX_OUT, w_PC_OUT);
-  --TBD
-  -- Instruction Memory (IRAM)
-  IRAM: ROMEM
-    generic map("Y:\hex.txt", DEPTH, WIDTH, 0)
-    port map (CLK, RST, w_PC_OUT, IR_LATCH_EN, w_IRAM_READY, w_IRAM_IN);
-  --TBD
-  -- Instruction Register (IR)
-  IR: REGISTER_GENERIC
-    generic map(WIDTH)
-    port map(CLK, RST, w_IRAM_READY, w_IRAM_IN, w_IRAM_OUT);
-  -- Program Counter Increment (INC)
-  INC: PC_INCREMENT
-    generic map(WIDTH)
-    port map(w_PC_OUT, w_NPC_IN);
-  -- New Program Counter (NPC)
-  NPC: REGISTER_GENERIC
-    generic map(WIDTH)
-    port map(CLK, RST, NPC_LATCH_EN, w_NPC_IN, w_NPC_OUT);
-
-  -------------------------------------------------------------------------------
-  --                                  Stage 2                                  --
-  -------------------------------------------------------------------------------
+  
+  -- Instruction Register Output
+  IR_OUT <= w_IRAM_OUT;
+  
+  -- Register File Address Signal
   REG_FILE_ADDR: process(w_IRAM_OUT)
   begin
     if w_IRAM_OUT(opcode_up downto opcode_down) = RTYPE then
@@ -220,22 +203,66 @@ begin
       w_IMMU_IN <= w_IRAM_OUT(inp2_up downto inp2_down);
     end if;
   end process;
+  
+  -- Branch Condition Signal
+  w_CMP_OUT <= w_Z xnor EQ_COND; 
+  
+  -- Mux Memory Access Select Signal
+  w_MUX_MEM_SEL <= w_CMP_OUT and JUMP_EN;
+  
+  -------------------------------------------------------------------------------
+  --                                  Stage 1                                  --
+  -------------------------------------------------------------------------------
+  
+  -- Program Counter (PC)
+  PC: REGISTER_GENERIC
+    generic map(WIDTH)
+    port map(CLK, RST, PC_LATCH_EN, w_MEM_MUX_OUT, w_PC_OUT);
+  
+  -- Instruction Memory (IRAM)
+  IRAM: ROMEM
+    generic map("Y:\hex.txt", DEPTH, WIDTH, 0)
+    port map (CLK, RST, w_PC_OUT, IRAM_LATCH_EN, w_IRAM_READY, w_IRAM_IN);
+  
+  -- Instruction Register (IR)
+  IR: REGISTER_GENERIC
+    generic map(WIDTH)
+    port map(CLK, RST, IR_LATCH_EN, w_IRAM_IN, w_IRAM_OUT);
+  
+  -- Program Counter Increment (INC)
+  INC: PC_INCREMENT
+    generic map(WIDTH)
+    port map(w_PC_OUT, w_NPC_IN);
+  
+  -- Next Program Counter (NPC)
+  NPC: REGISTER_GENERIC
+    generic map(WIDTH)
+    port map(CLK, RST, NPC_LATCH_EN, w_NPC_IN, w_NPC_OUT); 
+
+  -------------------------------------------------------------------------------
+  --                                  Stage 2                                  --
+  -------------------------------------------------------------------------------
+  
   -- Register File (RF)
   RF: REGISTER_FILE
     generic map (WIDTH, LENGTH)
     port map (CLK, RST, RF_LATCH_EN, RegA_LATCH_EN, RegB_LATCH_EN, RF_WE, w_WB_MUX_OUT, w_RegA_IN, w_RegB_IN,
               w_IRAM_OUT(r3_up downto r3_down), w_IRAM_OUT(r1_up downto r1_down), w_IRAM_OUT(r2_up downto r2_down));
+  
   -- Register A
   REG_A: REGISTER_GENERIC
     generic map(WIDTH)
     port map(CLK, RST, RegA_LATCH_EN, w_RegA_IN, w_RegA_OUT);
+  
   -- Register B
   REG_B: REGISTER_GENERIC
     generic map(WIDTH)
     port map(CLK, RST, RegA_LATCH_EN, w_RegB_IN, w_RegB_OUT);
+  
   -- Sign extend    
   SIGN_EXT: SIGN_EXTEND
     port map(w_IMMU_IN, w_IMMS_IN);
+  
   -- Register Immediate
   IMM: REGISTER_GENERIC
     generic map(WIDTH)
@@ -244,49 +271,56 @@ begin
   -------------------------------------------------------------------------------
   --                                  Stage 3                                  --
   -------------------------------------------------------------------------------
+  
   -- Mux A
   MUX_A: MUX21_GENERIC
     generic map(WIDTH)
     port map(w_NPC_OUT, w_RegA_OUT, MUXA_SEL, w_A_MUX_OUT);
+  
   -- Mux B
   MUX_B: MUX21_GENERIC
     generic map(WIDTH)
     port map(w_RegB_OUT, w_RegIMM_OUT, MUXB_SEL, w_B_MUX_OUT);
+  
   -- Arithmetic Logic Unit
   ALU1: ALU
     generic map(WIDTH, RADIX, OPCODE)
     port map(w_A_MUX_OUT, w_B_MUX_OUT, ALU_OPCODE, w_ALU_OUT);
+  
   -- Register ALU
   ALU_REG: REGISTER_GENERIC
     generic map(WIDTH)
     port map(CLK, RST, ALU_OUTREG_EN, w_ALU_OUT, w_RegALU_OUT);
+  
   -- Zero Detector Branch Condition
   COND: ZERO_DETECTOR
     generic map(WIDTH)
     port map(w_A_MUX_OUT, w_Z);
-  -- Branch Condition Signal
-  w_CMP_OUT <= w_Z xor EQ_COND; 
   
   -------------------------------------------------------------------------------
   --                                  Stage 4                                  --
   -------------------------------------------------------------------------------
+  
   -- Data memory
   DRAM: RWMEM
     generic map("Y:\test.txt", "Y:\test.txt", WIDTH, WIDTH, DEPTH)
-    port map(CLK, RST, w_ALU_OUT, LMD_LATCH_EN, DRAM_WE, w_RegB_OUT, w_DRAM_READY, w_DRAM_OUT);
+    port map(CLK, RST, w_ALU_OUT, DRAM_LATCH_EN, DRAM_WE, w_RegB_OUT, w_DRAM_READY, w_DRAM_OUT);
+  
   -- Load Memory Data (LMD)
   LMD: REGISTER_GENERIC
     generic map(WIDTH)
-    port map(CLK, RST, w_DRAM_READY, w_DRAM_OUT, w_LMD_OUT);
+    port map(CLK, RST, LMD_LATCH_EN, w_DRAM_OUT, w_LMD_OUT);
+  
   -- Mux Memory Access
-  w_MUX_MEM_SEL <= w_CMP_OUT and JUMP_EN;
   MUX_MEM: MUX21_GENERIC
     generic map(WIDTH)
-    port map(w_NPC_OUT, w_RegALU_OUT, w_MUX_MEM_SEL, w_MEM_MUX_OUT);
+    port map(w_RegALU_OUT, w_NPC_OUT, w_MUX_MEM_SEL, w_MEM_MUX_OUT);
 
   -------------------------------------------------------------------------------
   --                                  Stage 5                                  --
   -------------------------------------------------------------------------------
+  
+  -- Write-Back Mux
   MUX_WB: MUX21_GENERIC
     generic map(WIDTH)
     port map(w_LMD_OUT, w_RegALU_OUT, WB_MUX_SEL, w_WB_MUX_OUT);
