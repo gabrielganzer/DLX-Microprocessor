@@ -40,7 +40,7 @@ package GLOBALS is
 
   constant op_size           : integer := 6;
   constant function_size     : integer := 11;
-  constant control_word_size : integer := 18;
+  constant control_word_size : integer := 16;
 
   constant instructions_execution_cycles : integer := 5;
 

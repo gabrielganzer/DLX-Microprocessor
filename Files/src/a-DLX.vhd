@@ -21,7 +21,7 @@ entity DLX is
   port (
     -- Inputs
     CLK       : in    std_logic;    -- Clock
-    RST       : in    std_logic;    -- Synchronous, active-High
+    RST       : in    std_logic;    -- Synchronous, active-high
 		-- IRAM signals
   		IRAM_EN		 : out std_logic;
 		IRAM_ADDR : out std_logic_vector(6 downto 0);
@@ -53,7 +53,6 @@ architecture STRUCTURAL of DLX is
     -- Instruction Register
     IR_DATA_IN         : in  std_logic_vector(IR_SIZE - 1 downto 0);    
     -- Stage 1: instruction fetch
-    IRAM_LATCH_EN      : out std_logic;  -- Instruction Memory Latch Enable
     IR_LATCH_EN        : out std_logic;  -- Instruction Register Latch Enable
     NPC_LATCH_EN       : out std_logic;  -- Next Program Counter Register Latch Enable
     -- Stage 2: instruction decode/register fetch
@@ -68,7 +67,6 @@ architecture STRUCTURAL of DLX is
     EQ_COND            : out std_logic;  -- Branch if (not) Equal to Zero
     ALU_OPCODE         : out aluOp;      -- Implicit coding
     -- Stage 4: memory access
-    DRAM_LATCH_EN      : out std_logic;  -- Data Memory Latch Enable
     DRAM_RW            : out std_logic;  -- Data RAM Write Enable
     LMD_LATCH_EN       : out std_logic;  -- LMD Register Latch Enable
     JUMP_EN            : out std_logic;  -- JUMP Enable Signal for PC input MUX
@@ -159,7 +157,6 @@ begin
       CLK             => CLK,
       RST             => RST,
       IR_DATA_IN      => w_IR_DATA,  
-      IRAM_LATCH_EN   => IRAM_EN,
       IR_LATCH_EN     => w_IR_LATCH_EN,
       NPC_LATCH_EN    => w_NPC_LATCH_EN,
       RF_LATCH_EN     => w_RF_LATCH_EN,
@@ -171,7 +168,6 @@ begin
       ALU_OUTREG_EN   => w_ALU_OUTREG_EN,
       EQ_COND         => w_EQ_COND,
       ALU_OPCODE      => w_ALU_OPCODE,
-      DRAM_LATCH_EN   => DRAM_EN,
       DRAM_RW         => DRAM_RW,
       LMD_LATCH_EN    => w_LMD_LATCH_EN,
       JUMP_EN         => w_JUMP_EN,
@@ -211,5 +207,21 @@ begin
 			  DRAM_DATA_OUT   => DRAM_DOUT,
 			  IR_DATA         => w_IR_DATA
   );
+  
+  --------------------------------------------------------------------
+  -- Reset Process
+  --------------------------------------------------------------------
+  DLX_PROC: process (CLK)
+  begin
+    if (CLK = '1' and CLK = '1') then
+      if (RST = '1') then
+        IRAM_EN <= '0';
+        DRAM_EN <= '0';
+      else
+        IRAM_EN <= '1';
+        DRAM_EN <= '1';
+      end if;
+    end if;
+  end process;
 
 end architecture;

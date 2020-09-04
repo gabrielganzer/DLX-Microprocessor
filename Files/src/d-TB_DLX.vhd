@@ -109,9 +109,9 @@ begin
   STIMULI: process
   begin
     -- RST
-    s_RST    <= '0';
+    s_RST     <= '1';
     wait until (s_CLK = '1' and s_CLK'event);
-    s_RST    <= '1';
+    s_RST     <= '0';
     wait;
   end process;
 
