@@ -51,7 +51,7 @@ architecture BEHAVIORAL of RWMEM is
 begin
   
   -- Data RAM behavioral description
-	RAM_PROC: process (CLK, EN, RW, ADDR, DIN)
+	RAM_PROC: process (CLK)
 	begin
     if (CLK = '1' and CLK'event) then
       if RST = '1' then

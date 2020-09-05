@@ -31,7 +31,7 @@ architecture BEHAVIORAL of ROMEM is
 begin
 
 	-- Instruction ROM behavioral description
-	ROM_PROC: process (CLK, EN, ADDR)
+	ROM_PROC: process (CLK)
 		file mem_fp        : text;
 		variable fline     : line;
 		variable index     : natural range 0 to ENTRIES:= 0;

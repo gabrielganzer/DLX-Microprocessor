@@ -71,7 +71,7 @@ architecture HARDWIRED of DLX_CU is
   signal CW4       : std_logic_vector(5 downto 0);     -- 4th stage (7-bit)
   signal CW5       : std_logic_vector(1 downto 0);     -- 5th stage (2-bit)
   signal OPCODE    : aluOp := nopOp; -- ALUOP defined in package
-  signal REG_EN    : std_logic;
+  signal PIPE_EN   : std_logic;
  
 begin
 
@@ -101,36 +101,36 @@ begin
   RF_WE           <= CW5(1);
 
   -- process to pipeline control words
-  PIPE1: process (CLK, IR_DATA_IN)
+  PIPE1: process (CLK)
   begin
     if (CLK = '1' and CLK = '1') then
       if (RST = '1') then
-        CW1 <= (others => '0');
-        REG_EN <= '0';
+        CW1 <= "0010010000000011";
         ALU_OPCODE <= nopOp;
+        PIPE_EN <= '0';
       else
         CW1 <= CW;
-        REG_EN <= '1';
         ALU_OPCODE <= OPCODE;
+        PIPE_EN <= '1';
       end if;
     end if;
   end process;
 
   PIPE2: REGISTER_GENERIC
     generic map(CW2'length)
-    port map(CLK, RST, REG_EN, CW1((CW1'length)-1 downto 2), CW2);
+    port map(CLK, RST, PIPE_EN, CW1((CW1'length)-1 downto 2), CW2);
   
   PIPE3: REGISTER_GENERIC
     generic map(CW3'length)
-    port map(CLK, RST, REG_EN, CW2((CW2'length)-1 downto 4), CW3);
+    port map(CLK, RST, PIPE_EN, CW2((CW2'length)-1 downto 4), CW3);
 
   PIPE4: REGISTER_GENERIC
     generic map(CW4'length)
-    port map(CLK, RST, REG_EN, CW3((CW3'length)-1 downto 4), CW4);
+    port map(CLK, RST, PIPE_EN, CW3((CW3'length)-1 downto 4), CW4);
   
   PIPE5: REGISTER_GENERIC
     generic map(CW5'length)
-    port map(CLK, RST, REG_EN, CW4((CW4'length)-1 downto 4), CW5);
+    port map(CLK, RST, PIPE_EN, CW4((CW4'length)-1 downto 4), CW5);
 
   -- purpose: Generation of ALU OpCode
   LUT: process (IR_OPCODE, IR_FUNC)
@@ -165,7 +165,7 @@ begin
     elsif IR_OPCODE = I_SGEI                      then CW <= "1010010100101111"; OPCODE <= geOp;  -- I_SGEI    
     elsif IR_OPCODE = I_LW                        then CW <= "1010010100101111"; OPCODE <= addOp; -- LW
     elsif IR_OPCODE = I_SW                        then CW <= "1010010100111111"; OPCODE <= addOp; -- SW
-    else                                               CW <= (others => '0');
+    else                                               CW <= "0010010000000011";
     end if;
 	end process;
 
