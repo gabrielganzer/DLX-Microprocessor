@@ -45,7 +45,7 @@ architecture STRUCTURAL of ADDER_SUBTRACTOR is
               S:    out	std_logic_vector(WIDTH-1 downto 0));
     end component;
     -- Signals   
-	signal carry_ST : std_logic_vector(WIDTH/RADIX downto 0);
+	signal carry_ST : std_logic_vector(WIDTH/RADIX-1 downto 0);
 	signal carry_SG : std_logic_vector(WIDTH/RADIX-1 downto 0);
 begin
  	-- Instantiation of sparse tree

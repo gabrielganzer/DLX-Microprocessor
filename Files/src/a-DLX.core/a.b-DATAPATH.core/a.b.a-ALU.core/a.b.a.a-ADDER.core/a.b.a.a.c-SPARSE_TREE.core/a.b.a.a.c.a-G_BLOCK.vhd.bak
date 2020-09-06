@@ -22,6 +22,6 @@ end entity;
 
 architecture STRUCTURAL of BLOCKG is
 begin
-	-- Generate generate
+	-- Generate generation
 	gij <= (pik and gik_1) or gik;
 end architecture;

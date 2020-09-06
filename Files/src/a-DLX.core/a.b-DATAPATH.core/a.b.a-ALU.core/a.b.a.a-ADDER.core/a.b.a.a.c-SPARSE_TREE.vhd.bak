@@ -96,13 +96,13 @@ begin
 																			  s_P(row-1)(col*2**(NROW-1-row)+2**(NROW-2-row)+i),
 																			  s_G(row-1)(col*2**(NROW-1-row)+2**(NROW-2-row)+i));
 					end generate COL0;
-					COLi : if col=0 generate
+					coli : if col=0 generate
 						G_GEN : BLOCKG port map(s_P(row)(col*2**(NROW-1-row)+2**(NROW-2-row)+i),
 											  						  s_G(row)(col*2**(NROW-1-row)+2**(NROW-2-row)+i),
 											  						  s_P(row)(col*2**(NROW-1-row)+2**(NROW-2-row)-1),
 											  						  s_G(row)(col*2**(NROW-1-row)+2**(NROW-2-row)-1),
 											  						  s_G(row-1)(col*2**(NROW-1-row)+2**(NROW-2-row)+i));
-					end generate COLi;
+					end generate coli;
 				end generate PG_G;
 			
 		end generate COL_GENi;

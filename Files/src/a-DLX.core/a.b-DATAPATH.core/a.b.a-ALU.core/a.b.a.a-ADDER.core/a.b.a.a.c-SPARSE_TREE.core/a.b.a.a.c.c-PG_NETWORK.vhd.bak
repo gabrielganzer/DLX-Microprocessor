@@ -24,16 +24,13 @@ entity PG_NETWORK is
 end entity;
 
 architecture STRUCTURAL of PG_NETWORK is
-  -- Signals
-  signal p0: std_logic;
 begin
     -- Structural description of PG network
     NETWORK: for i in 0 to WIDTH-1 generate
       -- If first PG, Ci must be taken into account
       COL0: if (i=0) generate
-          p0 <= A(i) xor B(i);
-          P(i) <= p0;
-          G(i) <= (A(i) and B(i)) or (Ci and p0);
+          P(i) <= A(i) xor B(i);
+          G(i) <= (A(i) and B(i)) or (Ci and (A(i) xor B(i)));
       end generate; 
       -- Else generate PG network
       COLi: if (i>0) generate

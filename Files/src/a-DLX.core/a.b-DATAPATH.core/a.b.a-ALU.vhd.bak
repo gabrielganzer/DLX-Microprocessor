@@ -121,7 +121,7 @@ begin
   end process;
   
   -- Select the correct output according to the opcode signal
-  OUT_PROC: process (OP, s_OUT, s_LOG, s_SHI, s_GT, s_GE, s_LT, s_LE, s_EQ)
+  OUT_PROC: process (OP)
   begin
     case OP is
       when addOp  => Y <= s_OUT;
