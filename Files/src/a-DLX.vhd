@@ -23,11 +23,9 @@ entity DLX is
     CLK       : in    std_logic;    -- Clock
     RST       : in    std_logic;    -- Synchronous, active-high
 		-- IRAM signals
-  		IRAM_EN		 : out std_logic;
 		IRAM_ADDR : out std_logic_vector(6 downto 0);
 		IRAM_DATA	: in std_logic_vector(WIDTH-1 downto 0);
 		-- DRAM signals
-		DRAM_EN		 : out std_logic;
 		DRAM_RW		 : out std_logic;
 		DRAM_ADDR : out std_logic_vector(6 downto 0);
 		DRAM_DIN  : out std_logic_vector(WIDTH-1 downto 0);
@@ -207,21 +205,5 @@ begin
 			  DRAM_DATA_OUT   => DRAM_DOUT,
 			  IR_DATA         => w_IR_DATA
   );
-  
-  --------------------------------------------------------------------
-  -- Reset Process
-  --------------------------------------------------------------------
-  DLX_PROC: process (CLK)
-  begin
-    if (CLK = '1' and CLK = '1') then
-      if (RST = '1') then
-        IRAM_EN <= '0';
-        DRAM_EN <= '0';
-      else
-        IRAM_EN <= '1';
-        DRAM_EN <= '1';
-      end if;
-    end if;
-  end process;
 
 end architecture;

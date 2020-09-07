@@ -223,7 +223,7 @@ begin
   -- Register B
   REG_B: REGISTER_GENERIC
     generic map(WIDTH)
-    port map(CLK, RST, RegA_LATCH_EN, w_RegB_IN, w_RegB_OUT);
+    port map(CLK, RST, RegB_LATCH_EN, w_RegB_IN, w_RegB_OUT);
   
   -- Sign extend    
   SIGN_EXT: SIGN_EXTEND

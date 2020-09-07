@@ -19,10 +19,8 @@ architecture TESTBENCH of DLX_TB is
   port (
     CLK       : in    std_logic;
     RST       : in    std_logic;
-  		IRAM_EN		 : out std_logic;
 		IRAM_ADDR : out std_logic_vector(6 downto 0);
 		IRAM_DATA	: in std_logic_vector(WIDTH-1 downto 0);
-		DRAM_EN		 : out std_logic;
 		DRAM_RW		 : out std_logic;
 		DRAM_ADDR : out std_logic_vector(6 downto 0);
 		DRAM_DIN  : out std_logic_vector(WIDTH-1 downto 0);
@@ -70,10 +68,9 @@ architecture TESTBENCH of DLX_TB is
   
   signal s_CLK       : std_logic;
   signal s_RST       : std_logic;
-	signal s_IRAM_EN		 : std_logic;
+ 	signal s_EN		      : std_logic;
 	signal s_IRAM_ADDR : std_logic_vector(6 downto 0);
 	signal s_IRAM_DATA	: std_logic_vector(word_size-1 downto 0);
-	signal s_DRAM_EN		 : std_logic;
 	signal s_DRAM_RW		 : std_logic;
 	signal s_DRAM_ADDR : std_logic_vector(6 downto 0);
 	signal s_DRAM_DIN  : std_logic_vector(word_size-1 downto 0);
@@ -84,17 +81,17 @@ begin
   ----------------------------------------------------------------
   -- Unit Under Test (UUT)
   ----------------------------------------------------------------
-  DLX_UUT: DLX
+  UUT: DLX
     generic map (word_size)
-    port map (s_CLK, s_RST, s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DIN, s_DRAM_DOUT);
+    port map (s_CLK, s_RST, s_IRAM_ADDR, s_IRAM_DATA, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DIN, s_DRAM_DOUT);
   
   IRAM: ROMEM
 	  generic map("Y:/Microelectronic_Systems/DLX-Project/Files/src/hex_iram.txt", 128, word_size)
-	  port map(s_CLK, s_RST, s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA);
+	  port map (s_CLK, s_RST, s_EN, s_IRAM_ADDR, s_IRAM_DATA);
   
   DRAM: RWMEM
     generic map("Y:/Microelectronic_Systems/DLX-Project/Files/src/hex_dram.txt", 128, word_size)
-    port map(s_CLK, s_RST, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DIN, s_DRAM_DOUT);
+    port map (s_CLK, s_RST, s_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DIN, s_DRAM_DOUT);
 
   -- Clock Process
 	CLOCK: process
@@ -110,8 +107,10 @@ begin
   begin
     -- RST
     s_RST     <= '1';
+    s_EN      <= '0';
     wait until (s_CLK = '1' and s_CLK'event);
     s_RST     <= '0';
+    s_EN      <= '1';
     wait;
   end process;
 

@@ -51,30 +51,25 @@ entity DLX_CU is
 end entity;
 
 architecture HARDWIRED of DLX_CU is
-  -- Components
-  -- Register
-  component REGISTER_GENERIC
-  generic (WIDTH: integer := 32);
-    port (CLK  : in std_logic;
-          RST  : in std_logic;
-          EN   : in std_logic;
-          DIN  : in std_logic_vector(WIDTH-1 downto 0);    
-          DOUT : out std_logic_vector(WIDTH-1 downto 0));
-  end component;
+  
   -- Signals
   signal IR_OPCODE : std_logic_vector(OPCODE_SIZE-1 downto 0);  -- OpCode part of IR
   signal IR_FUNC   : std_logic_vector(FUNC_SIZE-1 downto 0);    -- Func part of IR when Rtype
-  signal CW        : std_logic_vector(15 downto 0);      -- Full control word register
-  signal CW1       : std_logic_vector(15 downto 0);      -- 1st stage (18-bt)
-  signal CW2       : std_logic_vector(13 downto 0);      -- 2nd stage (15-bit)
-  signal CW3       : std_logic_vector(9 downto 0);      -- 3rd stage (11-bit)
-  signal CW4       : std_logic_vector(5 downto 0);     -- 4th stage (7-bit)
-  signal CW5       : std_logic_vector(1 downto 0);     -- 5th stage (2-bit)
+  -- Full control word  
+  signal CW        : std_logic_vector(CW_SIZE-1 downto 0);    
+  -- Partitioned control word
+  signal CW1       : std_logic_vector(CW_SIZE-1 downto 0);    -- 1st stage (16-bit)
+  signal CW2       : std_logic_vector(CW_SIZE-3 downto 0);    -- 2nd stage (13-bit)
+  signal CW3       : std_logic_vector(CW_SIZE-7 downto 0);    -- 3rd stage (10-bit)
+  signal CW4       : std_logic_vector(CW_SIZE-11 downto 0);   -- 4th stage (6-bit)
+  signal CW5       : std_logic_vector(CW_SIZE-15 downto 0);   -- 5th stage (2-bit)
   signal OPCODE    : aluOp := nopOp; -- ALUOP defined in package
-  signal PIPE_EN   : std_logic;
+  signal OPCODE1   : aluOp := nopOp; 
+  signal OPCODE2   : aluOp := nopOp; 
+  signal OPCODE3   : aluOp := nopOp;
  
 begin
-
+  
   IR_OPCODE <= IR_DATA_IN(opcode_up downto opcode_down);
   IR_FUNC   <= IR_DATA_IN(func_up downto func_down);
 
@@ -91,6 +86,7 @@ begin
   MUXB_SEL        <= CW3(1);
   ALU_OUTREG_EN   <= CW3(2);
   EQ_COND         <= CW3(3);
+  ALU_OPCODE      <= OPCODE3;
   -- Stage 4: memory access
   DRAM_RW         <= CW4(0);
   LMD_LATCH_EN    <= CW4(1);
@@ -100,39 +96,31 @@ begin
   WB_MUX_SEL      <= CW5(0);
   RF_WE           <= CW5(1);
 
-  -- process to pipeline control words
-  PIPE1: process (CLK)
+  PIPE: process (CLK)
   begin
-    if (CLK = '1' and CLK = '1') then
+    if (CLK = '1' and CLK'event) then
       if (RST = '1') then
-        CW1 <= "0010010000000011";
-        ALU_OPCODE <= nopOp;
-        PIPE_EN <= '0';
+        CW1 <= (others => '0');
+        CW2 <= (others => '0');
+        CW3 <= (others => '0');
+        CW4 <= (others => '0');
+        CW5 <= (others => '0');
+        OPCODE1 <= nopOp; 
+        OPCODE2 <= nopOp; 
+        OPCODE3 <= nopOp; 
       else
         CW1 <= CW;
-        ALU_OPCODE <= OPCODE;
-        PIPE_EN <= '1';
+        CW2 <= CW1(CW_SIZE-1 downto 2);
+        CW3 <= CW2(CW_SIZE-3 downto 4);
+        CW4 <= CW3(CW_SIZE-7 downto 4);
+        CW5 <= CW4(CW_SIZE-11 downto 4);
+        OPCODE1 <= OPCODE; 
+        OPCODE2 <= OPCODE1; 
+        OPCODE3 <= OPCODE2;
       end if;
     end if;
   end process;
 
-  PIPE2: REGISTER_GENERIC
-    generic map(CW2'length)
-    port map(CLK, RST, PIPE_EN, CW1((CW1'length)-1 downto 2), CW2);
-  
-  PIPE3: REGISTER_GENERIC
-    generic map(CW3'length)
-    port map(CLK, RST, PIPE_EN, CW2((CW2'length)-1 downto 4), CW3);
-
-  PIPE4: REGISTER_GENERIC
-    generic map(CW4'length)
-    port map(CLK, RST, PIPE_EN, CW3((CW3'length)-1 downto 4), CW4);
-  
-  PIPE5: REGISTER_GENERIC
-    generic map(CW5'length)
-    port map(CLK, RST, PIPE_EN, CW4((CW4'length)-1 downto 4), CW5);
-
-  -- purpose: Generation of ALU OpCode
   LUT: process (IR_OPCODE, IR_FUNC)
   begin
     --TBD
@@ -165,7 +153,7 @@ begin
     elsif IR_OPCODE = I_SGEI                      then CW <= "1010010100101111"; OPCODE <= geOp;  -- I_SGEI    
     elsif IR_OPCODE = I_LW                        then CW <= "1010010100101111"; OPCODE <= addOp; -- LW
     elsif IR_OPCODE = I_SW                        then CW <= "1010010100111111"; OPCODE <= addOp; -- SW
-    else                                               CW <= "0010010000000011";
+    else                                               CW <= "0010010000000011"; OPCODE <= nopOp; -- NOP
     end if;
 	end process;
 
