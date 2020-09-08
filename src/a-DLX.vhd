@@ -23,11 +23,11 @@ entity DLX is
     CLK       : in    std_logic;    -- Clock
     RST       : in    std_logic;    -- Synchronous, active-high
 		-- IRAM signals
-		IRAM_ADDR : out std_logic_vector(6 downto 0);
+		IRAM_ADDR : out std_logic_vector(iram_addr_size-1 downto 0);
 		IRAM_DATA	: in std_logic_vector(WIDTH-1 downto 0);
 		-- DRAM signals
 		DRAM_RW		 : out std_logic;
-		DRAM_ADDR : out std_logic_vector(6 downto 0);
+		DRAM_ADDR : out std_logic_vector(dram_addr_size-1 downto 0);
 		DRAM_DIN  : out std_logic_vector(WIDTH-1 downto 0);
 		DRAM_DOUT : in std_logic_vector(WIDTH-1 downto 0)
   );
@@ -108,14 +108,12 @@ architecture STRUCTURAL of DLX is
       WB_MUX_SEL      : in std_logic;  -- Write Back MUX Sel
       RF_WE           : in std_logic;  -- Register File Write Enable
       -- IRAM signals
-      IRAM_ADDR    			: out std_logic_vector(6 downto 0);
+      IRAM_ADDR    			: out std_logic_vector(iram_addr_size-1 downto 0);
     		IRAM_DATA_OUT   : in std_logic_vector(WIDTH-1 downto 0);
 		  -- DRAM signals
-			DRAM_ADDR       : out std_logic_vector(6 downto 0);
+			DRAM_ADDR       : out std_logic_vector(dram_addr_size-1 downto 0);
 			DRAM_DATA_IN    : out std_logic_vector(WIDTH-1 downto 0);
-			DRAM_DATA_OUT   : in std_logic_vector(WIDTH-1 downto 0);
-			-- Instruction Register Data Out
-			IR_DATA         : out std_logic_vector(WIDTH-1 downto 0)
+			DRAM_DATA_OUT   : in std_logic_vector(WIDTH-1 downto 0)
     ); 
   end component;
 
@@ -202,8 +200,7 @@ begin
       		IRAM_DATA_OUT   => IRAM_DATA,
 			  DRAM_ADDR       => DRAM_ADDR,
 			  DRAM_DATA_IN    => DRAM_DIN,
-			  DRAM_DATA_OUT   => DRAM_DOUT,
-			  IR_DATA         => w_IR_DATA
+			  DRAM_DATA_OUT   => DRAM_DOUT
   );
 
 end architecture;

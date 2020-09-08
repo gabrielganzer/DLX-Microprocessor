@@ -35,8 +35,8 @@ package GLOBALS is
   constant func_up           : integer :=  10;
   constant func_down         : integer :=  0;
 
-  constant dram_addr_size    : integer := 32;
-  constant iram_addr_size    : integer := 20;
+  constant dram_addr_size    : integer := 6;
+  constant iram_addr_size    : integer := 6;
 
   constant op_size           : integer := 6;
   constant function_size     : integer := 11;
