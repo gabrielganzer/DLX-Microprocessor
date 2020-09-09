@@ -17,7 +17,7 @@ entity RWMEM is
 			CLK  : in std_logic;
 			RST		: in std_logic;  -- Synchronous, active-high
 			EN		 : in std_logic;  -- Active-high
-			RW		 : in std_logic;  -- Read active-high, write active-low
+			RW		 : in std_logic;  -- Write active-high
 			ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
 			DIN  : in std_logic_vector(WIDTH-1 downto 0);
 			DOUT : out std_logic_vector(WIDTH-1 downto 0)
@@ -58,7 +58,7 @@ begin
         tmp_data <= (others => '0');
       else
         if (EN = '1') then
-          if (RW = '0') then
+          if (RW = '1') then
             memory(to_integer(unsigned(ADDR))) <= DIN;
           else
             tmp_data <= memory(to_integer(unsigned(ADDR)));

@@ -20,13 +20,14 @@ entity DLX is
   );
   port (
     -- Inputs
-    CLK       : in    std_logic;    -- Clock
-    RST       : in    std_logic;    -- Synchronous, active-high
+    CLK       : in std_logic;    -- Clock
+    RST       : in std_logic;    -- Synchronous, active-high
+    EN        : in std_logic;    -- Active-high
 		-- IRAM signals
 		IRAM_ADDR : out std_logic_vector(iram_addr_size-1 downto 0);
 		IRAM_DATA	: in std_logic_vector(WIDTH-1 downto 0);
 		-- DRAM signals
-		DRAM_RW		 : out std_logic;
+		DRAM_WE		 : out std_logic;
 		DRAM_ADDR : out std_logic_vector(dram_addr_size-1 downto 0);
 		DRAM_DIN  : out std_logic_vector(WIDTH-1 downto 0);
 		DRAM_DOUT : in std_logic_vector(WIDTH-1 downto 0)
@@ -49,12 +50,11 @@ architecture STRUCTURAL of DLX is
     CLK                : in  std_logic;  -- Clock
     RST                : in  std_logic;  -- Synchronous, active-high
     -- Instruction Register
-    IR_DATA_IN         : in  std_logic_vector(IR_SIZE - 1 downto 0);    
+    IR_IN              : in  std_logic_vector(IR_SIZE - 1 downto 0);    
     -- Stage 1: instruction fetch
     IR_LATCH_EN        : out std_logic;  -- Instruction Register Latch Enable
     NPC_LATCH_EN       : out std_logic;  -- Next Program Counter Register Latch Enable
     -- Stage 2: instruction decode/register fetch
-    RF_LATCH_EN        : out std_logic;  -- New Program Counter Latch Enable
     RegA_LATCH_EN      : out std_logic;  -- Register A Latch Enable
     RegB_LATCH_EN      : out std_logic;  -- Register B Latch Enable
     RegIMM_LATCH_EN    : out std_logic;  -- Immediate Register Latch Enable
@@ -65,7 +65,7 @@ architecture STRUCTURAL of DLX is
     EQ_COND            : out std_logic;  -- Branch if (not) Equal to Zero
     ALU_OPCODE         : out aluOp;      -- Implicit coding
     -- Stage 4: memory access
-    DRAM_RW            : out std_logic;  -- Data RAM Write Enable
+    DRAM_WE            : out std_logic;  -- Data RAM Write Enable
     LMD_LATCH_EN       : out std_logic;  -- LMD Register Latch Enable
     JUMP_EN            : out std_logic;  -- JUMP Enable Signal for PC input MUX
     PC_LATCH_EN        : out std_logic;  -- Program Counte Latch Enable
@@ -76,7 +76,7 @@ architecture STRUCTURAL of DLX is
   end component;
 
   -- Datapath
-  component DATAPATH
+  component DLX_DP
     generic (
       WIDTH     : integer := word_size;
       LENGTH    : integer := addr_size;
@@ -84,13 +84,13 @@ architecture STRUCTURAL of DLX is
       OPCODE    : integer:= op_size
     );
     port (
-      CLK             : in  std_logic;
-      RST             : in  std_logic; -- Synchronous, active-high
+      CLK             : in std_logic;
+      RST             : in std_logic;  -- Synchronous, active-high
+      EN              : in std_logic;  -- Active-high
       -- Stage 1: instruction fetch
       IR_LATCH_EN     : in std_logic;  -- Instruction Register Latch Enable
       NPC_LATCH_EN    : in std_logic;  -- Next Program Counter Register Latch Enable
       -- Stage 2: instruction decode/register fetch
-      RF_LATCH_EN     : in std_logic;  -- New Program Counter Latch Enable
       RegA_LATCH_EN   : in std_logic;  -- Register A Latch Enable
       RegB_LATCH_EN   : in std_logic;  -- Register B Latch Enable
       RegIMM_LATCH_EN : in std_logic;  -- Immediate Register Latch Enable
@@ -113,7 +113,9 @@ architecture STRUCTURAL of DLX is
 		  -- DRAM signals
 			DRAM_ADDR       : out std_logic_vector(dram_addr_size-1 downto 0);
 			DRAM_DATA_IN    : out std_logic_vector(WIDTH-1 downto 0);
-			DRAM_DATA_OUT   : in std_logic_vector(WIDTH-1 downto 0)
+			DRAM_DATA_OUT   : in std_logic_vector(WIDTH-1 downto 0);
+			-- IR Data Output
+			IR_OUT          : out std_logic_vector(WIDTH-1 downto 0)
     ); 
   end component;
 
@@ -122,13 +124,12 @@ architecture STRUCTURAL of DLX is
   ----------------------------------------------------------------
 
   -- Instruction Register (IR) and ALU Opcode (ALU_OPCODE)
-  signal w_IR_DATA            : std_logic_vector(WIDTH-1 downto 0);
+  signal w_IR_DATA            :  std_logic_vector(WIDTH-1 downto 0);
   signal w_ALU_OPCODE         :  aluOp;
 
   -- Control Unit Bus signals   
   signal w_IR_LATCH_EN        :  std_logic;
   signal w_NPC_LATCH_EN       :  std_logic;
-  signal w_RF_LATCH_EN        :  std_logic;
   signal w_RegA_LATCH_EN      :  std_logic;
   signal w_RegB_LATCH_EN      :  std_logic;
   signal w_RegIMM_LATCH_EN    :  std_logic;
@@ -152,19 +153,18 @@ begin
     port map (
       CLK             => CLK,
       RST             => RST,
-      IR_DATA_IN      => w_IR_DATA,  
+      IR_IN           => w_IR_DATA,  
       IR_LATCH_EN     => w_IR_LATCH_EN,
       NPC_LATCH_EN    => w_NPC_LATCH_EN,
-      RF_LATCH_EN     => w_RF_LATCH_EN,
       RegA_LATCH_EN   => w_RegA_LATCH_EN,
       RegB_LATCH_EN   => w_RegB_LATCH_EN,
       RegIMM_LATCH_EN => w_RegIMM_LATCH_EN,
-      MUXA_SEL        => w_RegIMM_LATCH_EN,
+      MUXA_SEL        => w_MUXA_SEL,
       MUXB_SEL        => w_MUXB_SEL,
       ALU_OUTREG_EN   => w_ALU_OUTREG_EN,
       EQ_COND         => w_EQ_COND,
       ALU_OPCODE      => w_ALU_OPCODE,
-      DRAM_RW         => DRAM_RW,
+      DRAM_WE         => DRAM_WE,
       LMD_LATCH_EN    => w_LMD_LATCH_EN,
       JUMP_EN         => w_JUMP_EN,
       PC_LATCH_EN     => w_PC_LATCH_EN,
@@ -175,14 +175,14 @@ begin
   --------------------------------------------------------------------
   -- Datapath
   --------------------------------------------------------------------
-  DP: datapath
+  DP: DLX_DP
     generic map (word_size, addr_size, radix_size, op_size)
     port map(
         CLK             => CLK,
         RST             => RST,
+        EN              => EN,
         IR_LATCH_EN     => w_IR_LATCH_EN,
         NPC_LATCH_EN    => w_NPC_LATCH_EN,
-        RF_LATCH_EN     => w_RF_LATCH_EN,
         RegA_LATCH_EN   => w_RegA_LATCH_EN,
         RegB_LATCH_EN   => w_RegB_LATCH_EN,
         RegIMM_LATCH_EN => w_RegIMM_LATCH_EN,
@@ -200,7 +200,8 @@ begin
       		IRAM_DATA_OUT   => IRAM_DATA,
 			  DRAM_ADDR       => DRAM_ADDR,
 			  DRAM_DATA_IN    => DRAM_DIN,
-			  DRAM_DATA_OUT   => DRAM_DOUT
+			  DRAM_DATA_OUT   => DRAM_DOUT,
+			  IR_OUT          => w_IR_DATA
   );
 
 end architecture;

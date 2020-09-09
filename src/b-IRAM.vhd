@@ -42,6 +42,7 @@ begin
 		    -- Write content from hex file into ROM memory if reset enable
 			  -- Open file
 			  file_open(mem_fp, file_path, READ_MODE);
+			  DATA <= (others => '0');
 			  -- Read content
         while (not endfile(mem_fp)) loop
 				  readline(mem_fp,fline);

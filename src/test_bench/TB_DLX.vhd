@@ -17,11 +17,12 @@ architecture TESTBENCH of DLX_TB is
     WIDTH     : integer := word_size
   );
   port (
-    CLK       : in    std_logic;
-    RST       : in    std_logic;
+    CLK       : in std_logic;
+    RST       : in std_logic;
+    EN        : in std_logic;
 		IRAM_ADDR : out std_logic_vector(6 downto 0);
 		IRAM_DATA	: in std_logic_vector(WIDTH-1 downto 0);
-		DRAM_RW		 : out std_logic;
+		DRAM_WE		 : out std_logic;
 		DRAM_ADDR : out std_logic_vector(6 downto 0);
 		DRAM_DIN  : out std_logic_vector(WIDTH-1 downto 0);
 		DRAM_DOUT : in std_logic_vector(WIDTH-1 downto 0)
@@ -52,14 +53,14 @@ architecture TESTBENCH of DLX_TB is
 		WIDTH           : integer := 32
 	);
 	port (
-			CLK  : in std_logic;
-			RST		: in std_logic;
-			EN		 : in std_logic;
-			RW		 : in std_logic;
-			ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
-			DIN  : in std_logic_vector(WIDTH-1 downto 0);
-			DOUT : out std_logic_vector(WIDTH-1 downto 0)
-		);
+		CLK  : in std_logic;
+		RST		: in std_logic;
+		EN		 : in std_logic;
+		RW		 : in std_logic;
+		ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
+		DIN  : in std_logic_vector(WIDTH-1 downto 0);
+		DOUT : out std_logic_vector(WIDTH-1 downto 0)
+	);
   end component;
   
   ----------------------------------------------------------------
@@ -83,7 +84,7 @@ begin
   ----------------------------------------------------------------
   UUT: DLX
     generic map (word_size)
-    port map (s_CLK, s_RST, s_IRAM_ADDR, s_IRAM_DATA, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DIN, s_DRAM_DOUT);
+    port map (s_CLK, s_RST, s_EN,s_IRAM_ADDR, s_IRAM_DATA, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DIN, s_DRAM_DOUT);
   
   IRAM: ROMEM
     generic map("Y:/Microelectronic_Systems/DLX-Project/src/test_bench/hex_iram.txt", 128, word_size)

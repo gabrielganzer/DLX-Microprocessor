@@ -27,7 +27,6 @@ architecture TESTBENCH of TB_CU is
     IR_LATCH_EN        : out std_logic;  -- Instruction Register Latch Enable
     NPC_LATCH_EN       : out std_logic;  -- Next Program Counter Register Latch Enable
     -- Stage 2: instruction decode/register fetch
-    RF_LATCH_EN        : out std_logic;  -- New Program Counter Latch Enable
     RegA_LATCH_EN      : out std_logic;  -- Register A Latch Enable
     RegB_LATCH_EN      : out std_logic;  -- Register B Latch Enable
     RegIMM_LATCH_EN    : out std_logic;  -- Immediate Register Latch Enable
@@ -67,7 +66,7 @@ begin
   ----------------------------------------------------------------
   UUT: DLX_CU
     generic map (function_size, op_size, instruction_size, control_word_size)
-    port map (CLK, RST, INST, CW1(1), CW1(0), CW2(3), CW2(2), CW2(1), CW2(0), CW3(3), CW3(2), CW3(1), CW3(0), 
+    port map (CLK, RST, INST, CW1(1), CW1(0), CW2(2), CW2(1), CW2(0), CW3(3), CW3(2), CW3(1), CW3(0), 
                       OPCODE, CW4(3), CW4(2), CW4(1), CW4(0), CW5(1), CW5(0));
 
   -- Clock Process

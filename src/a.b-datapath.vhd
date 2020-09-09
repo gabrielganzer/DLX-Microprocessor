@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
--- Design units: DATAPATH
+-- Design units: DLX_DP
 -- Function: DLX data-path
 -- Input:
 -- Output:
@@ -15,7 +15,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.globals.all;
 
-entity DATAPATH is
+entity DLX_DP is
     generic (
       WIDTH     : integer := word_size;
       LENGTH    : integer := addr_size;
@@ -23,13 +23,13 @@ entity DATAPATH is
       OPCODE    : integer:= op_size
     );
     port (
-      CLK             : in  std_logic;
-      RST             : in  std_logic; -- Synchronous, active-high
+      CLK             : in std_logic;
+      RST             : in std_logic;  -- Synchronous, active-high
+      EN              : in std_logic;  -- Active-high
       -- Stage 1: instruction fetch
       IR_LATCH_EN     : in std_logic;  -- Instruction Register Latch Enable
       NPC_LATCH_EN    : in std_logic;  -- Next Program Counter Register Latch Enable
       -- Stage 2: instruction decode/register fetch
-      RF_LATCH_EN     : in std_logic;  -- New Program Counter Latch Enable
       RegA_LATCH_EN   : in std_logic;  -- Register A Latch Enable
       RegB_LATCH_EN   : in std_logic;  -- Register B Latch Enable
       RegIMM_LATCH_EN : in std_logic;  -- Immediate Register Latch Enable
@@ -52,11 +52,13 @@ entity DATAPATH is
 		  -- DRAM signals
 			DRAM_ADDR       : out std_logic_vector(dram_addr_size-1 downto 0);
 			DRAM_DATA_IN    : out std_logic_vector(WIDTH-1 downto 0);
-			DRAM_DATA_OUT   : in std_logic_vector(WIDTH-1 downto 0)
+			DRAM_DATA_OUT   : in std_logic_vector(WIDTH-1 downto 0);
+			-- IR Data Output
+			IR_OUT          : out std_logic_vector(WIDTH-1 downto 0)
     ); 
 end entity;
 
-architecture STRUCTURAL of DATAPATH is
+architecture STRUCTURAL of DLX_DP is
   --------------------------------------------------------------------
   -- Components
   --------------------------------------------------------------------
@@ -155,6 +157,9 @@ begin
     generic map(WIDTH)
     port map(CLK, RST, IR_LATCH_EN, IRAM_DATA_OUT, w_IR_OUT);
   
+  -- Instruction Register Output to Control Unit
+  IR_OUT <= w_IR_OUT;
+  
   -- Nex Program Counter Increment
   w_NPC_IN <= std_logic_vector(unsigned(w_PC_OUT) + 4);
   
@@ -185,6 +190,11 @@ begin
       w_RD2     <= (others => '0');
       w_RD      <= (others => '0');
       w_IMM     <= (word_size-1 downto word_size-op_size => w_IR_OUT(word_size-op_size))&w_IR_OUT(word_size-op_size-1 downto 0);
+    elsif w_IR_OUT(opcode_up downto opcode_down) = J_JAL then
+      w_RD1     <= (others => '0');
+      w_RD2     <= (others => '0');
+      w_RD      <= (others => '1');
+      w_IMM     <= (word_size-1 downto word_size-op_size => w_IR_OUT(word_size-op_size))&w_IR_OUT(word_size-op_size-1 downto 0);
     else
       w_RD1     <= w_IR_OUT(r1_up downto r1_down);
       w_RD2     <= (others => '0');
@@ -196,7 +206,7 @@ begin
   -- Register File (RF)
   RF: REGISTER_FILE
     generic map (WIDTH, LENGTH)
-    port map (CLK, RST, RF_LATCH_EN, RegA_LATCH_EN, RegB_LATCH_EN, RF_WE, w_WB_MUX_OUT, w_RegA_IN, w_RegB_IN, w_RD, w_RD1, w_RD2);
+    port map (CLK, RST, EN, RegA_LATCH_EN, RegB_LATCH_EN, RF_WE, w_WB_MUX_OUT, w_RegA_IN, w_RegB_IN, w_RD, w_RD1, w_RD2);
   
   -- Register A
   REG_A: REGISTER_GENERIC
