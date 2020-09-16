@@ -3,7 +3,7 @@
 Report : area
 Design : DLX_WIDTH32
 Version: F-2011.09-SP3
-Date   : Wed Sep 16 04:47:11 2020
+Date   : Wed Sep 16 19:29:43 2020
 ****************************************
 
 Information: Updating design information... (UID-85)

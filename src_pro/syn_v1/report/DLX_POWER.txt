@@ -9,7 +9,7 @@ Report : power
         -analysis_effort low
 Design : DLX_WIDTH32
 Version: F-2011.09-SP3
-Date   : Wed Sep 16 04:43:17 2020
+Date   : Wed Sep 16 19:25:46 2020
 ****************************************
 
 

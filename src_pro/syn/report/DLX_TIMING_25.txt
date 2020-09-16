@@ -1,0 +1,86 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Wed Sep 16 19:05:24 2020
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: IR/DOUT_reg[21]
+              (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: PC/DOUT_reg[1]
+            (rising edge-triggered flip-flop clocked by CLK)
+  Path Group: CLK
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  DLX_WIDTH32        5K_hvratio_1_4        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  IR/DOUT_reg[21]/CK (DFF_X1)                             0.00 #     0.00 r
+  IR/DOUT_reg[21]/Q (DFF_X1)                              0.11       0.11 f
+  IR/DOUT[21] (REGISTER_GENERIC_WIDTH32_12)               0.00       0.11 f
+  DP/RS1[0] (DLX_DP_WIDTH32_LENGTH5_RADIX4_OPCODE6)       0.00       0.11 f
+  DP/FU/RS1[0] (FORWARDING_UNIT_WIDTH32_LENGTH5)          0.00       0.11 f
+  DP/FU/U71/Z (XOR2_X1)                                   0.10       0.21 f
+  DP/FU/U21/ZN (NOR3_X1)                                  0.07       0.28 r
+  DP/FU/U22/ZN (NAND4_X1)                                 0.05       0.34 f
+  DP/FU/U7/ZN (AND4_X1)                                   0.06       0.40 f
+  DP/FU/U3/ZN (NOR2_X1)                                   0.06       0.46 r
+  DP/FU/ForwardC[0] (FORWARDING_UNIT_WIDTH32_LENGTH5)     0.00       0.46 r
+  DP/FwdC/SEL[0] (MUX31_GENERIC_NBIT32_3)                 0.00       0.46 r
+  DP/FwdC/U11/ZN (INV_X1)                                 0.03       0.49 f
+  DP/FwdC/U14/ZN (AND3_X1)                                0.05       0.53 f
+  DP/FwdC/U7/Z (BUF_X1)                                   0.07       0.61 f
+  DP/FwdC/U51/ZN (AOI222_X1)                              0.14       0.74 r
+  DP/FwdC/U50/ZN (INV_X1)                                 0.03       0.77 f
+  DP/FwdC/Y[13] (MUX31_GENERIC_NBIT32_3)                  0.00       0.77 f
+  DP/ZERO/A[13] (ZERO_DETECTOR_WIDTH32_0)                 0.00       0.77 f
+  DP/ZERO/U8/ZN (NOR4_X1)                                 0.10       0.86 r
+  DP/ZERO/U6/ZN (NAND4_X1)                                0.05       0.92 f
+  DP/ZERO/U10/ZN (NOR2_X1)                                0.05       0.97 r
+  DP/ZERO/Y (ZERO_DETECTOR_WIDTH32_0)                     0.00       0.97 r
+  DP/COND/Z (BRANCH_UNIT_WIDTH32)                         0.00       0.97 r
+  DP/COND/U2/ZN (XNOR2_X1)                                0.03       1.01 f
+  DP/COND/U1/ZN (AND2_X1)                                 0.04       1.05 f
+  DP/COND/BRANCH (BRANCH_UNIT_WIDTH32)                    0.00       1.05 f
+  DP/MuxMEM/SEL (MUX21_GENERIC_NBIT32_3)                  0.00       1.05 f
+  DP/MuxMEM/U12/Z (BUF_X1)                                0.04       1.09 f
+  DP/MuxMEM/U10/Z (BUF_X1)                                0.04       1.13 f
+  DP/MuxMEM/U2/ZN (INV_X1)                                0.12       1.25 r
+  DP/MuxMEM/U52/ZN (AOI22_X1)                             0.06       1.31 f
+  DP/MuxMEM/U51/ZN (INV_X1)                               0.03       1.35 r
+  DP/MuxMEM/Y[1] (MUX21_GENERIC_NBIT32_3)                 0.00       1.35 r
+  DP/NPC_OUT[1] (DLX_DP_WIDTH32_LENGTH5_RADIX4_OPCODE6)
+                                                          0.00       1.35 r
+  PC/DIN[1] (REGISTER_GENERIC_WIDTH32_0)                  0.00       1.35 r
+  PC/U46/ZN (INV_X1)                                      0.02       1.37 f
+  PC/U45/ZN (OAI22_X1)                                    0.05       1.43 r
+  PC/DOUT_reg[1]/D (DFF_X1)                               0.01       1.44 r
+  data arrival time                                                  1.44
+
+  clock CLK (rise edge)                                   2.50       2.50
+  clock network delay (ideal)                             0.00       2.50
+  PC/DOUT_reg[1]/CK (DFF_X1)                              0.00       2.50 r
+  library setup time                                     -0.04       2.46
+  data required time                                                 2.46
+  --------------------------------------------------------------------------
+  data required time                                                 2.46
+  data arrival time                                                 -1.44
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.03
+
+
+1
