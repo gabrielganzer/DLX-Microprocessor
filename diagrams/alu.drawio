@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2020-09-16T16:07:40.106Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36" etag="bYI9KGjP29iaApA8UXsX" version="13.7.1" type="github">
+<mxfile host="app.diagrams.net" modified="2020-09-16T21:29:15.695Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36" etag="f6tTd4XMk4esQ90qjtNW" version="13.7.2" type="github">
   <diagram id="jrDMd2VkX8Fc1aG8_HDz" name="Page-1">
-    <mxGraphModel dx="1113" dy="694" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1577" dy="983" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -198,7 +198,7 @@
             <mxPoint y="13.5" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ozGeXN4ysE4LUQdFKBSn-48" value="" style="verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.logic_gates.logic_gate;operation=xor;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="ozGeXN4ysE4LUQdFKBSn-48" value="" style="verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.logic_gates.logic_gate;operation=xor;fillColor=#C7F2FF;" parent="1" vertex="1">
           <mxGeometry x="490" y="280" width="50" height="33" as="geometry" />
         </mxCell>
         <mxCell id="ozGeXN4ysE4LUQdFKBSn-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=6;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;strokeWidth=1;" parent="1" source="ozGeXN4ysE4LUQdFKBSn-53" target="ozGeXN4ysE4LUQdFKBSn-48" edge="1">
@@ -234,7 +234,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ozGeXN4ysE4LUQdFKBSn-53" value="" style="verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.logic_gates.logic_gate;operation=xor;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="ozGeXN4ysE4LUQdFKBSn-53" value="" style="verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.logic_gates.logic_gate;operation=xor;fillColor=#C7F2FF;" parent="1" vertex="1">
           <mxGeometry x="320" y="167" width="50" height="33" as="geometry" />
         </mxCell>
         <mxCell id="ozGeXN4ysE4LUQdFKBSn-97" style="edgeStyle=none;rounded=0;jumpSize=6;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=1;startSize=6;endSize=3;" parent="1" edge="1">
