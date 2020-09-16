@@ -1,0 +1,141 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Wed Sep 16 05:13:09 2020
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: CU/cw3_reg[8]
+              (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: DP/RegALU3/DOUT_reg[0]
+            (rising edge-triggered flip-flop clocked by CLK)
+  Path Group: CLK
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  DLX_WIDTH32        5K_hvratio_1_4        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  CU/cw3_reg[8]/CK (DFFR_X1)                              0.00 #     0.00 r
+  CU/cw3_reg[8]/Q (DFFR_X1)                               0.10       0.10 r
+  CU/MuxA_SEL (DLX_CU_WIDTH32_LENGTH5)                    0.00       0.10 r
+  DP/MuxA_SEL (DLX_DP_WIDTH32_LENGTH5_RADIX4_OPCODE6)     0.00       0.10 r
+  DP/MuxA/SEL (MUX21_GENERIC_NBIT32_4)                    0.00       0.10 r
+  DP/MuxA/U43/Z (BUF_X1)                                  0.04       0.15 r
+  DP/MuxA/U12/Z (BUF_X1)                                  0.05       0.19 r
+  DP/MuxA/U71/ZN (INV_X1)                                 0.04       0.23 f
+  DP/MuxA/U83/ZN (AOI22_X1)                               0.06       0.30 r
+  DP/MuxA/U29/ZN (INV_X1)                                 0.07       0.36 f
+  DP/MuxA/Y[0] (MUX21_GENERIC_NBIT32_4)                   0.00       0.36 f
+  DP/ALU0/A[0] (ALU_WIDTH32_RADIX4_OPCODE6)               0.00       0.36 f
+  DP/ALU0/ADD_SUB/A[0] (ADDER_SUBTRACTOR_WIDTH32_RADIX4)
+                                                          0.00       0.36 f
+  DP/ALU0/ADD_SUB/SPARSETREE/A[0] (SPARSE_TREE_WIDTH32_RADIX4)
+                                                          0.00       0.36 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGNET/A[0] (PG_NETWORK_WIDTH32)
+                                                          0.00       0.36 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGNET/U72/ZN (OAI21_X1)      0.07       0.43 r
+  DP/ALU0/ADD_SUB/SPARSETREE/PGNET/U69/ZN (INV_X1)        0.03       0.46 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGNET/U71/ZN (AOI21_X1)      0.05       0.51 r
+  DP/ALU0/ADD_SUB/SPARSETREE/PGNET/U73/ZN (INV_X1)        0.03       0.54 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGNET/G[0] (PG_NETWORK_WIDTH32)
+                                                          0.00       0.54 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_5_0/gik_1 (BLOCKPG_0)
+                                                          0.00       0.54 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_5_0/U3/ZN (AOI21_X1)
+                                                          0.04       0.58 r
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_5_0/U2/ZN (INV_X1)      0.03       0.61 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_5_0/gij (BLOCKPG_0)     0.00       0.61 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_4_0/gik_1 (BLOCKPG_13)
+                                                          0.00       0.61 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_4_0/U3/ZN (AOI21_X1)
+                                                          0.04       0.65 r
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_4_0/U2/ZN (INV_X1)      0.03       0.68 f
+  DP/ALU0/ADD_SUB/SPARSETREE/PGij_4_0/gij (BLOCKPG_13)
+                                                          0.00       0.68 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_3_0_0/gik_1 (BLOCKG_0)
+                                                          0.00       0.68 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_3_0_0/U2/ZN (AOI21_X1)
+                                                          0.04       0.72 r
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_3_0_0/U1/ZN (INV_X1)
+                                                          0.03       0.75 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_3_0_0/gij (BLOCKG_0)
+                                                          0.00       0.75 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_2_0_1/gik_1 (BLOCKG_5)
+                                                          0.00       0.75 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_2_0_1/U2/ZN (AOI21_X1)
+                                                          0.04       0.79 r
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_2_0_1/U1/ZN (INV_X1)
+                                                          0.04       0.83 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_2_0_1/gij (BLOCKG_5)
+                                                          0.00       0.83 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_1_0_2/gik_1 (BLOCKG_2)
+                                                          0.00       0.83 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_1_0_2/U1/ZN (AOI21_X1)
+                                                          0.05       0.88 r
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_1_0_2/U2/ZN (INV_X1)
+                                                          0.04       0.92 f
+  DP/ALU0/ADD_SUB/SPARSETREE/G_GEN_1_0_2/gij (BLOCKG_2)
+                                                          0.00       0.92 f
+  DP/ALU0/ADD_SUB/SPARSETREE/Co[7] (SPARSE_TREE_WIDTH32_RADIX4)
+                                                          0.00       0.92 f
+  DP/ALU0/ADD_SUB/SUMGEN/Ci[7] (SUM_GENERATOR_WIDTH32_RADIX4)
+                                                          0.00       0.92 f
+  DP/ALU0/ADD_SUB/SUMGEN/CSBi_7/Ci (CSB_RADIX4_0)         0.00       0.92 f
+  DP/ALU0/ADD_SUB/SUMGEN/CSBi_7/MUX21_SUM/SEL (MUX21_GENERIC_NBIT4_0)
+                                                          0.00       0.92 f
+  DP/ALU0/ADD_SUB/SUMGEN/CSBi_7/MUX21_SUM/U5/ZN (AOI22_X1)
+                                                          0.07       0.98 r
+  DP/ALU0/ADD_SUB/SUMGEN/CSBi_7/MUX21_SUM/U7/ZN (INV_X1)
+                                                          0.03       1.01 f
+  DP/ALU0/ADD_SUB/SUMGEN/CSBi_7/MUX21_SUM/Y[3] (MUX21_GENERIC_NBIT4_0)
+                                                          0.00       1.01 f
+  DP/ALU0/ADD_SUB/SUMGEN/CSBi_7/S[3] (CSB_RADIX4_0)       0.00       1.01 f
+  DP/ALU0/ADD_SUB/SUMGEN/S[31] (SUM_GENERATOR_WIDTH32_RADIX4)
+                                                          0.00       1.01 f
+  DP/ALU0/ADD_SUB/S[31] (ADDER_SUBTRACTOR_WIDTH32_RADIX4)
+                                                          0.00       1.01 f
+  DP/ALU0/BIG_XNOR/A[31] (ZERO_DETECTOR_WIDTH32_1)        0.00       1.01 f
+  DP/ALU0/BIG_XNOR/U8/ZN (NOR4_X1)                        0.10       1.11 r
+  DP/ALU0/BIG_XNOR/U10/ZN (NAND4_X1)                      0.05       1.16 f
+  DP/ALU0/BIG_XNOR/U9/ZN (NOR2_X1)                        0.05       1.21 r
+  DP/ALU0/BIG_XNOR/Y (ZERO_DETECTOR_WIDTH32_1)            0.00       1.21 r
+  DP/ALU0/COMP/Z (COMPARATOR)                             0.00       1.21 r
+  DP/ALU0/COMP/U4/ZN (INV_X1)                             0.03       1.24 f
+  DP/ALU0/COMP/NE (COMPARATOR)                            0.00       1.24 f
+  DP/ALU0/U114/ZN (AOI22_X1)                              0.06       1.30 r
+  DP/ALU0/U13/ZN (NAND2_X1)                               0.03       1.33 f
+  DP/ALU0/U10/ZN (OR2_X1)                                 0.06       1.38 f
+  DP/ALU0/Y[0] (ALU_WIDTH32_RADIX4_OPCODE6)               0.00       1.38 f
+  DP/RegALU3/DIN[0] (REGISTER_GENERIC_WIDTH32_6)          0.00       1.38 f
+  DP/RegALU3/U75/ZN (INV_X1)                              0.03       1.41 r
+  DP/RegALU3/U74/ZN (OAI22_X1)                            0.03       1.44 f
+  DP/RegALU3/DOUT_reg[0]/D (DFF_X1)                       0.01       1.45 f
+  data arrival time                                                  1.45
+
+  clock CLK (rise edge)                                   1.50       1.50
+  clock network delay (ideal)                             0.00       1.50
+  DP/RegALU3/DOUT_reg[0]/CK (DFF_X1)                      0.00       1.50 r
+  library setup time                                     -0.04       1.46
+  data required time                                                 1.46
+  --------------------------------------------------------------------------
+  data required time                                                 1.46
+  data arrival time                                                 -1.45
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1

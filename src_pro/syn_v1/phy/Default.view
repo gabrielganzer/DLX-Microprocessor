@@ -1,0 +1,16 @@
+# Version:1.0 MMMC View Definition File
+# Do Not Remove Above Line
+create_rc_corner -name standard -cap_table $MycapTable -T {300} -preRoute_res {1.0} -preRoute_cap {1.0} -preRoute_clkres {0.0} -preRoute_clkcap {0.0} -postRoute_res {1.0} -postRoute_cap {1.0} -postRoute_xcap {1.0} -postRoute_clkres {0.0} -postRoute_clkcap {0.0}
+create_rc_corner -name high -cap_table $MycapTable -T {400} -preRoute_res {1.0} -preRoute_cap {1.0} -preRoute_clkres {0.0} -preRoute_clkcap {0.0} -postRoute_res {1.0} -postRoute_cap {1.0} -postRoute_xcap {1.0} -postRoute_clkres {0.0} -postRoute_clkcap {0.0}
+create_rc_corner -name low -cap_table $MycapTable -T {240} -preRoute_res {1.0} -preRoute_cap {1.0} -preRoute_clkres {0.0} -preRoute_clkcap {0.0} -postRoute_res {1.0} -postRoute_cap {1.0} -postRoute_xcap {1.0} -postRoute_clkres {0.0} -postRoute_clkcap {0.0}
+create_library_set -name libsTYP -timing $MyTimingLibNom
+create_library_set -name libsWC -timing $MyTimingLibSlow
+create_library_set -name libsBC -timing $MyTimingLibFast
+create_constraint_mode -name coherent-synthesis -sdc_files {dlx.sdc}
+create_delay_corner -name std-typ -library_set {libsTYP} -rc_corner {standard}
+create_delay_corner -name ht-wc -library_set {libsWC} -rc_corner {high}
+create_delay_corner -name lt-bc -library_set {libsBC} -rc_corner {low}
+create_analysis_view -name default -constraint_mode {coherent-synthesis} -delay_corner {std-typ}
+create_analysis_view -name worst -constraint_mode {coherent-synthesis} -delay_corner {ht-wc}
+create_analysis_view -name best -constraint_mode {coherent-synthesis} -delay_corner {lt-bc}
+set_analysis_view -setup {default} -hold {default}

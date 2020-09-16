@@ -1,0 +1,231 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Wed Sep 16 04:47:12 2020
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: DP/RegRD4/DOUT_reg[1]
+              (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: DP/RegALU3/DOUT_reg[30]
+            (rising edge-triggered flip-flop clocked by CLK)
+  Path Group: CLK
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  DLX_WIDTH32        5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  DP/RegRD4/DOUT_reg[1]/CK (DFF_X1)                       0.00 #     0.00 r
+  DP/RegRD4/DOUT_reg[1]/Q (DFF_X1)                        0.10       0.10 r
+  DP/RegRD4/DOUT[1] (REGISTER_GENERIC_WIDTH5_1)           0.00       0.10 r
+  DP/FU/RD4[1] (FORWARDING_UNIT_WIDTH32_LENGTH5)          0.00       0.10 r
+  DP/FU/U34/ZN (XNOR2_X1)                                 0.06       0.16 r
+  DP/FU/U28/ZN (NAND4_X1)                                 0.05       0.21 f
+  DP/FU/U102/ZN (NOR4_X1)                                 0.06       0.26 r
+  DP/FU/U53/ZN (AND2_X1)                                  0.06       0.32 r
+  DP/FU/U48/ZN (NOR2_X1)                                  0.03       0.35 f
+  DP/FU/ForwardB[0] (FORWARDING_UNIT_WIDTH32_LENGTH5)     0.00       0.35 f
+  DP/FwdB/SEL[0] (MUX31_GENERIC_NBIT32_4)                 0.00       0.35 f
+  DP/FwdB/U33/ZN (INV_X1)                                 0.05       0.40 r
+  DP/FwdB/U38/ZN (NAND3_X1)                               0.05       0.45 f
+  DP/FwdB/U28/ZN (NAND3_X2)                               0.06       0.51 r
+  DP/FwdB/Y[1] (MUX31_GENERIC_NBIT32_4)                   0.00       0.51 r
+  DP/ALU0/B[1] (ALU_WIDTH32_RADIX4)                       0.00       0.51 r
+  DP/ALU0/MULT/B[1] (MULTIPLIER_WIDTH16)                  0.00       0.51 r
+  DP/ALU0/MULT/enc0/b[2] (BOOTH_ENCODER_WIDTH16_0)        0.00       0.51 r
+  DP/ALU0/MULT/enc0/U108/ZN (NAND2_X1)                    0.04       0.55 f
+  DP/ALU0/MULT/enc0/U26/ZN (NOR2_X1)                      0.07       0.62 r
+  DP/ALU0/MULT/enc0/U9/ZN (INV_X2)                        0.06       0.68 f
+  DP/ALU0/MULT/enc0/U64/ZN (OAI21_X1)                     0.08       0.76 r
+  DP/ALU0/MULT/enc0/vp[3] (BOOTH_ENCODER_WIDTH16_0)       0.00       0.76 r
+  DP/ALU0/MULT/rca0/B[3] (RCA_MUL_WIDTH16_0)              0.00       0.76 r
+  DP/ALU0/MULT/rca0/sumI_3/B (FA_197)                     0.00       0.76 r
+  DP/ALU0/MULT/rca0/sumI_3/U1/ZN (XNOR2_X1)               0.08       0.84 r
+  DP/ALU0/MULT/rca0/sumI_3/S (FA_197)                     0.00       0.84 r
+  DP/ALU0/MULT/rca0/S[1] (RCA_MUL_WIDTH16_0)              0.00       0.84 r
+  DP/ALU0/MULT/rcai_0/A[1] (RCA_MUL_WIDTH16_7)            0.00       0.84 r
+  DP/ALU0/MULT/rcai_0/sumI_1/A (FA_182)                   0.00       0.84 r
+  DP/ALU0/MULT/rcai_0/sumI_1/U2/ZN (NOR2_X1)              0.03       0.87 f
+  DP/ALU0/MULT/rcai_0/sumI_1/U1/ZN (AOI21_X1)             0.06       0.93 r
+  DP/ALU0/MULT/rcai_0/sumI_1/Co (FA_182)                  0.00       0.93 r
+  DP/ALU0/MULT/rcai_0/sumI_2/Ci (FA_181)                  0.00       0.93 r
+  DP/ALU0/MULT/rcai_0/sumI_2/U1/Z (BUF_X1)                0.04       0.97 r
+  DP/ALU0/MULT/rcai_0/sumI_2/U7/Z (XOR2_X1)               0.06       1.03 r
+  DP/ALU0/MULT/rcai_0/sumI_2/S (FA_181)                   0.00       1.03 r
+  DP/ALU0/MULT/rcai_0/S[0] (RCA_MUL_WIDTH16_7)            0.00       1.03 r
+  DP/ALU0/MULT/rcai_1/A[0] (RCA_MUL_WIDTH16_6)            0.00       1.03 r
+  DP/ALU0/MULT/rcai_1/sum0/A (FA_166)                     0.00       1.03 r
+  DP/ALU0/MULT/rcai_1/sum0/U1/ZN (INV_X1)                 0.03       1.06 f
+  DP/ALU0/MULT/rcai_1/sum0/U7/ZN (OAI22_X1)               0.06       1.12 r
+  DP/ALU0/MULT/rcai_1/sum0/Co (FA_166)                    0.00       1.12 r
+  DP/ALU0/MULT/rcai_1/sumI_1/Ci (FA_165)                  0.00       1.12 r
+  DP/ALU0/MULT/rcai_1/sumI_1/U5/ZN (OAI21_X1)             0.04       1.16 f
+  DP/ALU0/MULT/rcai_1/sumI_1/U3/ZN (NAND2_X1)             0.03       1.19 r
+  DP/ALU0/MULT/rcai_1/sumI_1/Co (FA_165)                  0.00       1.19 r
+  DP/ALU0/MULT/rcai_1/sumI_2/Ci (FA_164)                  0.00       1.19 r
+  DP/ALU0/MULT/rcai_1/sumI_2/U5/ZN (NAND2_X1)             0.03       1.22 f
+  DP/ALU0/MULT/rcai_1/sumI_2/U6/ZN (NAND2_X1)             0.03       1.25 r
+  DP/ALU0/MULT/rcai_1/sumI_2/Co (FA_164)                  0.00       1.25 r
+  DP/ALU0/MULT/rcai_1/sumI_3/Ci (FA_163)                  0.00       1.25 r
+  DP/ALU0/MULT/rcai_1/sumI_3/U6/ZN (INV_X1)               0.02       1.27 f
+  DP/ALU0/MULT/rcai_1/sumI_3/U8/ZN (OAI22_X1)             0.04       1.32 r
+  DP/ALU0/MULT/rcai_1/sumI_3/Co (FA_163)                  0.00       1.32 r
+  DP/ALU0/MULT/rcai_1/sumI_4/Ci (FA_162)                  0.00       1.32 r
+  DP/ALU0/MULT/rcai_1/sumI_4/U5/ZN (INV_X1)               0.03       1.35 f
+  DP/ALU0/MULT/rcai_1/sumI_4/U7/ZN (OAI22_X1)             0.04       1.39 r
+  DP/ALU0/MULT/rcai_1/sumI_4/Co (FA_162)                  0.00       1.39 r
+  DP/ALU0/MULT/rcai_1/sumI_5/Ci (FA_161)                  0.00       1.39 r
+  DP/ALU0/MULT/rcai_1/sumI_5/U4/ZN (INV_X1)               0.03       1.42 f
+  DP/ALU0/MULT/rcai_1/sumI_5/U6/ZN (OAI22_X1)             0.06       1.48 r
+  DP/ALU0/MULT/rcai_1/sumI_5/Co (FA_161)                  0.00       1.48 r
+  DP/ALU0/MULT/rcai_1/sumI_6/Ci (FA_160)                  0.00       1.48 r
+  DP/ALU0/MULT/rcai_1/sumI_6/U4/ZN (INV_X1)               0.03       1.50 f
+  DP/ALU0/MULT/rcai_1/sumI_6/U6/ZN (OAI22_X1)             0.06       1.56 r
+  DP/ALU0/MULT/rcai_1/sumI_6/Co (FA_160)                  0.00       1.56 r
+  DP/ALU0/MULT/rcai_1/sumI_7/Ci (FA_159)                  0.00       1.56 r
+  DP/ALU0/MULT/rcai_1/sumI_7/U4/ZN (INV_X1)               0.03       1.58 f
+  DP/ALU0/MULT/rcai_1/sumI_7/U6/ZN (OAI22_X1)             0.05       1.63 r
+  DP/ALU0/MULT/rcai_1/sumI_7/Co (FA_159)                  0.00       1.63 r
+  DP/ALU0/MULT/rcai_1/sumI_8/Ci (FA_158)                  0.00       1.63 r
+  DP/ALU0/MULT/rcai_1/sumI_8/U5/ZN (INV_X1)               0.03       1.66 f
+  DP/ALU0/MULT/rcai_1/sumI_8/U7/ZN (OAI22_X1)             0.05       1.71 r
+  DP/ALU0/MULT/rcai_1/sumI_8/Co (FA_158)                  0.00       1.71 r
+  DP/ALU0/MULT/rcai_1/sumI_9/Ci (FA_157)                  0.00       1.71 r
+  DP/ALU0/MULT/rcai_1/sumI_9/U5/ZN (INV_X1)               0.03       1.73 f
+  DP/ALU0/MULT/rcai_1/sumI_9/U7/ZN (OAI22_X1)             0.06       1.79 r
+  DP/ALU0/MULT/rcai_1/sumI_9/Co (FA_157)                  0.00       1.79 r
+  DP/ALU0/MULT/rcai_1/sumI_10/Ci (FA_156)                 0.00       1.79 r
+  DP/ALU0/MULT/rcai_1/sumI_10/U4/ZN (INV_X1)              0.03       1.81 f
+  DP/ALU0/MULT/rcai_1/sumI_10/U6/ZN (OAI22_X1)            0.06       1.87 r
+  DP/ALU0/MULT/rcai_1/sumI_10/Co (FA_156)                 0.00       1.87 r
+  DP/ALU0/MULT/rcai_1/sumI_11/Ci (FA_155)                 0.00       1.87 r
+  DP/ALU0/MULT/rcai_1/sumI_11/U4/ZN (INV_X1)              0.03       1.89 f
+  DP/ALU0/MULT/rcai_1/sumI_11/U6/ZN (OAI22_X1)            0.06       1.95 r
+  DP/ALU0/MULT/rcai_1/sumI_11/Co (FA_155)                 0.00       1.95 r
+  DP/ALU0/MULT/rcai_1/sumI_12/Ci (FA_154)                 0.00       1.95 r
+  DP/ALU0/MULT/rcai_1/sumI_12/U4/ZN (INV_X1)              0.03       1.97 f
+  DP/ALU0/MULT/rcai_1/sumI_12/U6/ZN (OAI22_X1)            0.06       2.03 r
+  DP/ALU0/MULT/rcai_1/sumI_12/Co (FA_154)                 0.00       2.03 r
+  DP/ALU0/MULT/rcai_1/sumI_13/Ci (FA_153)                 0.00       2.03 r
+  DP/ALU0/MULT/rcai_1/sumI_13/U4/ZN (INV_X1)              0.03       2.05 f
+  DP/ALU0/MULT/rcai_1/sumI_13/U6/ZN (OAI22_X1)            0.04       2.10 r
+  DP/ALU0/MULT/rcai_1/sumI_13/Co (FA_153)                 0.00       2.10 r
+  DP/ALU0/MULT/rcai_1/sumI_14/Ci (FA_152)                 0.00       2.10 r
+  DP/ALU0/MULT/rcai_1/sumI_14/U5/ZN (INV_X1)              0.03       2.12 f
+  DP/ALU0/MULT/rcai_1/sumI_14/U1/ZN (XNOR2_X1)            0.06       2.19 f
+  DP/ALU0/MULT/rcai_1/sumI_14/S (FA_152)                  0.00       2.19 f
+  DP/ALU0/MULT/rcai_1/S[12] (RCA_MUL_WIDTH16_6)           0.00       2.19 f
+  DP/ALU0/MULT/rcai_2/A[12] (RCA_MUL_WIDTH16_5)           0.00       2.19 f
+  DP/ALU0/MULT/rcai_2/sumI_12/A (FA_137)                  0.00       2.19 f
+  DP/ALU0/MULT/rcai_2/sumI_12/U3/ZN (XNOR2_X1)            0.07       2.25 f
+  DP/ALU0/MULT/rcai_2/sumI_12/U5/ZN (OAI22_X1)            0.06       2.31 r
+  DP/ALU0/MULT/rcai_2/sumI_12/Co (FA_137)                 0.00       2.31 r
+  DP/ALU0/MULT/rcai_2/sumI_13/Ci (FA_136)                 0.00       2.31 r
+  DP/ALU0/MULT/rcai_2/sumI_13/U4/ZN (INV_X1)              0.03       2.34 f
+  DP/ALU0/MULT/rcai_2/sumI_13/U6/ZN (OAI22_X1)            0.05       2.39 r
+  DP/ALU0/MULT/rcai_2/sumI_13/Co (FA_136)                 0.00       2.39 r
+  DP/ALU0/MULT/rcai_2/sumI_14/Ci (FA_135)                 0.00       2.39 r
+  DP/ALU0/MULT/rcai_2/sumI_14/U1/Z (BUF_X1)               0.04       2.43 r
+  DP/ALU0/MULT/rcai_2/sumI_14/U2/ZN (XNOR2_X1)            0.06       2.49 r
+  DP/ALU0/MULT/rcai_2/sumI_14/S (FA_135)                  0.00       2.49 r
+  DP/ALU0/MULT/rcai_2/S[12] (RCA_MUL_WIDTH16_5)           0.00       2.49 r
+  DP/ALU0/MULT/rcai_3/A[12] (RCA_MUL_WIDTH16_4)           0.00       2.49 r
+  DP/ALU0/MULT/rcai_3/sumI_12/A (FA_120)                  0.00       2.49 r
+  DP/ALU0/MULT/rcai_3/sumI_12/U3/ZN (XNOR2_X1)            0.07       2.56 r
+  DP/ALU0/MULT/rcai_3/sumI_12/U2/ZN (XNOR2_X1)            0.07       2.63 r
+  DP/ALU0/MULT/rcai_3/sumI_12/S (FA_120)                  0.00       2.63 r
+  DP/ALU0/MULT/rcai_3/S[10] (RCA_MUL_WIDTH16_4)           0.00       2.63 r
+  DP/ALU0/MULT/rcai_4/A[10] (RCA_MUL_WIDTH16_3)           0.00       2.63 r
+  DP/ALU0/MULT/rcai_4/sumI_10/A (FA_105)                  0.00       2.63 r
+  DP/ALU0/MULT/rcai_4/sumI_10/U3/ZN (XNOR2_X1)            0.07       2.70 r
+  DP/ALU0/MULT/rcai_4/sumI_10/U1/ZN (XNOR2_X1)            0.07       2.77 r
+  DP/ALU0/MULT/rcai_4/sumI_10/S (FA_105)                  0.00       2.77 r
+  DP/ALU0/MULT/rcai_4/S[8] (RCA_MUL_WIDTH16_3)            0.00       2.77 r
+  DP/ALU0/MULT/rcai_5/A[8] (RCA_MUL_WIDTH16_2)            0.00       2.77 r
+  DP/ALU0/MULT/rcai_5/sumI_8/A (FA_90)                    0.00       2.77 r
+  DP/ALU0/MULT/rcai_5/sumI_8/U2/ZN (XNOR2_X1)             0.07       2.84 r
+  DP/ALU0/MULT/rcai_5/sumI_8/U3/ZN (OAI22_X1)             0.05       2.89 f
+  DP/ALU0/MULT/rcai_5/sumI_8/Co (FA_90)                   0.00       2.89 f
+  DP/ALU0/MULT/rcai_5/sumI_9/Ci (FA_89)                   0.00       2.89 f
+  DP/ALU0/MULT/rcai_5/sumI_9/U7/ZN (INV_X1)               0.03       2.92 r
+  DP/ALU0/MULT/rcai_5/sumI_9/U4/ZN (OAI22_X1)             0.03       2.95 f
+  DP/ALU0/MULT/rcai_5/sumI_9/Co (FA_89)                   0.00       2.95 f
+  DP/ALU0/MULT/rcai_5/sumI_10/Ci (FA_88)                  0.00       2.95 f
+  DP/ALU0/MULT/rcai_5/sumI_10/U7/Z (CLKBUF_X1)            0.04       2.99 f
+  DP/ALU0/MULT/rcai_5/sumI_10/U6/ZN (XNOR2_X1)            0.06       3.05 f
+  DP/ALU0/MULT/rcai_5/sumI_10/S (FA_88)                   0.00       3.05 f
+  DP/ALU0/MULT/rcai_5/S[8] (RCA_MUL_WIDTH16_2)            0.00       3.05 f
+  DP/ALU0/MULT/rcai_6/A[8] (RCA_MUL_WIDTH16_1)            0.00       3.05 f
+  DP/ALU0/MULT/rcai_6/sumI_8/A (FA_73)                    0.00       3.05 f
+  DP/ALU0/MULT/rcai_6/sumI_8/U4/ZN (XNOR2_X1)             0.06       3.12 f
+  DP/ALU0/MULT/rcai_6/sumI_8/U8/ZN (OAI22_X1)             0.05       3.16 r
+  DP/ALU0/MULT/rcai_6/sumI_8/Co (FA_73)                   0.00       3.16 r
+  DP/ALU0/MULT/rcai_6/sumI_9/Ci (FA_72)                   0.00       3.16 r
+  DP/ALU0/MULT/rcai_6/sumI_9/U6/ZN (INV_X1)               0.03       3.19 f
+  DP/ALU0/MULT/rcai_6/sumI_9/U8/ZN (OAI22_X1)             0.04       3.23 r
+  DP/ALU0/MULT/rcai_6/sumI_9/Co (FA_72)                   0.00       3.23 r
+  DP/ALU0/MULT/rcai_6/sumI_10/Ci (FA_71)                  0.00       3.23 r
+  DP/ALU0/MULT/rcai_6/sumI_10/U5/ZN (INV_X1)              0.03       3.26 f
+  DP/ALU0/MULT/rcai_6/sumI_10/U7/ZN (OAI22_X1)            0.04       3.30 r
+  DP/ALU0/MULT/rcai_6/sumI_10/Co (FA_71)                  0.00       3.30 r
+  DP/ALU0/MULT/rcai_6/sumI_11/Ci (FA_70)                  0.00       3.30 r
+  DP/ALU0/MULT/rcai_6/sumI_11/U7/ZN (INV_X1)              0.03       3.33 f
+  DP/ALU0/MULT/rcai_6/sumI_11/U9/ZN (OAI22_X1)            0.05       3.38 r
+  DP/ALU0/MULT/rcai_6/sumI_11/Co (FA_70)                  0.00       3.38 r
+  DP/ALU0/MULT/rcai_6/sumI_12/Ci (FA_69)                  0.00       3.38 r
+  DP/ALU0/MULT/rcai_6/sumI_12/U6/ZN (INV_X1)              0.03       3.40 f
+  DP/ALU0/MULT/rcai_6/sumI_12/U8/ZN (OAI22_X1)            0.04       3.45 r
+  DP/ALU0/MULT/rcai_6/sumI_12/Co (FA_69)                  0.00       3.45 r
+  DP/ALU0/MULT/rcai_6/sumI_13/Ci (FA_68)                  0.00       3.45 r
+  DP/ALU0/MULT/rcai_6/sumI_13/U6/ZN (INV_X1)              0.03       3.47 f
+  DP/ALU0/MULT/rcai_6/sumI_13/U5/ZN (AOI21_X1)            0.06       3.53 r
+  DP/ALU0/MULT/rcai_6/sumI_13/Co (FA_68)                  0.00       3.53 r
+  DP/ALU0/MULT/rcai_6/sumI_14/Ci (FA_67)                  0.00       3.53 r
+  DP/ALU0/MULT/rcai_6/sumI_14/U7/ZN (NOR2_X1)             0.03       3.55 f
+  DP/ALU0/MULT/rcai_6/sumI_14/U4/ZN (NOR2_X1)             0.05       3.61 r
+  DP/ALU0/MULT/rcai_6/sumI_14/Co (FA_67)                  0.00       3.61 r
+  DP/ALU0/MULT/rcai_6/sumI_15/Ci (FA_66)                  0.00       3.61 r
+  DP/ALU0/MULT/rcai_6/sumI_15/U2/ZN (AOI21_X1)            0.03       3.64 f
+  DP/ALU0/MULT/rcai_6/sumI_15/U3/ZN (INV_X1)              0.03       3.67 r
+  DP/ALU0/MULT/rcai_6/sumI_15/Co (FA_66)                  0.00       3.67 r
+  DP/ALU0/MULT/rcai_6/sumTH/Ci (FA_65)                    0.00       3.67 r
+  DP/ALU0/MULT/rcai_6/sumTH/U2/ZN (XNOR2_X1)              0.06       3.73 r
+  DP/ALU0/MULT/rcai_6/sumTH/S (FA_65)                     0.00       3.73 r
+  DP/ALU0/MULT/rcai_6/S[15] (RCA_MUL_WIDTH16_1)           0.00       3.73 r
+  DP/ALU0/MULT/P[31] (MULTIPLIER_WIDTH16)                 0.00       3.73 r
+  DP/ALU0/U12/ZN (NAND2_X1)                               0.03       3.76 f
+  DP/ALU0/U13/ZN (NAND2_X1)                               0.03       3.79 r
+  DP/ALU0/Y[30] (ALU_WIDTH32_RADIX4)                      0.00       3.79 r
+  DP/RegALU3/DIN[30] (REGISTER_GENERIC_WIDTH32_6)         0.00       3.79 r
+  DP/RegALU3/U14/ZN (NAND2_X1)                            0.03       3.82 f
+  DP/RegALU3/U12/ZN (NAND2_X1)                            0.03       3.85 r
+  DP/RegALU3/DOUT_reg[30]/D (DFF_X2)                      0.01       3.86 r
+  data arrival time                                                  3.86
+
+  clock CLK (rise edge)                                   1.50       1.50
+  clock network delay (ideal)                             0.00       1.50
+  DP/RegALU3/DOUT_reg[30]/CK (DFF_X2)                     0.00       1.50 r
+  library setup time                                     -0.03       1.47
+  data required time                                                 1.47
+  --------------------------------------------------------------------------
+  data required time                                                 1.47
+  data arrival time                                                 -3.86
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -2.39
+
+
+1

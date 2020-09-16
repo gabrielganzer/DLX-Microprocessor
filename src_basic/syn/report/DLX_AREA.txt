@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Wed Sep 16 05:12:22 2020
+****************************************
+
+Information: Updating design information... (UID-85)
+Warning: Design 'DLX_WIDTH32' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+Library(s) Used:
+
+    NangateOpenCellLibrary (File: /home/mariagrazia.graziano/do/libnangate/NangateOpenCellLibrary_typical_ecsm.db)
+
+Number of ports:                          113
+Number of nets:                           270
+Number of cells:                           55
+Number of combinational cells:             51
+Number of sequential cells:                 0
+Number of macros:                           0
+Number of buf/inv:                         14
+Number of references:                      14
+
+Combinational area:       7313.138003
+Noncombinational area:    7205.141762
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:          14518.279764
+Total area:                 undefined
+1
