@@ -16,7 +16,7 @@ library work;
 use IEEE.std_logic_1164.all;
 use work.globals.all;
 
-entity ALU is
+entity ALU_v2 is
     generic (
       WIDTH: integer:= word_size;
       RADIX: integer:= radix_size;
@@ -28,7 +28,7 @@ entity ALU is
           Y  :  out	std_logic_vector(WIDTH-1 downto 0)); -- Result
 end entity;
 
-architecture STRUCTURAL of ALU is
+architecture STRUCTURAL of ALU_v2 is
   
   -- Components
   -- Adder/Subtractor
@@ -66,11 +66,12 @@ architecture STRUCTURAL of ALU is
           Y : out std_logic);
   end component;
   -- Multiplier
-  component MULTIPLIER is
-    generic (WIDTH: integer := word_size/2);
-    port (A:   in std_logic_vector(WIDTH-1 downto 0);
-          B:   in std_logic_vector(WIDTH-1 downto 0);
-          P:   out std_logic_vector((2*WIDTH)-1 downto 0));
+  component BOOTH_MULTIPLIER
+    generic (WIDTH: integer := word_size);
+    port (A   : in std_logic_vector((WIDTH/2)-1 downto 0);
+          B   : in std_logic_vector((WIDTH/2)-1 downto 0);
+          P   : out std_logic_vector(WIDTH-1 downto 0)
+    );
   end component;
   
   -- Signals
@@ -88,10 +89,11 @@ architecture STRUCTURAL of ALU is
   signal s_LOGIC   : std_logic_vector(3 downto 0) := (others => '0');
   signal s_SHIFT   : std_logic_vector(1 downto 0) := (others => '0');
   signal s_OUT     : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
-  signal s_MULT    : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
+  signal s_MULT     : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_LOG     : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_SHI     : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal S_B_LHI   : std_logic_vector((WIDTH/2)-1 downto 0) := (others => '0');
+  signal s_SUM, S_CARRY : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_A_ADDER, S_B_ADDER : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_A_LOGIC, S_B_LOGIC : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_A_SHIFT, S_B_SHIFT : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
@@ -128,14 +130,14 @@ begin
       when leUOp  => s_A_ADDER <= A; s_B_ADDER <= B; s_ADD_SUB <= '1'; s_SIGN <= '0';
       when eqOp   => s_A_ADDER <= A; s_B_ADDER <= B; s_ADD_SUB <= '1'; s_SIGN <= '0';
       when neOp   => s_A_ADDER <= A; s_B_ADDER <= B; s_ADD_SUB <= '1'; s_SIGN <= '0';
-      when multOp => s_A_MULT  <= A((WIDTH/2)-1 downto 0); s_B_MULT  <= B((WIDTH/2)-1 downto 0);      
+      when multOp => s_A_MULT  <= A((WIDTH/2)-1 downto 0); s_B_MULT  <= B((WIDTH/2)-1 downto 0);
       when lhiOp  => s_B_LHI   <= B((WIDTH/2)-1 downto 0);
       when others => null;
     end case;
   end process;
   
   -- Select the correct output according to the opcode signal
-  OUT_PROC: process (OP, s_OUT, s_LOG, s_SHI, s_GT, s_GE, s_LT, s_LE, s_EQ, s_NE, s_B_LHI, s_MULT)
+  OUT_PROC: process (OP, s_OUT, s_LOG, s_SHI, s_GT, s_GE, s_LT, s_LE, s_EQ, s_NE, s_MULT, s_B_LHI)
   begin
     case OP is
       when addOp  => Y <= s_OUT;
@@ -182,8 +184,8 @@ begin
     generic map (WIDTH)
     port map (s_A_SHIFT, s_B_SHIFT, s_SHIFT, s_SHI);
       
-  MULT: MULTIPLIER
-    generic map(WIDTH/2)
-    port map (s_A_MULT, s_B_MULT, s_MULT);
+	MULT: BOOTH_MULTIPLIER
+    		generic map (WIDTH)
+    		port map (s_A_MULT, s_B_MULT, s_MULT);
   
 end architecture;

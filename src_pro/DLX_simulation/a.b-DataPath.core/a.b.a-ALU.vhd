@@ -66,15 +66,14 @@ architecture STRUCTURAL of ALU is
           Y : out std_logic);
   end component;
   -- Multiplier
-
-component WALLACE_TREE
-    generic (WIDTH: integer := word_size);
-    port (A   : in std_logic_vector((WIDTH/2)-1 downto 0);
-          B   : in std_logic_vector((WIDTH/2)-1 downto 0);
-          S   : out std_logic_vector(WIDTH-1 downto 0);
-          Co  : out std_logic_vector(WIDTH-1 downto 0)
-    );
-end component;
+  component WALLACE_TREE
+      generic (WIDTH: integer := word_size);
+      port (A   : in std_logic_vector((WIDTH/2)-1 downto 0);
+            B   : in std_logic_vector((WIDTH/2)-1 downto 0);
+            S   : out std_logic_vector(WIDTH-1 downto 0);
+            Co  : out std_logic_vector(WIDTH-1 downto 0)
+      );
+  end component;
   
   -- Signals
   signal s_ADD_SUB : std_logic := '0'; 
@@ -91,10 +90,10 @@ end component;
   signal s_LOGIC   : std_logic_vector(3 downto 0) := (others => '0');
   signal s_SHIFT   : std_logic_vector(1 downto 0) := (others => '0');
   signal s_OUT     : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
-  signal s_MULT    : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_LOG     : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_SHI     : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal S_B_LHI   : std_logic_vector((WIDTH/2)-1 downto 0) := (others => '0');
+  signal s_SUM, S_CARRY : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_A_ADDER, S_B_ADDER : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_A_LOGIC, S_B_LOGIC : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
   signal s_A_SHIFT, S_B_SHIFT : std_logic_vector(WIDTH-1 downto 0) := (others => '0');
@@ -106,7 +105,7 @@ begin
   s_C <= s_Co xor s_SIGN;
   
   -- Select which component will execute according to the opcode signal
-  SEL_PROC: process (OP, A, B)
+  SEL_PROC: process (OP, A, B, s_SUM, s_CARRY)
   begin
     case OP is
       -- Adder/Subtractor
@@ -131,14 +130,15 @@ begin
       when leUOp  => s_A_ADDER <= A; s_B_ADDER <= B; s_ADD_SUB <= '1'; s_SIGN <= '0';
       when eqOp   => s_A_ADDER <= A; s_B_ADDER <= B; s_ADD_SUB <= '1'; s_SIGN <= '0';
       when neOp   => s_A_ADDER <= A; s_B_ADDER <= B; s_ADD_SUB <= '1'; s_SIGN <= '0';
-      when multOp => s_A_MULT  <= A((WIDTH/2)-1 downto 0); s_B_MULT  <= B((WIDTH/2)-1 downto 0); s_ADD_SUB <= '0';
+      when multOp => s_A_MULT  <= A((WIDTH/2)-1 downto 0); s_B_MULT  <= B((WIDTH/2)-1 downto 0); 
+                     s_A_ADDER <= s_SUM; s_B_ADDER <= s_CARRY; s_ADD_SUB <= '0';
       when lhiOp  => s_B_LHI   <= B((WIDTH/2)-1 downto 0);
       when others => null;
     end case;
   end process;
   
   -- Select the correct output according to the opcode signal
-  OUT_PROC: process (OP, s_OUT, s_LOG, s_SHI, s_GT, s_GE, s_LT, s_LE, s_EQ, s_NE, s_B_LHI, s_MULT)
+  OUT_PROC: process (OP, s_OUT, s_LOG, s_SHI, s_GT, s_GE, s_LT, s_LE, s_EQ, s_NE, s_B_LHI)
   begin
     case OP is
       when addOp  => Y <= s_OUT;
@@ -160,7 +160,7 @@ begin
       when eqOp   => Y <= (WIDTH-1 downto 1 => '0') & s_EQ;
       when neOp   => Y <= (WIDTH-1 downto 1 => '0') & s_NE;
       when lhiOp  => Y <= s_B_LHI & x"0000"; 
-      when multOp => Y <= s_MULT;
+      when multOp => Y <= s_OUT;
       when others => Y <= (others => '0');
     end case;
   end process;
@@ -187,6 +187,6 @@ begin
       
 	MULT: WALLACE_TREE
     		generic map (WIDTH)
-    		port map (s_A_MULT, s_B_MULT, s_A_ADDER, s_B_ADDER);
+    		port map (s_A_MULT, s_B_MULT, s_SUM, s_CARRY);
   
 end architecture;
