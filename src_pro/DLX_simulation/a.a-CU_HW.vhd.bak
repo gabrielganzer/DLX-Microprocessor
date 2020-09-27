@@ -19,46 +19,47 @@ entity DLX_CU is
   generic (WIDTH  : integer := word_size;
            LENGTH : integer := addr_size);
   port (
-    CLK             : in  std_logic;  -- Clock
-    RST             : in  std_logic;  -- Synchronous reset, active-low
-    IR_IN           : in std_logic_vector(WIDTH-1 downto 0);
+    CLK              : in  std_logic;  -- Clock
+    RST              : in  std_logic;  -- Synchronous reset, active-low
+    IR_IN            : in std_logic_vector(WIDTH-1 downto 0);
     -- Control
     -- Stage 1: Instruction Fetch (IF)
-    EN1             : out std_logic;
+    IF_EN            : out std_logic;
     -- Stage 2: Instruction Decode (ID)
-    EN2             : out std_logic;
-    RF_LATCH_EN     : out std_logic;
-    RegImm_LATCH_EN : out std_logic;
-    RegRD2_LATCH_EN : out std_logic;
-    RF_RD1          : out std_logic;
-    RF_RD2          : out std_logic;
-    MuxIMM_SEL      : out std_logic;
-    SIGN_EN         : out std_logic;
+    RegNPC1_LATCH_EN : out std_logic;
+    RF_LATCH_EN      : out std_logic;
+    RegImm_LATCH_EN  : out std_logic;
+    RegRD1_LATCH_EN  : out std_logic;
+    RF_RD1           : out std_logic;
+    RF_RD2           : out std_logic;
+    IMM_SEL          : out std_logic_vector(2 downto 0);
     -- Stage 3: Execution (EX)
-    EN3             : out std_logic;
-    RegME_LATCH_EN  : out std_logic;
-    RegRD3_LATCH_EN : out std_logic;
-    MuxA_SEL        : out std_logic;
-    MuxB_SEL        : out std_logic;
-    EQ_COND         : out std_logic;
-    JUMP_EN         : out std_logic;
-    RF_WE3          : out std_logic;
-    ALU_OPCODE      : out aluOp;
+    RegNPC2_LATCH_EN : out std_logic;
+    RegALU1_LATCH_EN : out std_logic;
+    RegME_LATCH_EN   : out std_logic;
+    RegRD2_LATCH_EN  : out std_logic;
+    MuxA_SEL         : out std_logic;
+    MuxB_SEL         : out std_logic;
+    EQ_COND          : out std_logic;
+    JUMP_EN          : out std_logic;
+    RF_WE_EX         : out std_logic;
+    ALU_OPCODE       : out aluOp;
     -- Stage 4: Memory Access (MEM)
-    EN4             : out std_logic;
-    RegLMD_LATCH_EN : out std_logic;
-    RegRD4_LATCH_EN : out std_logic;
-    RegNPC_LATCH_EN : out std_logic;
-    RF_WE4          : out std_logic;
-    DRAM_WE         : out std_logic;
-    SIGN_LD_EN      : out std_logic;
-    MuxLD_SEL       : out std_logic_vector(2 downto 0);
-    MuxSW_SEL       : out std_logic_vector(2 downto 0); 
+    RegNPC3_LATCH_EN : out std_logic;
+    RegALU2_LATCH_EN : out std_logic;
+    DRAM_LATCH_EN    : out std_logic;
+    RegLMD_LATCH_EN  : out std_logic;
+    RegRD3_LATCH_EN  : out std_logic;
+    RF_WE_MEM        : out std_logic;
+    DRAM_WE          : out std_logic;
+    SIGN_LD_EN       : out std_logic;
+    LD_SEL           : out std_logic_vector(2 downto 0);
+    SW_SEL           : out std_logic_vector(2 downto 0); 
     -- Stage 5: Write-Back (WB)
-    MuxWB_SEL       : out std_logic;
-    RF_WE           : out std_logic;
-    JUMP_LINK       : out std_logic
-    ); 
+    MuxWB_SEL        : out std_logic;
+    RF_WE            : out std_logic;
+    JUMP_LINK        : out std_logic
+  ); 
 end entity;
 
 architecture HARDWIRED of DLX_CU is
@@ -69,9 +70,9 @@ architecture HARDWIRED of DLX_CU is
   -- Shifted Control Word
   signal cw1 : std_logic_vector(control_word_size-1 downto 0);  -- 1st stage
   signal cw2 : std_logic_vector(control_word_size-2 downto 0);  -- 2nd stage
-  signal cw3 : std_logic_vector(control_word_size-9 downto 0);  -- 3rd stage
-  signal cw4 : std_logic_vector(control_word_size-12 downto 0); -- 4th stage
-  signal cw5 : std_logic_vector(control_word_size-21 downto 0); -- 5th stage
+  signal cw3 : std_logic_vector(control_word_size-11 downto 0);  -- 3rd stage
+  signal cw4 : std_logic_vector(control_word_size-19 downto 0); -- 4th stage
+  signal cw5 : std_logic_vector(control_word_size-32 downto 0); -- 5th stage
   -- Shifted ALU Opcode
   signal aluOpcodei : aluOp := nopOp; -- ALUOP defined in package
   signal aluOpcode1 : aluOp := nopOp;
@@ -81,44 +82,44 @@ architecture HARDWIRED of DLX_CU is
 begin
 
   -- OpCode and Func extraction
-  IR_opcode <= IR_IN(opcode_up downto opcode_down);
-  IR_func   <= IR_IN(func_up downto func_down);
-  
+  IR_opcode        <= IR_IN(opcode_up downto opcode_down);
+  IR_func          <= IR_IN(func_up downto func_down);
   -- Stage 1: Instruction Fetch (IF)
-  EN1             <= cw1(control_word_size-1);
+  IF_EN            <= cw1(control_word_size-1);
   -- Stage 2: Instruction Decode (ID)
-  EN2             <= cw2(control_word_size-2);
-  RF_LATCH_EN     <= cw2(control_word_size-3);
-  RegImm_LATCH_EN <= cw2(control_word_size-4);
-  RegRD2_LATCH_EN <= cw2(control_word_size-5);
-  RF_RD1          <= cw2(control_word_size-6);
-  RF_RD2          <= cw2(control_word_size-7);
-  MuxIMM_SEL      <= cw2(control_word_size-8);
-  SIGN_EN         <= cw2(control_word_size-9);  
+  RegNPC1_LATCH_EN <= cw2(control_word_size-2);
+  RF_LATCH_EN      <= cw2(control_word_size-3);
+  RegImm_LATCH_EN  <= cw2(control_word_size-4);
+  RegRD1_LATCH_EN  <= cw2(control_word_size-5);
+  RF_RD1           <= cw2(control_word_size-6);
+  RF_RD2           <= cw2(control_word_size-7);
+  IMM_SEL          <= cw2(control_word_size-8 downto control_word_size-10);
   -- Stage 3: Execution (EX)
-  EN3             <= cw3(control_word_size-10);
-  RegME_LATCH_EN  <= cw3(control_word_size-11);
-  RegRD3_LATCH_EN <= cw3(control_word_size-12);
-  MuxA_SEL        <= cw3(control_word_size-13);
-  MuxB_SEL        <= cw3(control_word_size-14);
-  EQ_COND         <= cw3(control_word_size-15);
-  JUMP_EN         <= cw3(control_word_size-16);
-  RF_WE3          <= cw3(control_word_size-30);
-  ALU_OPCODE      <= aluOpcode3;
+  RegNPC2_LATCH_EN <= cw3(control_word_size-11);
+  RegALU1_LATCH_EN <= cw3(control_word_size-12);
+  RegME_LATCH_EN   <= cw3(control_word_size-13);
+  RegRD2_LATCH_EN  <= cw3(control_word_size-14);
+  MuxA_SEL         <= cw3(control_word_size-15);
+  MuxB_SEL         <= cw3(control_word_size-16);
+  EQ_COND          <= cw3(control_word_size-17);
+  JUMP_EN          <= cw3(control_word_size-18);
+  RF_WE_EX         <= cw3(control_word_size-33);
+  ALU_OPCODE       <= aluOpcode3;
   -- Stage 4: Memory Access (MEM)
-  EN4             <= cw4(control_word_size-17);
-  RegLMD_LATCH_EN <= cw4(control_word_size-18);
-  RegRD4_LATCH_EN <= cw4(control_word_size-19);
-  RegNPC_LATCH_EN <= cw4(control_word_size-20);
-  RF_WE4          <= cw4(control_word_size-30);
-  DRAM_WE         <= cw4(control_word_size-21);
-  SIGN_LD_EN      <= cw4(control_word_size-22);
-  MuxLD_SEL       <= cw4(control_word_size-23 downto control_word_size-25);
-  MuxSW_SEL       <= cw4(control_word_size-26 downto control_word_size-28);
+  RegNPC3_LATCH_EN <= cw4(control_word_size-19);
+  RegALU2_LATCH_EN <= cw4(control_word_size-20);
+  DRAM_LATCH_EN    <= cw4(control_word_size-21);
+  RegLMD_LATCH_EN  <= cw4(control_word_size-22);
+  RegRD3_LATCH_EN  <= cw4(control_word_size-23);
+  RF_WE_MEM        <= cw4(control_word_size-33);
+  DRAM_WE          <= cw4(control_word_size-24);
+  SIGN_LD_EN       <= cw4(control_word_size-25);
+  LD_SEL           <= cw4(control_word_size-26 downto control_word_size-28);
+  SW_SEL           <= cw4(control_word_size-29 downto control_word_size-31);
   -- Stage 5: Write-Back (WB)
-  MuxWB_SEL       <= cw5(control_word_size-29);
-  RF_WE           <= cw5(control_word_size-30);
-  JUMP_LINK       <= cw5(control_word_size-31);
+  MuxWB_SEL        <= cw5(control_word_size-32);
+  RF_WE            <= cw5(control_word_size-33);
+  JUMP_LINK        <= cw5(control_word_size-34);
 
   -- Pipeline control words
   PIPE: process (CLK, RST)
@@ -135,9 +136,9 @@ begin
       elsif (CLK = '1' and CLK'event) then
         cw1 <= cw;
         cw2 <= cw1(control_word_size-2 downto 0);
-        cw3 <= cw2(control_word_size-7 downto 0);
-        cw4 <= cw3(control_word_size-12 downto 0);
-        cw5 <= cw4(control_word_size-21 downto 0);
+        cw3 <= cw2(control_word_size-11 downto 0);
+        cw4 <= cw3(control_word_size-19 downto 0);
+        cw5 <= cw4(control_word_size-32 downto 0);
         aluOpcode1 <= aluOpcodei; 
         aluOpcode2 <= aluOpcode1; 
         aluOpcode3 <= aluOpcode2;
@@ -147,31 +148,7 @@ begin
   CW_LUT: process(IR_opcode, IR_func)
   begin
  	  case IR_opcode is
- 	    when RTYPE      => 
- 	    case IR_func is
-          when R_SLL  => CW <= "11110010100100001001010";
-          when R_SRL  => CW <= "11110010100100001001010";
-          when R_SRA  => CW <= "11110010100100001001010";
-          when R_MULT => CW <= "11110010100100001001010";
-          when R_ADD  => CW <= "11110010100100001001010";
-          when R_ADDU => CW <= "11110010100100001001010";
-          when R_SUB  => CW <= "11110010100100001001010";
-          when R_SUBU => CW <= "11110010100100001001010";
-          when R_AND  => CW <= "11110010100100001001010";
-          when R_OR   => CW <= "11110010100100001001010";
-          when R_XOR  => CW <= "11110010100100001001010";
-          when R_SEQ  => CW <= "11110010100100001001010";
-          when R_SNE  => CW <= "11110010100100001001010";
-          when R_SLT  => CW <= "11110010100100001001010";
-          when R_SGT  => CW <= "11110010100100001001010";
-          when R_SLE  => CW <= "11110010100100001001010";
-          when R_SGE  => CW <= "11110010100100001001010";
-          when R_SLTU => CW <= "11110010100100001001010";
-          when R_SGTU => CW <= "11110010100100001001010";
-          when R_SLEU => CW <= "11110010100100001001010";
-          when R_SGEU => CW <= "11110010100100001001010";
-          when others => CW <= "10000000000000000000000";
-        end case;
+ 	    when RTYPE      => CW <= "11110010100100001001010";
   		  when NOP        => CW <= "10000000000000001001000";
       when J          => CW <= "11000011001100001001000";
       when J_JAL      => CW <= "11000011001100001001011";

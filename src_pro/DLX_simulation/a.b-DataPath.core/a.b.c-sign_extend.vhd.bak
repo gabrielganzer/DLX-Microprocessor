@@ -25,8 +25,8 @@ end entity;
 
 architecture RTL of SIGN_EXTEND is
 begin
-  IMMS <= (WIDTH-1 downto inp2_up+1     => IR(inp2_up))&IR(inp2_up downto 0)         when SEL = "001" else
-          (WIDTH-1 downto inp2_up+1     => '0')&IR(inp2_up downto 0)                 when SEL = "010" else
-          (WIDTH-1 downto opcode_down+1 => IR(opcode_down))&IR(opcode_down downto 0) when SEL = "100" else
+  IMMS <= (others => IR(inp2_up))&IR(inp2_up downto 0) when SEL = "001" else
+          (others => '0')&IR(inp2_up downto 0) when SEL = "010" else
+          (others => IR(opcode_down))&IR(opcode_down downto 0) when SEL = "100" else
           (others => '0');
 end architecture;

@@ -35,7 +35,7 @@ entity DLX_DP is
       EN2             : in std_logic;
       RF_RD1          : in std_logic;
       RF_RD2          : in std_logic;
-      IMM_SEL         : in std_logic;           
+      IMM_SEL      : in std_logic;           
       -- Data
       RD              : in std_logic_vector(LENGTH-1 downto 0);
       RS1             : in std_logic_vector(LENGTH-1 downto 0);

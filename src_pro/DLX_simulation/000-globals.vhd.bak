@@ -40,7 +40,7 @@ package GLOBALS is
 
   constant op_size           : integer := 6;
   constant function_size     : integer := 11;
-  constant control_word_size : integer := 23;
+  constant control_word_size : integer := 31;
   constant microcode_mem_size: integer := 256;
   constant reloc_mem_size    : integer := 64;   
   constant instructions_execution_cycles : integer := 5;
