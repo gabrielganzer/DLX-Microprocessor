@@ -40,7 +40,7 @@ package GLOBALS is
 
   constant op_size           : integer := 6;
   constant function_size     : integer := 11;
-  constant control_word_size : integer := 31;
+  constant control_word_size : integer := 33;
   constant microcode_mem_size: integer := 256;
   constant reloc_mem_size    : integer := 64;   
   constant instructions_execution_cycles : integer := 5;
@@ -113,7 +113,7 @@ package GLOBALS is
   constant	R_SGEU  : std_logic_vector(function_size - 1 downto 0) :=  "00000111101";	-- (0x3D)
 
   -- Types
-  type mul_array is array (((word_size/2)/2)-1 downto 0) of std_logic_vector((word_size/2) downto 0); -- array of bytes
+  type mmuOp is (IDLE, SB, SH, SW, LB, LBU, LH, LHU, LW);
   type aluOp is (nopOp, addOp, subOp, andOp, orOp, xorOp, sllOp, srlOp, sraOp, multOp, lhiOp,
                  gtOp,  geOp,  ltOp,  leOp,  eqOp, neOp,  gtUOp, geUOp, ltUOp, leUOp);
   

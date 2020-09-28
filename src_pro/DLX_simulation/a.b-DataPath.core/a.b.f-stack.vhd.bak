@@ -17,15 +17,13 @@ use work.globals.all;
 entity STACK is
   generic (WIDTH : integer := word_size;
            DEPTH : integer := stack_size);
-  port (CLK   : in std_logic;
-        RST   : in std_logic; -- Synchronous, active-low
-        EN    : in std_logic; -- Active-high
-        PUSH  : in std_logic;
-        POP   : in std_logic;
-        DIN   : in std_logic_vector (WIDTH-1 downto 0);
-        EMPTY : in std_logic;
-        FULL  : in std_logic;
-        DOUT  : out std_logic_vector (WIDTH-1 downto 0)
+  port (CLK  : in std_logic;
+        RST  : in std_logic; -- Synchronous, active-low
+        EN   : in std_logic; -- Active-high
+        PUSH : in std_logic;
+        POP  : in std_logic;
+        DIN  : in std_logic_vector (WIDTH-1 downto 0);
+        DOUT : out std_logic_vector (WIDTH-1 downto 0)
   );
 end entity;
 

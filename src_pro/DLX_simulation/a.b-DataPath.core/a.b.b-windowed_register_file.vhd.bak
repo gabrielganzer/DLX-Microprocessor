@@ -35,7 +35,7 @@ entity WINDOWED_REGISTER_FILE is
 		RD2     :IN std_logic;
 		WR      :IN std_logic;
 		-- Ports addresses 
-	  ADD_WR  :IN std_logic_vector(log2(3*N+M)-1 downto 0);
+	  	ADD_WR  :IN std_logic_vector(log2(3*N+M)-1 downto 0);
 		ADD_RD1 :IN std_logic_vector(log2(3*N+M)-1 downto 0);
 		ADD_RD2 :IN std_logic_vector(log2(3*N+M)-1 downto 0);
 		-- Single write port

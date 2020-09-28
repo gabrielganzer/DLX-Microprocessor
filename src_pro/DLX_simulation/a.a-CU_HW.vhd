@@ -52,9 +52,7 @@ entity DLX_CU is
     RegRD3_LATCH_EN  : out std_logic;
     RF_WE_MEM        : out std_logic;
     DRAM_WE          : out std_logic;
-    SIGN_LD_EN       : out std_logic;
-    LD_SEL           : out std_logic_vector(2 downto 0);
-    SW_SEL           : out std_logic_vector(2 downto 0); 
+    MMU_CTRL         : out mmuOp;
     -- Stage 5: Write-Back (WB)
     MuxWB_SEL        : out std_logic;
     RF_WE            : out std_logic;
@@ -64,20 +62,27 @@ end entity;
 
 architecture HARDWIRED of DLX_CU is
 
+  -- Instruction Register Fields
   signal IR_opcode : std_logic_vector(op_size-1 downto 0);              -- OpCode part of IR
   signal IR_func   : std_logic_vector(function_size -1 downto 0);       -- Func part of IR when Rtype
-  signal cw        : std_logic_vector(control_word_size - 1 downto 0);  -- Full Control Word
   -- Shifted Control Word
-  signal cw1 : std_logic_vector(control_word_size-1 downto 0);  -- 1st stage
-  signal cw2 : std_logic_vector(control_word_size-2 downto 0);  -- 2nd stage
-  signal cw3 : std_logic_vector(control_word_size-11 downto 0);  -- 3rd stage
-  signal cw4 : std_logic_vector(control_word_size-19 downto 0); -- 4th stage
-  signal cw5 : std_logic_vector(control_word_size-32 downto 0); -- 5th stage
+  signal cwi : std_logic_vector(control_word_size-1 downto 0);  -- Full Control Word
+  signal cw1 : std_logic_vector(control_word_size-1 downto 0);    -- 1st stage
+  signal cw2 : std_logic_vector(control_word_size-2 downto 0);    -- 2nd stage
+  signal cw3 : std_logic_vector(control_word_size-11 downto 0);   -- 3rd stage
+  signal cw4 : std_logic_vector(control_word_size-19 downto 0);   -- 4th stage
+  signal cw5 : std_logic_vector(control_word_size-25 downto 0);   -- 5th stage
   -- Shifted ALU Opcode
   signal aluOpcodei : aluOp := nopOp; -- ALUOP defined in package
-  signal aluOpcode1 : aluOp := nopOp;
-  signal aluOpcode2 : aluOp := nopOp;
-  signal aluOpcode3 : aluOp := nopOp;
+  signal aluOpcode1 : aluOp := nopOp; -- 1st stage
+  signal aluOpcode2 : aluOp := nopOp; -- 2nd stage
+  signal aluOpcode3 : aluOp := nopOp; -- 3rd stage
+  -- Shifted MMU Opcode
+  signal mmuOpcodei : mmuOp := IDLE; -- MMUOP defined in package
+  signal mmuOpcode1 : mmuOp := IDLE; -- 1st stage
+  signal mmuOpcode2 : mmuOp := IDLE; -- 2nd stage
+  signal mmuOpcode3 : mmuOp := IDLE; -- 3rd stage
+  signal mmuOpcode4 : mmuOp := IDLE; -- 4th stage
 
 begin
 
@@ -103,7 +108,7 @@ begin
   MuxB_SEL         <= cw3(control_word_size-16);
   EQ_COND          <= cw3(control_word_size-17);
   JUMP_EN          <= cw3(control_word_size-18);
-  RF_WE_EX         <= cw3(control_word_size-33);
+  RF_WE_EX         <= cw3(control_word_size-26);
   ALU_OPCODE       <= aluOpcode3;
   -- Stage 4: Memory Access (MEM)
   RegNPC3_LATCH_EN <= cw4(control_word_size-19);
@@ -111,15 +116,13 @@ begin
   DRAM_LATCH_EN    <= cw4(control_word_size-21);
   RegLMD_LATCH_EN  <= cw4(control_word_size-22);
   RegRD3_LATCH_EN  <= cw4(control_word_size-23);
-  RF_WE_MEM        <= cw4(control_word_size-33);
+  RF_WE_MEM        <= cw4(control_word_size-26);
   DRAM_WE          <= cw4(control_word_size-24);
-  SIGN_LD_EN       <= cw4(control_word_size-25);
-  LD_SEL           <= cw4(control_word_size-26 downto control_word_size-28);
-  SW_SEL           <= cw4(control_word_size-29 downto control_word_size-31);
+  MMU_CTRL         <= mmuOpcode4;
   -- Stage 5: Write-Back (WB)
-  MuxWB_SEL        <= cw5(control_word_size-32);
-  RF_WE            <= cw5(control_word_size-33);
-  JUMP_LINK        <= cw5(control_word_size-34);
+  MuxWB_SEL        <= cw5(control_word_size-25);
+  RF_WE            <= cw5(control_word_size-26);
+  JUMP_LINK        <= cw5(control_word_size-27);
 
   -- Pipeline control words
   PIPE: process (CLK, RST)
@@ -132,60 +135,68 @@ begin
         cw5 <= (others => '0');
         aluOpcode1 <= nopOp; 
         aluOpcode2 <= nopOp; 
-        aluOpcode3 <= nopOp; 
+        aluOpcode3 <= nopOp;
+        mmuOpcode1 <= IDLE;
+        mmuOpcode2 <= IDLE;
+        mmuOpcode3 <= IDLE;
+        mmuOpcode4 <= IDLE;
       elsif (CLK = '1' and CLK'event) then
-        cw1 <= cw;
+        cw1 <= cwi;
         cw2 <= cw1(control_word_size-2 downto 0);
         cw3 <= cw2(control_word_size-11 downto 0);
         cw4 <= cw3(control_word_size-19 downto 0);
-        cw5 <= cw4(control_word_size-32 downto 0);
+        cw5 <= cw4(control_word_size-25 downto 0);
         aluOpcode1 <= aluOpcodei; 
         aluOpcode2 <= aluOpcode1; 
         aluOpcode3 <= aluOpcode2;
+        mmuOpcode1 <= mmuOpcodei;
+        mmuOpcode2 <= mmuOpcode1;
+        mmuOpcode3 <= mmuOpcode2;
+        mmuOpcode4 <= mmuOpcode3;
       end if;
   end process;
 
-  CW_LUT: process(IR_opcode, IR_func)
+  CW_LUT: process(IR_opcode)
   begin
  	  case IR_opcode is
- 	    when RTYPE      => CW <= "11110010100100001001010";
-  		  when NOP        => CW <= "10000000000000001001000";
-      when J          => CW <= "11000011001100001001000";
-      when J_JAL      => CW <= "11000011001100001001011";
-      when J_BEQZ     => CW <= "11101111011100001001000";
-      when J_BNEZ     => CW <= "11101111001100001001000";
-      when J_JR       => CW <= "11101010001100001001000";
-      when J_JALR     => CW <= "11101010001100001001011";
-      when I_ADDI     => CW <= "11101110000100001001010";
-      when I_ADDUI    => CW <= "11101010000100001001010";
-      when I_SUBI     => CW <= "11101110000100001001010";
-      when I_SUBUI    => CW <= "11101010000100001001010";
-      when I_ANDI     => CW <= "11101110000100001001010";
-      when I_ORI      => CW <= "11101110000100001001010";
-      when I_XORI     => CW <= "11101110000100001001010";
-      when I_LHI      => CW <= "11001110000100001001010";
-      when I_SLLI     => CW <= "11101110000100001001010";
-      when I_SRLI     => CW <= "11101110000100001001010";
-      when I_SRAI     => CW <= "11101110000100001001010";
-      when I_SEQI     => CW <= "11101110000100001001010";
-      when I_SNEI     => CW <= "11101110000100001001010";
-      when I_SLTI     => CW <= "11101110000100001001010";
-      when I_SGTI     => CW <= "11101110000100001001010";
-      when I_SLEI     => CW <= "11101110000100001001010";
-      when I_SGEI     => CW <= "11101110000100001001010";
-      when I_LB       => CW <= "11101110000101100001110";
-      when I_LH       => CW <= "11101110000101010001110";
-      when I_LW       => CW <= "11101110000100001001110";
-      when I_SB       => CW <= "11111110000110001100100";
-      when I_SH       => CW <= "11111110000110001010100";
-      when I_SW       => CW <= "11111110000110001001100";
-      when I_LBU      => CW <= "11101110000100100001110";
-      when I_LHU      => CW <= "11101110000100010001110";
-      when I_SLTUI    => CW <= "11101010000100001001010";
-      when I_SGTUI    => CW <= "11101010000100001001010";
-      when I_SLEUI    => CW <= "11101010000100001001010";
-      when I_SGEUI    => CW <= "11101010000100001001010";
-  		  when others     => CW <= "10000000000000000000000";
+ 	    when RTYPE      => cwi <= "11110010100100001001010";
+  		  when NOP        => cwi <= "10000000000000001001000";
+      when J          => cwi <= "11000011001100001001000";
+      when J_JAL      => cwi <= "11000011001100001001011";
+      when J_BEQZ     => cwi <= "11101111011100001001000";
+      when J_BNEZ     => cwi <= "11101111001100001001000";
+      when J_JR       => cwi <= "11101010001100001001000";
+      when J_JALR     => cwi <= "11101010001100001001011";
+      when I_ADDI     => cwi <= "11101110000100001001010";
+      when I_ADDUI    => cwi <= "11101010000100001001010";
+      when I_SUBI     => cwi <= "11101110000100001001010";
+      when I_SUBUI    => cwi <= "11101010000100001001010";
+      when I_ANDI     => cwi <= "11101110000100001001010";
+      when I_ORI      => cwi <= "11101110000100001001010";
+      when I_XORI     => cwi <= "11101110000100001001010";
+      when I_LHI      => cwi <= "11001110000100001001010";
+      when I_SLLI     => cwi <= "11101110000100001001010";
+      when I_SRLI     => cwi <= "11101110000100001001010";
+      when I_SRAI     => cwi <= "11101110000100001001010";
+      when I_SEQI     => cwi <= "11101110000100001001010";
+      when I_SNEI     => cwi <= "11101110000100001001010";
+      when I_SLTI     => cwi <= "11101110000100001001010";
+      when I_SGTI     => cwi <= "11101110000100001001010";
+      when I_SLEI     => cwi <= "11101110000100001001010";
+      when I_SGEI     => cwi <= "11101110000100001001010";
+      when I_LB       => cwi <= "11101110000101100001110";
+      when I_LH       => cwi <= "11101110000101010001110";
+      when I_LW       => cwi <= "11101110000100001001110";
+      when I_SB       => cwi <= "11111110000110001100100";
+      when I_SH       => cwi <= "11111110000110001010100";
+      when I_SW       => cwi <= "11111110000110001001100";
+      when I_LBU      => cwi <= "11101110000100100001110";
+      when I_LHU      => cwi <= "11101110000100010001110";
+      when I_SLTUI    => cwi <= "11101010000100001001010";
+      when I_SGTUI    => cwi <= "11101010000100001001010";
+      when I_SLEUI    => cwi <= "11101010000100001001010";
+      when I_SGEUI    => cwi <= "11101010000100001001010";
+  		  when others     => cwi <= "10000000000000000000000";
 	 end case;
   end process;
 
@@ -256,6 +267,21 @@ begin
   		  when others     => aluOpcodei <= nopOp;
 	 end case;
 	end process;
+	
+	MEM_LUT: process(IR_opcode)
+  begin
+ 	  case IR_opcode is
+      when I_LB       => mmuOpcodei <= LB;
+      when I_LH       => mmuOpcodei <= LH;
+      when I_LW       => mmuOpcodei <= LW;
+      when I_SB       => mmuOpcodei <= SB;
+      when I_SH       => mmuOpcodei <= SH;
+      when I_SW       => mmuOpcodei <= SW;
+      when I_LBU      => mmuOpcodei <= LBU;
+      when I_LHU      => mmuOpcodei <= LHU;
+  		  when others     => mmuOpcodei <= IDLE;
+	 end case;
+  end process;
 
 end architecture;
 
