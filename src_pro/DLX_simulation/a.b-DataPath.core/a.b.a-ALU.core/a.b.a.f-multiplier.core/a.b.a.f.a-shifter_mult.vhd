@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
--- Design units: MUX21_GENERIC
+-- Design units: SHIFTER_MULT
 -- Function: multiplexer 2x1 
 -- Input: A, B (N-bit), SEL (1-bit)
 -- Output: Y (N-bit)

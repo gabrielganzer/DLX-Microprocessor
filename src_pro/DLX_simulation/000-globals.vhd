@@ -35,6 +35,10 @@ package GLOBALS is
   constant func_down         : integer :=  0;
   
   constant stack_size        : integer := 32;
+  constant tag_size          : integer := 6;
+  constant index_size        : integer := 2;
+  constant word_cache_size   : integer := 2;
+  constant block_size        : integer := 2;
   constant dram_addr_size    : integer := 6;
   constant iram_addr_size    : integer := 6;
 
@@ -113,7 +117,7 @@ package GLOBALS is
   constant	R_SGEU  : std_logic_vector(function_size - 1 downto 0) :=  "00000111101";	-- (0x3D)
 
   -- Types
-  type mmuOp is (IDLE, SB, SH, SW, LB, LBU, LH, LHU, LW);
+  type dmaOp is (IDLE, SB, SH, SW, LB, LBU, LH, LHU, LW);
   type aluOp is (nopOp, addOp, subOp, andOp, orOp, xorOp, sllOp, srlOp, sraOp, multOp, lhiOp,
                  gtOp,  geOp,  ltOp,  leOp,  eqOp, neOp,  gtUOp, geUOp, ltUOp, leUOp);
   

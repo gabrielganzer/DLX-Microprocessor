@@ -15,18 +15,19 @@ use ieee.std_logic_1164.all;
 use work.globals.all;
 
 entity SIGN_EXTEND is
-  generic (WIDTH:  integer := word_size;
-           OPCODE: integer := op_size);
-  port (IR   : in std_logic_vector(WIDTH-OPCODE-1 downto 0);  -- Instruction 
-        SEL  : in std_logic_vector(2 downto 0);               -- Select from CU
-        IMMS : out std_logic_vector(WIDTH-1 downto 0)         -- Sign extended immediate
+  generic (WIDTH_IN: integer := word_size/2;
+           WIDTH_OUT: integer := word_size);
+  port (A: in std_logic_vector(WIDTH_IN-1 downto 0);   -- Unsigned immediate
+        S: in std_logic;                               -- Active-high signed output, active-low unsigned output
+        Y: out std_logic_vector (WIDTH_OUT-1 downto 0) -- Sign extended immediate
   );
 end entity;
 
 architecture RTL of SIGN_EXTEND is
+  -- Constants
+	constant POS : std_logic_vector(WIDTH_OUT-1 downto WIDTH_IN) := (others => '0');
+	constant NEG : std_logic_vector(WIDTH_OUT-1 downto WIDTH_IN) := (others => '1');
+
 begin
-  IMMS <= (WIDTH-1 downto inp2_up+1     => IR(inp2_up))&IR(inp2_up downto 0)         when SEL = "001" else
-          (WIDTH-1 downto inp2_up+1     => '0')&IR(inp2_up downto 0)                 when SEL = "010" else
-          (WIDTH-1 downto opcode_down+1 => IR(opcode_down))&IR(opcode_down downto 0) when SEL = "100" else
-          (others => '0');
+  Y <= NEG&A when (A(WIDTH_IN-1) = '1' and S = '1') else POS&A;
 end architecture;

@@ -34,8 +34,8 @@ architecture STRUCTURAL of CSB is
     end component;
     component MUX21_GENERIC
 	      generic (NBIT: integer:= 4);
-	      port (S1:	in 	std_logic_vector(NBIT-1 downto 0);
-	            S0:	in	std_logic_vector(NBIT-1 downto 0);
+	      port (S0:	in	std_logic_vector(NBIT-1 downto 0);
+			S1:	in 	std_logic_vector(NBIT-1 downto 0);
 	            SEL:	in	std_logic;
 	            Y:	out	std_logic_vector(NBIT-1 downto 0));
     end component;
@@ -51,5 +51,5 @@ begin
       port map(A, B, '1', S1);
     MUX21_SUM: MUX21_GENERIC 
       generic map(RADIX)
-      port map(S1, S0, Ci, S);
+      port map(S0, S1, Ci, S);
 end architecture;

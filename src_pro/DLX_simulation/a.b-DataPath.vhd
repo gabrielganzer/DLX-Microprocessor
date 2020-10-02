@@ -80,8 +80,8 @@ architecture STRUCTURAL of DLX_DP is
   -- Multiplexer 2x1
   component MUX21_GENERIC
     generic(NBIT: integer);
-    port (S1  :	in 	std_logic_vector(NBIT-1 downto 0);
-	        S0  :	in	std_logic_vector(NBIT-1 downto 0);
+    port (S0  :	in 	std_logic_vector(NBIT-1 downto 0);
+	        S1  :	in	std_logic_vector(NBIT-1 downto 0);
 	        SEL :	in	std_logic;
 	        Y   :	out	std_logic_vector(NBIT-1 downto 0));
   end component;
@@ -284,7 +284,7 @@ begin
   -- Mux Immediate
   MuxIMM: MUX21_GENERIC
     generic map(WIDTH)
-    port map(IMMS16, IMMS26, MuxIMM_SEL, IMM);
+    port map(IMMS26, IMMS16, MuxIMM_SEL, IMM);
   
   -- Immediate Register
   RegIMM: REGISTER_GENERIC
@@ -308,12 +308,12 @@ begin
   -- Mux A
   MuxA: MUX21_GENERIC
     generic map(WIDTH)
-    port map(NPC2, RegA_OUT, MuxA_SEL, MuxA_OUT);
+    port map(RegA_OUT, NPC2, MuxA_SEL, MuxA_OUT);
   
   -- Mux B
   MuxB: MUX21_GENERIC
     generic map(WIDTH)
-    port map(RegB_OUT, RegIMM_OUT, MuxB_SEL, MuxB_OUT);
+    port map(RegIMM_OUT, RegB_OUT, MuxB_SEL, MuxB_OUT);
       
   -- Forwarding Mux A
   FwdA: MUX31_GENERIC
@@ -386,12 +386,12 @@ begin
   -- Mux Memory Access
   MuxMEM: MUX21_GENERIC
     generic map(WIDTH)
-    port map(RegALU3_OUT, NPC3, MuxMEM_SEL, MuxMEM_OUT);
+    port map(NPC3, RegALU3_OUT, MuxMEM_SEL, MuxMEM_OUT);
   
   -- Forwarding Mux D (Data Memory)
   FwdD: MUX21_GENERIC
     generic map(WIDTH)
-    port map(RegME_OUT, MuxWB_OUT, FwdD_SEL, MuxFWD_OUT);
+    port map(MuxWB_OUT, RegME_OUT, FwdD_SEL, MuxFWD_OUT);
       
   -- Sign Extend Data8
   SignSW8: SIGN_EXTEND
@@ -443,7 +443,7 @@ begin
   -- Write-Back Mux
   MuxWB: MUX21_GENERIC
     generic map(WIDTH)
-    port map(MuxLD_OUT, RegALU4_OUT, MuxWB_SEL, MuxWB_OUT);
+    port map(RegALU4_OUT, MuxLD_OUT, MuxWB_SEL, MuxWB_OUT);
       
   -------------------------------------------------------------------------------
   --                                FORWARDING                                 --
