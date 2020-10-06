@@ -20,7 +20,26 @@ package GLOBALS is
   constant word_size         : integer := 32;
   constant addr_size         : integer := 5;
   constant radix_size        : integer := 4;
-
+  constant stack_size        : integer := 5;
+  constant tag_size          : integer := 6;
+  constant index_size        : integer := 2;
+  constant word_cache_size   : integer := 2;
+  constant block_size        : integer := 2;
+  constant dram_addr_size    : integer := 6;
+  constant iram_addr_size    : integer := 6;
+  constant btb_size          : integer := 5;
+  constant btb_field         : integer := 66; -- (PC+TARGET+COUNTER)
+  constant pc_up             : integer := 65;
+  constant pc_down           : integer := 34;
+  constant target_up         : integer := 33;
+  constant target_down       : integer := 2;
+  constant counter_up        : integer := 1;
+  constant counter_down      : integer := 0;
+  
+  -- Control Unit constants
+  constant op_size           : integer := 6;
+  constant function_size     : integer := 11;
+  constant control_word_size : integer := 27;
   constant opcode_up         : integer :=  31;
   constant opcode_down       : integer :=  26;
   constant r1_up             : integer :=  25;
@@ -34,23 +53,6 @@ package GLOBALS is
   constant func_up           : integer :=  10;
   constant func_down         : integer :=  0;
   
-  constant stack_size        : integer := 32;
-  constant tag_size          : integer := 6;
-  constant index_size        : integer := 2;
-  constant word_cache_size   : integer := 2;
-  constant block_size        : integer := 2;
-  constant dram_addr_size    : integer := 6;
-  constant iram_addr_size    : integer := 6;
-
-  constant op_size           : integer := 6;
-  constant function_size     : integer := 11;
-  constant control_word_size : integer := 27;
-  constant microcode_mem_size: integer := 256;
-  constant reloc_mem_size    : integer := 64;   
-  constant instructions_execution_cycles : integer := 5;
-  
-
-  -- CU constants
   -- NOP instruction -> OPCODE field
   constant	NOP	    : std_logic_vector(op_size - 1 downto 0) :=  "010101";		-- (0x15)
   -- J-Type instruction -> OPCODE field
@@ -70,7 +72,9 @@ package GLOBALS is
   constant	I_ANDI		: std_logic_vector(op_size - 1 downto 0) :=  "001100";		-- (0x0C)
   constant	I_ORI		 : std_logic_vector(op_size - 1 downto 0) :=  "001101";		-- (0x0D)
   constant	I_XORI		: std_logic_vector(op_size - 1 downto 0) :=  "001110";		-- (0x0E)
-  constant	I_LHI	 	: std_logic_vector(op_size - 1 downto 0) :=  "001111";		-- (0x0E)
+  constant	I_LHI	 	: std_logic_vector(op_size - 1 downto 0) :=  "001111";		-- (0x0F)
+  constant	I_RFE   : std_logic_vector(op_size - 1 downto 0) :=  "010000";		-- (0x10)
+  constant	I_TRAP	 : std_logic_vector(op_size - 1 downto 0) :=  "010001";		-- (0x11)
   constant	I_SLLI		: std_logic_vector(op_size - 1 downto 0) :=  "010100";		-- (0x14)
   constant	I_SRLI		: std_logic_vector(op_size - 1 downto 0) :=  "010110";		-- (0x16)
   constant	I_SRAI		: std_logic_vector(op_size - 1 downto 0) :=  "010111";		-- (0x17)
@@ -117,7 +121,6 @@ package GLOBALS is
   constant	R_SGEU  : std_logic_vector(function_size - 1 downto 0) :=  "00000111101";	-- (0x3D)
 
   -- Types
-  type dmaOp is (IDLE, SB, SH, SW, LB, LBU, LH, LHU, LW);
   type aluOp is (nopOp, addOp, subOp, andOp, orOp, xorOp, sllOp, srlOp, sraOp, multOp, lhiOp,
                  gtOp,  geOp,  ltOp,  leOp,  eqOp, neOp,  gtUOp, geUOp, ltUOp, leUOp);
   
