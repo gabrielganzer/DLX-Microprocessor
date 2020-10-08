@@ -18,7 +18,7 @@ use ieee.std_logic_textio.all;
 use std.textio.all;
 use work.globals.all;
 
-entity RWMEM is
+entity SDRAM is
 	generic (
 		FILE_PATH       : string;
 		ENTRIES         : integer := 128;
@@ -35,7 +35,7 @@ entity RWMEM is
 		);
 end entity;
 
-architecture BEHAVIORAL of RWMEM is
+architecture BEHAVIORAL of SDRAM is
 	type RAM is array (0 to ENTRIES-1) of std_logic_vector(WIDTH-1 downto 0);
 	signal memory: RAM := (others => (others => '0'));
 	signal tmp_data: std_logic_vector(WIDTH-1 downto 0);

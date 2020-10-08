@@ -17,86 +17,101 @@ use work.globals.all;
 
 entity ICACHE_CONTROLLER is
   generic (WIDTH        : integer := word_size;
-           CACHE_LENGTH : integer := index_size+word_cache_size);
+           LENGTH       : integer := line_size+word_offset);
 	port (CLK          : in std_logic;
 	      RST          : in std_logic;                                  -- Synchronous, active-low
-	      EN           : in std_logic;                                  -- Active-high
 	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);         -- PC address
 	      CACHE_WE     : out std_logic;                                 -- Cache write enable, read otherwise
-	      CACHE_ADDR   : out std_logic_vector(CACHE_LENGTH-1 downto 0); -- INDEX & WORD fields
+	      CACHE_ADDR   : out std_logic_vector(LENGTH-1 downto 0); -- LINE&WORD fields
 	      STALL        : out std_logic                                  -- Pipeline stall
 	);
 end entity;
 
 architecture BEHAVIORAL of ICACHE_CONTROLLER is
    type stateTYPE is (IDLE, RD_CACHE, RD0, RD1, RD2, RD3);
-   type tag_array is array ((2**index_size)-1 downto 0) of std_logic_vector(tag_size-1 downto 0);
-   signal cacheTAG   : tag_array := (others => (others => '0'));
-   signal currST     : stateTYPE := IDLE;
-   signal nextST     : stateTYPE := IDLE;
-   signal TAG        : std_logic_vector(tag_size-1 downto 0) := (others => '0');
-   signal INDEX      : std_logic_vector(index_size-1 downto 0) := (others => '0');
-   signal WORD       : std_logic_vector(word_cache_size-1 downto 0) := (others => '0');
-   signal BLOCK_SEL  : std_logic_vector(block_size-1 downto 0) := (others => '0');
-   signal HIT        : std_logic := '0';
-	 signal CACHE_ADDRi: std_logic_vector(index_size+word_cache_size-1 downto 0) := (others => '0');
+   type tag_array is array ((2**line_size)-1 downto 0) of std_logic_vector(tag_size downto 0);
+   signal CAM       : tag_array;
+   signal currST    : stateTYPE;
+   signal nextST    : stateTYPE;
+   signal TAG       : std_logic_vector(tag_size-1 downto 0);
+   signal LINE      : std_logic_vector(line_size-1 downto 0);
+   signal WORD      : std_logic_vector(word_offset-1 downto 0);
+   signal BLOCK_SEL : std_logic_vector(word_offset-1 downto 0);
+   signal HIT       : std_logic;
+   signal LD        : std_logic;
+
 begin
     
-    TAG    <= ADDR(tag_size+index_size+word_cache_size+block_size-1 downto tag_size);
-    INDEX  <= ADDR(tag_size-1 downto index_size+word_cache_size);
-    WORD   <= ADDR(index_size+word_cache_size-1 downto word_cache_size);
+    TAG  <= ADDR(tag_size+line_size+word_offset-1 downto tag_size);
+    LINE <= ADDR(tag_size-1 downto word_offset);
+    WORD <= ADDR(word_offset-1 downto 0);
     
-    HIT    <= '1' when (cacheTAG(to_integer(unsigned(INDEX))) = TAG) else '0';
+    HIT <= '1' when ((CAM(to_integer(unsigned(LINE)))(tag_size-1 downto 0) = TAG) and (CAM(to_integer(unsigned(LINE)))(tag_size) = '1')) else '0';
     
-    CRTL: process(CLK)
+    CACHE_ADDR <= LINE&BLOCK_SEL when LD = '1' else LINE&WORD;
+    
+    
+    CRTL: process (CLK, RST)
     begin
-      if (CLK = '1' and CLK'event) then
-        if (RST = '0') then
-	         CACHE_ADDR  <= (others => '0');
-           currST      <= IDLE;
-        else
-          if (EN = '1') then
-	          CACHE_ADDR <= CACHE_ADDRi;
-	          currST     <= nextST;
-	        end if;
-        end if;
+      if (RST = '0') then
+        CAM     <= (others => (others => '0'));
+        currST  <= IDLE;
+      elsif (CLK = '1' and CLK'event) then
+          if (LD = '1') then
+            -- TAG field
+            CAM(to_integer(unsigned(LINE)))(tag_size-1 downto 0) <= TAG;
+            -- Valid bit
+            CAM(to_integer(unsigned(LINE)))(tag_size) <= '1';
+          end if;
+	      currST  <= nextST;
       end if;
     end process;
     
-    FSM: process(currST, HIT, TAG, INDEX, WORD)
+    FSM: process(currST, HIT)
     begin
         case currST is
             when IDLE =>
-   	          CACHE_WE  <= '0';
-	            STALL     <= '0';
+   	          CACHE_WE    <= '0';
+              STALL       <= '0';
+              BLOCK_SEL   <= "00";
+              LD          <= '0';              
               if (HIT = '1') then
-                  nextST <= RD_CACHE;
+                nextST      <= RD_CACHE;
               else
-                  nextST <= RD0;
+                nextST      <= RD0;
               end if;
             when RD_CACHE =>
    	          CACHE_WE    <= '0';
-	            STALL       <= '0';
-	            CACHE_ADDRi <= INDEX&WORD;
+              STALL       <= '0';
+              BLOCK_SEL   <= "00";
+              LD          <= '0';
 	            nextST      <= IDLE;
-            when RD0 =>
-   	          CACHE_WE    <= '1';
+            when RD0 => 
+              CACHE_WE    <= '1';
+ 	            STALL       <= '1';
 	            BLOCK_SEL   <= "00";
-	            STALL       <= '1';
-	            CACHE_ADDRi <= INDEX&BLOCK_SEL;
-              cacheTAG(to_integer(unsigned(INDEX)))(tag_size-1 downto 0) <= TAG;
+	            LD          <= '1';
 	            nextST      <= RD1;
             when RD1 =>
-              BLOCK_SEL  <= "01";
-              nextST <= RD2;
+              CACHE_WE    <= '1';
+ 	            STALL       <= '1';
+              BLOCK_SEL   <= "01";
+              LD          <= '1';
+              nextST      <= RD2;
             when RD2 =>
-              BLOCK_SEL  <= "10";
-              nextST <= RD3;
+              CACHE_WE    <= '1';
+ 	            STALL       <= '1';
+              BLOCK_SEL   <= "10";
+              LD          <= '1';
+              nextST      <= RD3;
             when RD3 =>
-              BLOCK_SEL  <= "11";
-              nextST <= RD_CACHE;
+              CACHE_WE    <= '1';
+ 	            STALL       <= '1';
+              BLOCK_SEL   <= "11";
+              LD          <= '1';
+              nextST      <= RD_CACHE;
             when others =>
-              nextST <= IDLE;
+              nextST      <= IDLE;
         end case;
     end process;
 

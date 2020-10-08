@@ -6,6 +6,7 @@ vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/01-generic_m
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/01-generic_rca.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/01-generic_csa.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/01-generic_register.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/01-ffd.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/01-ivx.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/01-nand2.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.core/a.b.a.a.a-pg_network.vhd}
@@ -28,78 +29,51 @@ vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.core/a.b.a.e-zero_detector.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.core/a.b.a.f-booth_multiplier_v1.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.core/a.b.a.f-wallace_tree.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.f-data_cache.core/a.b.f.a-cache_controler.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.f-data_cache.core/a.b.f.b-cache_memory.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.g-instruction_cache.core/a.b.g.a-cache_controler.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.g-instruction_cache.core/a.b.g.b-cache_memory.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU_v1.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU_v2.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.b-register_file.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.c-sign_extend.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.d-branch_unit.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.e-forwarding_unit.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.f-data_cache.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.g-instruction_cache.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.h-branch_target_buffer.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.a-CU_HW.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a-DLX.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/b-IRAM.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/b-IROM.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/c-DRAM.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/TB_DLX.vhd}
 
 # Start simulation
-vsim -t 10ps work.dlx_tb(testbench)
+#vsim -t 10ps work.dlx_tb(testbench)
 
 ################################## ProgramCounter ##################################
-add wave -group ProgramCounter sim:/dlx_tb/uut/pc/*
+#add wave -group ProgramCounter sim:/dlx_tb/uut/pc/*
 
 ################################## IRAM ##################################
-add wave -group InstructionMemory sim:/dlx_tb/iram/*
+
 
 ################################## InstructionRegister ##################################
-add wave -group InstructionRegister sim:/dlx_tb/uut/ir/*
+
 
 ################################## ControlUnit ##################################
-add wave -group ControlUnit sim:/dlx_tb/uut/cu/*
+
 
 ################################## DataPath ##################################
-# Stage 1
-add wave -group DataPath -group RegNPC1 sim:/dlx_tb/uut/dp/RegNPC1/*
-# Stage 2
-add wave -group DataPath -group MuxWR sim:/dlx_tb/uut/dp/MuxWR/*
-add wave -group DataPath -group RegFILE sim:/dlx_tb/uut/dp/RegFILE/*
-add wave -group DataPath -group RegA sim:/dlx_tb/uut/dp/RegA/*
-add wave -group DataPath -group RegB sim:/dlx_tb/uut/dp/RegB/*
-add wave -group DataPath -group SignImm16 sim:/dlx_tb/uut/dp/SignImm16/*
-add wave -group DataPath -group SignImm26 sim:/dlx_tb/uut/dp/SignImm26/*
-add wave -group DataPath -group MuxIMM sim:/dlx_tb/uut/dp/MuxIMM/*
-add wave -group DataPath -group RegIMM sim:/dlx_tb/uut/dp/RegIMM/*
-add wave -group DataPath -group RegRD2 sim:/dlx_tb/uut/dp/RegRD2/*
-add wave -group DataPath -group RegNPC2 sim:/dlx_tb/uut/dp/RegNPC2/*
-# Stage 3
-add wave -group DataPath -group MuxA sim:/dlx_tb/uut/dp/MuxA/*
-add wave -group DataPath -group MuxB sim:/dlx_tb/uut/dp/MuxB/*
-add wave -group DataPath -group FwdA sim:/dlx_tb/uut/dp/FwdA/*
-add wave -group DataPath -group FwdB sim:/dlx_tb/uut/dp/FwdB/*
-add wave -group DataPath -group FwdC sim:/dlx_tb/uut/dp/FwdC/*
-add wave -group DataPath -group ALU0 sim:/dlx_tb/uut/dp/ALU0/*
-add wave -group DataPath -group RegALU3 sim:/dlx_tb/uut/dp/RegALU3/*
-add wave -group DataPath -group ZERO sim:/dlx_tb/uut/dp/ZERO/*
-add wave -group DataPath -group COND sim:/dlx_tb/uut/dp/COND/*
-add wave -group DataPath -group RegME sim:/dlx_tb/uut/dp/RegME/*
-add wave -group DataPath -group RegRD3 sim:/dlx_tb/uut/dp/RegRD3/*
-add wave -group DataPath -group RegNPC3 sim:/dlx_tb/uut/dp/RegNPC3/*
-# Stage 4
-add wave -group DataPath -group MuxMEM sim:/dlx_tb/uut/dp/MuxMEM/*
-add wave -group DataPath -group FwdD sim:/dlx_tb/uut/dp/FwdD/*
-add wave -group DataPath -group RegLMD sim:/dlx_tb/uut/dp/RegLMD/*
-add wave -group DataPath -group RegRD4 sim:/dlx_tb/uut/dp/RegRD4/*
-add wave -group DataPath -group RegNPC4 sim:/dlx_tb/uut/dp/RegNPC4/*
-add wave -group DataPath -group RegALU4 sim:/dlx_tb/uut/dp/RegALU4/*  
-# Stage 5
-add wave -group DataPath -group MuxWB sim:/dlx_tb/uut/dp/MuxWB/*
-# Forwarding Unit
-add wave -group DataPath -group FU sim:/dlx_tb/uut/dp/FU/*
+
 
 ################################## DRAM ##################################
-add wave -group DataMemory sim:/dlx_tb/dram/*
+
 
 # Set unsigned as DEFAULT radix
-radix -hex
+#radix -hex
 # Run simulation
-run 450 ns
+#run 450 ns
 # Print postscript waveform
 #write wave p4adder.ps -start 0 -end 230000 -perpage 230000

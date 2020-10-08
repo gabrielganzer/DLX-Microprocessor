@@ -17,7 +17,7 @@ use work.globals.all;
 
 entity CACHE_MEMORY is
   generic (WIDTH  : integer := word_size;
-           LENGTH : integer := index_size+word_cache_size);
+           LENGTH : integer := line_size+word_offset);
 	port (CLK      : in std_logic;
 	      RST      : in std_logic;   -- Synchronous, active-low
 	      EN       : in std_logic;   -- Active-high

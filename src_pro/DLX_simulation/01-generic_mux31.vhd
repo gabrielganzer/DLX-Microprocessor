@@ -15,16 +15,16 @@ use IEEE.std_logic_1164.all;
 
 entity MUX31_GENERIC is
 	generic(NBIT: integer:= 4);
-	port (S2:	in 	std_logic_vector(NBIT-1 downto 0);
+	port (S0:	in 	std_logic_vector(NBIT-1 downto 0);
 	      S1:	in 	std_logic_vector(NBIT-1 downto 0);
-	      S0:	in	std_logic_vector(NBIT-1 downto 0);
+	      S2:	in	std_logic_vector(NBIT-1 downto 0);
 	      SEL:	in	std_logic_vector(2 downto 0);
 	      Y:	out	std_logic_vector(NBIT-1 downto 0));
 end entity;
 
 architecture BEHAVIORAL of MUX31_GENERIC is
 begin
-        process (S1, S0, SEL)
+        process (S0, S1, S2, SEL)
         begin
         	if (SEL = "001") then
         		Y <= S0;

@@ -52,15 +52,15 @@ begin
     end process;
 
 
-    ForwardA <= "100" when ((RF_WE3 = '1') and (RS1_ID = RD3) and (RS1_ID /= ZERO)) else
+    ForwardA <= "001" when ((RF_WE3 = '1') and (RS1_ID = RD3) and (RS1_ID /= ZERO)) else
                 "010" when ((RF_WE4 = '1') and (RS1_ID = RD4) and (RS1_ID /= ZERO) and ((RS1_ID /= RD3) or (RF_WE3 = '0'))) else
-                "001"; 
-    ForwardB <= "100" when ((RF_WE3 = '1') and (RS2_ID = RD3) and (RS2_ID /= ZERO)) else
+                "100"; 
+    ForwardB <= "001" when ((RF_WE3 = '1') and (RS2_ID = RD3) and (RS2_ID /= ZERO)) else
                 "010" when ((RF_WE4 = '1') and (RS2_ID = RD4) and (RS2_ID /= ZERO) and ((RS2_ID /= RD3) or (RF_WE3 = '0'))) else
-                "001"; 
-    ForwardC <= "100" when ((RF_WE3 = '1') and (RS1 = RD3) and (RS1 /= ZERO)) else
+                "100"; 
+    ForwardC <= "001" when ((RF_WE3 = '1') and (RS1 = RD3) and (RS1 /= ZERO)) else
                 "010" when ((RF_WE4 = '1') and (RS1 = RD4) and (RS1 /= ZERO) and ((RS1 /= RD3) or (RF_WE3 ='0'))) else
-                "001";
+                "100";
     ForwardD <= '1' when ((RF_WE4 = '1') and (RS2_EX = RD4) and (RS2_EX /= ZERO)) else '0';
 
 end architecture;

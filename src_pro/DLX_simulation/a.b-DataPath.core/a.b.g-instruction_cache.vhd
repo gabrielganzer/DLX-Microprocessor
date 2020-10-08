@@ -20,8 +20,9 @@ entity INSTRUCTION_CACHE is
 	      RST          : in std_logic;                                  -- Synchronous, active-low
 	      EN           : in std_logic;                                  -- Active-high
 	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);         -- PC address
-        DIN          : in std_logic_vector(WIDTH-1 downto 0);         -- Instruction from rom
-        DOUT         : out std_logic_vector(WIDTH-1 downto 0);        -- Instruction to register
+        DIN          : in std_logic_vector(WIDTH-1 downto 0);         -- Instruction from ROM
+        WORD         : out std_logic_vector(1 downto 0);              -- Word select
+        DOUT         : out std_logic_vector(WIDTH-1 downto 0);        -- Instruction to IR
 	      STALL        : out std_logic                                  -- Pipeline stall
 	);
 end entity;
@@ -29,21 +30,20 @@ end entity;
 architecture STRUCTURAL of INSTRUCTION_CACHE is
   
   component ICACHE_CONTROLLER is
-    generic(WIDTH        : integer := word_size;
-            CACHE_LENGTH : integer := index_size+word_cache_size);
-  	 port(CLK          : in std_logic;
-  	      RST          : in std_logic;                                  -- Synchronous, active-low
-  	      EN           : in std_logic;                                  -- Active-high
-  	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);         -- PC address
-  	      CACHE_WE     : out std_logic;                                 -- Cache write enable, read otherwise
-  	      CACHE_ADDR   : out std_logic_vector(CACHE_LENGTH-1 downto 0); -- INDEX & WORD fields
-  	      STALL        : out std_logic                                  -- Pipeline stall
-  	 );
+    generic (WIDTH        : integer := word_size;
+             LENGTH       : integer := line_size+word_offset);
+	  port (CLK          : in std_logic;
+   	      RST          : in std_logic;                                  -- Synchronous, active-low
+   	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);         -- PC address
+   	      CACHE_WE     : out std_logic;                                 -- Cache write enable, read otherwise
+   	      CACHE_ADDR   : out std_logic_vector(LENGTH-1 downto 0); -- LINE&WORD fields
+   	      STALL        : out std_logic                                  -- Pipeline stall
+	   );
   end component;
   
   component CACHE_MEMORY is
      generic (WIDTH  : integer := word_size;
-              LENGTH : integer := index_size+word_cache_size);
+              LENGTH : integer := line_size+word_offset);
     	port (CLK      : in std_logic;
     	      RST      : in std_logic;
     	      EN       : in std_logic;
@@ -56,16 +56,18 @@ architecture STRUCTURAL of INSTRUCTION_CACHE is
 
    -- Signals
    signal CACHE_WE   : std_logic; 
-   signal CACHE_ADDR : std_logic_vector(index_size+word_cache_size-1 downto 0);
+   signal CACHE_ADDR : std_logic_vector(line_size+word_offset-1 downto 0);
    
 begin
-
+  
+  WORD  <= CACHE_ADDR(word_offset-1 downto 0);
+  
   ICACHE_CTRL: ICACHE_CONTROLLER
-    generic map (word_size, index_size+word_cache_size)
-  	 port map (CLK, RST, EN, ADDR, CACHE_WE, CACHE_ADDR, STALL);
+    generic map (word_size, line_size+word_offset)
+  	 port map (CLK, RST, ADDR, CACHE_WE, CACHE_ADDR, STALL);
 	           
 	ICACHE_MEM: CACHE_MEMORY
-     generic map (word_size, index_size+word_cache_size)
+     generic map (word_size, line_size+word_offset)
     	port map (CLK, RST, EN, CACHE_WE, CACHE_ADDR, DIN, DOUT);
 
 end architecture;

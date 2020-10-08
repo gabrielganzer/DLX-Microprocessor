@@ -22,21 +22,17 @@ use work.globals.all;
 -- Instruction memory for DLX
 -- Memory filled by a process which reads from a file
 -- file name is "test.asm.mem"
-entity ROMEM is
-	generic (
-		FILE_PATH   : string;
-		ENTRIES		   : integer := 128;
-		WIDTH       : integer := 32
-	);
-	port (
-		CS					  : in std_logic; -- Active-high
-		OE				    : in std_logic; -- Active-high
-		ADDR   				 : in std_logic_vector((log2(ENTRIES))-1 downto 0);
-		DATA				    : out std_logic_vector(WIDTH-1 downto 0)
-	);
+entity ROM is
+	generic (FILE_PATH   : string;
+		       ENTRIES		   : integer := 128;
+		       WIDTH       : integer := 32);
+	port (CS					  : in std_logic; -- Active-high
+		    OE				    : in std_logic; -- Active-high
+		    ADDR   				 : in std_logic_vector((log2(ENTRIES))-1 downto 0);
+		    DATA				    : out std_logic_vector(WIDTH-1 downto 0));
 end entity;
 
-architecture BEHAVIORAL of ROMEM is
+architecture BEHAVIORAL of ROM is
 	type ROM is array (0 to ENTRIES-1) of std_logic_vector(WIDTH-1 downto 0);
 	signal memory : ROM := (others => (others => '0'));
 begin

@@ -16,77 +16,85 @@ use IEEE.numeric_std.all;
 use work.globals.all;
 
 entity DCACHE_CONTROLLER is
-  generic (WIDTH       : integer := word_size;
-           CACHE_LENGTH: integer := index_size+word_cache_size;
-           SDRAM_LENGTH: integer := tag_size+index_size+word_cache_size+block_size);
+  generic (WIDTH  : integer := word_size;
+           LENGTH : integer := line_size+word_offset);
 	port (CLK          : in std_logic;
-	      RST          : in std_logic;                                  -- Synchronous, active-low
-	      EN           : in std_logic;                                  -- Active-high
-	      WE           : in std_logic;                                  -- Write enable, read otherwise
-	      FWD          : in std_logic;                                  -- Forwarding signal enable
-	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);         -- Address from ALU
-	      CACHE_WE     : out std_logic;                                 -- Cache write enable, read otherwise
-	      CACHE_SRC    : out std_logic_vector(2 downto 0);              -- Cache data source select
-	      CACHE_ADDR   : out std_logic_vector(CACHE_LENGTH-1 downto 0); -- INDEX & WORD fields
-	      SDRAM_WE     : out std_logic;                                 -- Cache write enable, read otherwise
-	      SDRAM_SRC    : out std_logic;                                 -- Data memory address source select
-	      SDRAM_ADDR   : out std_logic_vector(SDRAM_LENGTH downto 0);   -- TAG & INDEX & BLOCK & 0's
-	      STALL        : out std_logic                                  -- Pipeline stall
+	      RST          : in std_logic;                                     -- Synchronous, active-low
+	      WE           : in std_logic;                                     -- Write enable, read otherwise
+	      FWD          : in std_logic;                                     -- Forwarding signal enable
+	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);            -- Address from ALU
+	      CACHE_WE     : out std_logic;                                    -- Cache write enable, read otherwise
+	      CACHE_SRC    : out std_logic_vector(2 downto 0);                 -- Cache data source select
+	      CACHE_ADDR   : out std_logic_vector(LENGTH-1 downto 0);          -- LINE & WORD fields
+	      SDRAM_WE     : out std_logic;                                    -- Cache write enable, read otherwise
+	      SDRAM_SRC    : out std_logic;                                    -- Data memory address source select
+	      SDRAM_ADDR   : out std_logic_vector(tag_size+LENGTH-1 downto 0); -- TAG&LINE&WORD fields
+	      STALL        : out std_logic                                     -- Pipeline stall
 	);
 end entity;
 
 architecture BEHAVIORAL of DCACHE_CONTROLLER is
    type stateTYPE is (IDLE, WR_CACHE, RD_CACHE, WR0, WR1, WR2, WR3, RD0, RD1, RD2, RD3);
-   type tag_array is array (3 downto 0) of std_logic_vector(6 downto 0);
-   signal cacheTAG   : tag_array := (others => (others => '0'));
-   signal currST     : stateTYPE := IDLE;
-   signal nextST     : stateTYPE := IDLE;
-   signal TAG        : std_logic_vector(tag_size-1 downto 0) := (others => '0');
-   signal INDEX      : std_logic_vector(index_size-1 downto 0) := (others => '0');
-   signal WORD       : std_logic_vector(word_cache_size-1 downto 0) := (others => '0');
-   signal BLOCK_SEL  : std_logic_vector(block_size-1 downto 0) := (others => '0');
-   signal HIT        : std_logic := '0';
-   signal DIRTY      : std_logic := '0';
-   signal CACHE_SRCi : std_logic_vector(2 downto 0) := (others => '0');
-	 signal CACHE_ADDRi: std_logic_vector(index_size+word_cache_size-1 downto 0) := (others => '0');
-	 signal SDRAM_SRCi  : std_logic := '0';
-	 signal SDRAM_ADDRi : std_logic_vector(tag_size+index_size+word_cache_size+block_size-1 downto 0):= (others => '0');
+   type tag_array is array ((2**line_size)-1 downto 0) of std_logic_vector(tag_size+1 downto 0);
+   signal CAM       : tag_array;
+   signal currST    : stateTYPE;
+   signal nextST    : stateTYPE;
+   signal TAG       : std_logic_vector(tag_size-1 downto 0);
+   signal LINE      : std_logic_vector(line_size-1 downto 0);
+   signal WORD      : std_logic_vector(word_offset-1 downto 0);
+   signal BLOCK_SEL : std_logic_vector(word_offset-1 downto 0);
+   signal HIT       : std_logic;
+   signal DIRTY     : std_logic;
+   signal CTRL      : std_logic_vector(1 downto 0);
+
 begin
     
-    TAG    <= ADDR(tag_size+index_size+word_cache_size+block_size-1 downto tag_size);
-    INDEX  <= ADDR(tag_size-1 downto index_size+word_cache_size);
-    WORD   <= ADDR(index_size+word_cache_size-1 downto word_cache_size);
+    TAG  <= ADDR(tag_size+line_size+word_offset-1 downto tag_size);
+    LINE <= ADDR(tag_size-1 downto word_offset);
+    WORD <= ADDR(word_offset-1 downto 0);
     
-    HIT    <= '1' when (cacheTAG(to_integer(unsigned(INDEX)))(tag_size-1 downto 0) = TAG) else '0';
-    DIRTY  <= cacheTAG(to_integer(unsigned(INDEX)))(tag_size);
+    HIT   <= '1' when ((CAM(to_integer(unsigned(LINE)))(tag_size-1 downto 0) = TAG) and (CAM(to_integer(unsigned(LINE)))(tag_size) = '1')) else '0';
+    DIRTY <= CAM(to_integer(unsigned(LINE)))(tag_size+1);
     
-    CRTL: process(CLK)
+    CACHE_SRC  <= "001" when CTRL = "01" else
+                 	"010" when (CTRL = "10" and FWD = '1') else
+                  "100";
+    CACHE_ADDR <= LINE&BLOCK_SEL when (CTRL = "01" or CTRL = "11") else LINE&WORD;
+    
+                  
+    SDRAM_SRC  <= '1' when CTRL = "11" else '0';
+    SDRAM_ADDR <= TAG&LINE&BLOCK_SEL;
+    
+    CRTL: process(CLK, RST)
     begin
-      if (CLK = '1' and CLK'event) then
-        if (RST = '0') then
-           CACHE_SRC   <= (others => '0');
-	         CACHE_ADDR  <= (others => '0');
-	         SDRAM_SRC   <= '0';
-	         SDRAM_ADDR  <= (others => '0');
-           currST      <= IDLE;
-        else
-          if (EN = '1') then
-            CACHE_SRC  <= CACHE_SRCi;
-	          CACHE_ADDR <= CACHE_ADDRi;
-	          SDRAM_SRC  <= SDRAM_SRCi;
-	          SDRAM_ADDR <= SDRAM_ADDRi;
-	          currST     <= nextST;
-	        end if;
+      if (RST = '0') then
+         CAM     <= (others => (others => '0'));
+         currST      <= IDLE;
+      elsif (CLK = '1' and CLK'event) then
+        if (CTRL = "01" or CTRL = "11") then
+          -- TAG field
+          CAM(to_integer(unsigned(LINE)))(tag_size-1 downto 0) <= TAG;
+          -- Valid bit
+          CAM(to_integer(unsigned(LINE)))(tag_size) <= '1';
+          -- Dirty bit
+          CAM(to_integer(unsigned(LINE)))(tag_size+1) <= '0';
         end if;
+        if (CTRL = "10") then
+          -- Dirty bit
+          CAM(to_integer(unsigned(LINE)))(tag_size+1) <= '1';
+        end if;
+        currST     <= nextST;
       end if;
     end process;
     
-    FSM: process(currST, WE, HIT, DIRTY, TAG, INDEX, WORD)
+    FSM: process(currST, WE, HIT, DIRTY)
     begin
         case currST is
             when IDLE =>
    	          CACHE_WE  <= '0';
 	            SDRAM_WE  <= '0';
+	            BLOCK_SEL <= "00";
+              CTRL      <= "00";   
 	            STALL     <= '0';
               if (WE = '0' and HIT = '1') then
                   nextST <= RD_CACHE;
@@ -100,60 +108,74 @@ begin
                   nextST <= IDLE;
               end if;
             when RD_CACHE =>
-   	          CACHE_WE    <= '0';
-	            STALL       <= '0';
-	            CACHE_ADDRi <= INDEX&WORD;
-	            nextST      <= IDLE;
+   	          CACHE_WE  <= '0';
+	            SDRAM_WE  <= '0';
+	            BLOCK_SEL <= "00";
+              CTRL      <= "00";   
+	            STALL     <= '0';
+	            nextST    <= IDLE;
             when RD0 =>
-   	          CACHE_WE    <= '1';
-	            CACHE_SRCi  <= "001";
-	            SDRAM_WE    <= '0';
-	            BLOCK_SEL   <= "00";
-	            STALL       <= '1';
-	            CACHE_ADDRi <= INDEX&BLOCK_SEL;
-              cacheTAG(to_integer(unsigned(INDEX)))(tag_size-1 downto 0) <= TAG;
-              cacheTAG(to_integer(unsigned(INDEX)))(tag_size) <= '0';
-	            nextST      <= RD1;
+   	          CACHE_WE  <= '1';
+	            SDRAM_WE  <= '0';
+	            BLOCK_SEL <= "00";
+	            CTRL      <= "01"; 
+	            STALL     <= '1';
+	            nextST    <= RD1;
             when RD1 =>
-              BLOCK_SEL  <= "01";
-              nextST <= RD2;
+   	          CACHE_WE  <= '1';
+	            SDRAM_WE  <= '0';
+              BLOCK_SEL <= "01";
+              CTRL      <= "01"; 
+	            STALL     <= '1';
+              nextST    <= RD2;
             when RD2 =>
-              BLOCK_SEL  <= "10";
-              nextST <= RD3;
+              CACHE_WE  <= '1';
+	            SDRAM_WE  <= '0';
+              BLOCK_SEL <= "10";
+              CTRL      <= "01"; 
+	            STALL     <= '1';
+              nextST    <= RD3;
             when RD3 =>
-              BLOCK_SEL  <= "11";
-              nextST <= RD_CACHE;
+              CACHE_WE  <= '1';
+	            SDRAM_WE  <= '0';
+              BLOCK_SEL <= "11";
+              CTRL      <= "01";
+	            STALL     <= '1';
+              nextST    <= RD_CACHE;
             when WR_CACHE =>
    	          CACHE_WE  <= '1';
-	          	 if (FWD = '1') then
-                CACHE_SRCi <= "010";
-              else
-                CACHE_SRCi <= "100";
-              end if;
-	            SDRAM_WE    <= '0';
-	            STALL       <= '0';
-	            CACHE_ADDRi <= INDEX&WORD;
-              cacheTAG(to_integer(unsigned(INDEX)))(tag_size) <= '1';
-	            nextST      <= IDLE;
+	            SDRAM_WE  <= '0';
+	            BLOCK_SEL <= "00";
+              CTRL      <= "10";
+	            STALL     <= '0';
+	            nextST    <= IDLE;
             when WR0 =>  
-   	          CACHE_WE    <= '0';
-	            SDRAM_WE    <= '1';
-	            SDRAM_SRCi  <= '1';
-	            BLOCK_SEL   <= "00";
-	            STALL       <= '1';
-	            SDRAM_ADDRi <= TAG&INDEX&WORD&BLOCK_SEL;
-	            CACHE_ADDRi <= INDEX&BLOCK_SEL;
-              cacheTAG(to_integer(unsigned(INDEX)))(tag_size-1 downto 0) <= TAG;
-              cacheTAG(to_integer(unsigned(INDEX)))(tag_size) <= '0';
-	            nextST     <= WR1;
+   	          CACHE_WE  <= '0';
+	            SDRAM_WE  <= '1';
+	            BLOCK_SEL <= "00";
+              CTRL      <= "11";
+	            STALL     <= '1';
+	            nextST    <= WR1;
             when WR1 =>
-              BLOCK_SEL  <= "01";
-              nextST     <= WR2;
+   	          CACHE_WE  <= '0';
+	            SDRAM_WE  <= '1';
+              BLOCK_SEL <= "01";
+              CTRL      <= "11";
+              STALL     <= '1';
+              nextST    <= WR2;
             when WR2 =>
-              BLOCK_SEL  <= "10";
-              nextST     <= WR3;
+              CACHE_WE  <= '0';
+	            SDRAM_WE  <= '1';
+              BLOCK_SEL <= "10";
+              CTRL      <= "11";
+              STALL     <= '1';
+              nextST    <= WR3;
             when WR3 =>
-              BLOCK_SEL  <= "11";
+              CACHE_WE  <= '0';
+	            SDRAM_WE  <= '1';
+              BLOCK_SEL <= "11";
+              CTRL      <= "11";
+              STALL     <= '1';
               if (WE = '1') then
                   nextST <= WR_CACHE;
               else

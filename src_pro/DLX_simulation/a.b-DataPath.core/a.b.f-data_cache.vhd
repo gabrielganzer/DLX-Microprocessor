@@ -15,8 +15,8 @@ use IEEE.std_logic_1164.all;
 use work.globals.all;
 
 entity DATA_CACHE is
-  generic (WIDTH       : integer := word_size;
-           SDRAM_LENGTH: integer := tag_size+index_size+word_cache_size+block_size);
+  generic (WIDTH  : integer := word_size;
+           LENGTH : integer := dram_addr_size);
 	port (CLK          : in std_logic;
  	      RST          : in std_logic;                                  -- Synchronous, active-low
  	      EN           : in std_logic;                                  -- Active-high
@@ -25,7 +25,7 @@ entity DATA_CACHE is
  	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);         -- Address from ALU
  	      SDRAM_WE     : out std_logic;                                 -- Cache write enable, read otherwise
  	      SDRAM_SRC    : out std_logic;                                 -- Data memory address source select
- 	      SDRAM_ADDR   : out std_logic_vector(SDRAM_LENGTH-1 downto 0); -- TAG & INDEX & 0's
+ 	      SDRAM_ADDR   : out std_logic_vector(LENGTH-1 downto 0);       -- TAG & INDEX & 0's
  	      CACHE_DIN    : in std_logic_vector(WIDTH-1 downto 0);
  	      CACHE_DOUT   : out std_logic_vector(WIDTH-1 downto 0);
  	      CACHE_SRC    : out std_logic_vector(2 downto 0);              -- Cache data source select
@@ -36,28 +36,26 @@ end entity;
 architecture STRUCTURAL of DATA_CACHE is
   
   -- Components
-  component CACHE_CONTROLLER
-    generic(WIDTH       : integer := word_size;
-            CACHE_LENGTH: integer := index_size+word_size;
-            SDRAM_LENGTH: integer := tag_size+index_size+word_cache_size+block_size);
+  component DCACHE_CONTROLLER
+    generic(WIDTH  : integer := word_size;
+            LENGTH : integer := line_size+word_offset);
     port(CLK          : in std_logic;
-  	      RST          : in std_logic;                                  
-  	      EN           : in std_logic;                                  
+  	      RST          : in std_logic;                                                                   
   	      WE           : in std_logic;                                  
   	      FWD          : in std_logic;                                                                      
   	      ADDR         : in std_logic_vector(WIDTH-1 downto 0);         
   	      CACHE_WE     : out std_logic;                                 
   	      CACHE_SRC    : out std_logic_vector(2 downto 0);              
-  	      CACHE_ADDR   : out std_logic_vector(CACHE_LENGTH-1 downto 0); 
+  	      CACHE_ADDR   : out std_logic_vector(LENGTH-1 downto 0); 
   	      SDRAM_WE     : out std_logic;                                 
   	      SDRAM_SRC    : out std_logic;                                 
-  	      SDRAM_ADDR   : out std_logic_vector(SDRAM_LENGTH downto 0);                                   
+  	      SDRAM_ADDR   : out std_logic_vector(tag_size+LENGTH-1 downto 0);                                  
   	      STALL        : out std_logic);
   end component;
   
   component CACHE_MEMORY is
      generic (WIDTH  : integer := word_size;
-              LENGTH : integer := index_size+word_cache_size);
+              LENGTH : integer := line_size+word_offset);
     	port (CLK      : in std_logic;
     	      RST      : in std_logic;
     	      EN       : in std_logic;
@@ -70,17 +68,17 @@ architecture STRUCTURAL of DATA_CACHE is
 
    -- Signals
    signal CACHE_WE   : std_logic; 
-   signal CACHE_ADDR : std_logic_vector(index_size+word_cache_size-1 downto 0);
+   signal CACHE_ADDR : std_logic_vector(line_size+word_offset-1 downto 0);
    
 begin
 
-  DCACHE_CTRL: CACHE_CONTROLLER
-    generic map (word_size, index_size+word_cache_size, tag_size+index_size+word_cache_size+block_size)
-  	 port map(CLK, RST, EN, WE, FWD, ADDR, CACHE_WE, CACHE_SRC, CACHE_ADDR, 
+  DCACHE_CTRL: DCACHE_CONTROLLER
+    generic map (word_size, line_size+word_offset)
+  	 port map(CLK, RST, WE, FWD, ADDR, CACHE_WE, CACHE_SRC, CACHE_ADDR, 
 	           SDRAM_WE, SDRAM_SRC, SDRAM_ADDR, STALL);
 	           
 	DCACHE_MEM: CACHE_MEMORY
-     generic map (word_size, index_size+word_cache_size)
+     generic map (word_size, line_size+word_offset)
     	port map (CLK, RST, EN, CACHE_WE, CACHE_ADDR, CACHE_DIN, CACHE_DOUT);
 
 end architecture;

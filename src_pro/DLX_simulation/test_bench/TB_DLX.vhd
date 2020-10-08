@@ -22,44 +22,40 @@ architecture TESTBENCH of DLX_TB is
   component DLX is
     generic (WIDTH     : integer := word_size);
     port (CLK               : in std_logic;
-          RST               : in std_logic; -- Active-low
-          IRAM_EN				       : out std_logic;
-		      IRAM_ADDR   	     : out std_logic_vector(iram_addr_size-1 downto 0);
-		      IRAM_DATA				     : in std_logic_vector(WIDTH-1 downto 0);
+          RST               : in std_logic;
+          IROM_EN				       : out std_logic;
+		      IROM_ADDR   	     : out std_logic_vector(iram_addr_size-1 downto 0);
+		      IROM_DATA				     : in std_logic_vector(WIDTH-1 downto 0);
 		      DRAM_EN		         : out std_logic;
 		      DRAM_RW		         : out std_logic;
 		      DRAM_ADDR         : out std_logic_vector(dram_addr_size-1 downto 0);
 		      DRAM_DATA_IN      : in std_logic_vector(WIDTH-1 downto 0);
-		      DRAM_DATA_OUT     : out std_logic_vector(WIDTH-1 downto 0)
-		 );
+		      DRAM_DATA_OUT     : out std_logic_vector(WIDTH-1 downto 0));
   end component;
   
   -- IROM
-  component ROMEM is
-  	 generic (
-  		  FILE_PATH   : string;
-  		  ENTRIES		   : integer := 128;
-  		  WIDTH       : integer := 32);
-  	 port (
-  		  CS					  : in std_logic; -- Active-high
-  		  OE				    : in std_logic; -- Active-high
-  		  ADDR   				 : in std_logic_vector((log2(ENTRIES))-1 downto 0);
-  		  DATA				    : out std_logic_vector(WIDTH-1 downto 0));
+  component ROM
+  	 generic (FILE_PATH   : string;
+		         ENTRIES		   : integer := 128;
+		         WIDTH       : integer := 32);
+  	 port (CS					  : in std_logic;
+  	       OE				    : in std_logic;
+  		      ADDR   				 : in std_logic_vector((log2(ENTRIES))-1 downto 0);
+  		      DATA				    : out std_logic_vector(WIDTH-1 downto 0));
   end component;
   
   -- DRAM
-  component RWMEM
-	  generic (
-		  FILE_PATH       : string;
-		  ENTRIES         : integer := 128;
-		  WIDTH           : integer := 32);
-	  port (			CLK  : in std_logic;
-			RST		: in std_logic;  -- Synchronous, active-low
-			EN		 : in std_logic;  -- Active-high
-			RW		 : in std_logic;  -- Write active-high
-			ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
-			DIN  : in std_logic_vector(WIDTH-1 downto 0);
-			DOUT : out std_logic_vector(WIDTH-1 downto 0));
+  component SDRAM
+	  generic (FILE_PATH       : string;
+		         ENTRIES         : integer := 128;
+		         WIDTH           : integer := 32);
+	  port (CLK  : in std_logic;
+			    RST		: in std_logic;
+			    EN		 : in std_logic;
+			    RW		 : in std_logic;
+			    ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
+			    DIN  : in std_logic_vector(WIDTH-1 downto 0);
+			    DOUT : out std_logic_vector(WIDTH-1 downto 0));
   end component;
   
   ----------------------------------------------------------------
@@ -89,14 +85,14 @@ begin
   --------------------------------------------------------------------
   -- IRAM (Read-Only)
   --------------------------------------------------------------------   
-  IRAM: ROMEM
+  IRAM: ROM
     generic map("C:/Users/gabrielganzer/Desktop/DLX/test_bench/test.asm.mem", 2**iram_addr_size, word_size)
     port map (s_RST, s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA);
   
   --------------------------------------------------------------------
   -- DRAM
   --------------------------------------------------------------------
-  DRAM: RWMEM
+  DRAM: SDRAM
 	 generic map("C:/Users/gabrielganzer/Desktop/DLX/test_bench/hex_dram.txt", 2**dram_addr_size, word_size)
 	 port map (s_CLK, s_RST, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DATA_IN, s_DRAM_DATA_OUT);
 
@@ -110,6 +106,6 @@ begin
 	end process;
 
   -- Reset
-  s_RST <= '0', '1' after 20 ns;
+  s_RST <= '0', '1' after 6 ns;
 
 end architecture;
