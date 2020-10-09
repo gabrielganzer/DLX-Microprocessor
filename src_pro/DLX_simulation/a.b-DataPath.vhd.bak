@@ -271,6 +271,7 @@ architecture STRUCTURAL of DLX_DP is
   signal RD1         : std_logic_vector(LENGTH-1 downto 0);
   signal RD2         : std_logic_vector(LENGTH-1 downto 0);
   signal RD3         : std_logic_vector(LENGTH-1 downto 0);
+  signal RD_out      : std_logic_vector(LENGTH-1 downto 0);
   signal RS1         : std_logic_vector(LENGTH-1 downto 0);
   signal RS2         : std_logic_vector(LENGTH-1 downto 0);
   signal IMM16       : std_logic_vector((WIDTH/2)-1 downto 0);
@@ -353,7 +354,7 @@ begin
   -- Mux Register File Address-write
   MuxRFADDR: MUX21_GENERIC
     generic map(LENGTH)
-    port map((others => '1'), RD3, JUMP_LINK, RF_ADDR);
+    port map((others => '1'), RD_out, JUMP_LINK, RF_ADDR);
   
   -- Register file
   RF0: REGISTER_FILE
@@ -473,7 +474,7 @@ begin
   -- Pipeline Register RD2
   RegRD2: REGISTER_GENERIC
     generic map(LENGTH)
-    port map(CLK, RST, RegRD2_LATCH_EN, RD1, RD2);
+    port map(CLK, RST, RegRD2_LATCH_EN, RD2, RD3);
       
   -- Pipeline Register Operand A
   RegA1: REGISTER_GENERIC
@@ -554,7 +555,7 @@ begin
   -- Pipeline Register RD3
   RegRD3: REGISTER_GENERIC
     generic map(LENGTH)
-    port map(CLK, RST, RegRD3_LATCH_EN, RD2, RD3);
+    port map(CLK, RST, RegRD3_LATCH_EN, RD3, RD_out);
   
   -- Pipeline Register NPC
   RegNPC3: REGISTER_GENERIC

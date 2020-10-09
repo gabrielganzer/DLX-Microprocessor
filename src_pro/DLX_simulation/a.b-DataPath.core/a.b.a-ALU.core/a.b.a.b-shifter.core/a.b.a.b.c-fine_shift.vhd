@@ -46,6 +46,8 @@ begin
 				shifted <= op(32 downto 1);
 			when "111" => 
 				shifted <= op(31 downto 0);
+			when others => 
+			  null;
 		end case;
 	end process;
 

@@ -36,30 +36,32 @@ architecture BEHAVIORAL of ROM is
 	type ROM is array (0 to ENTRIES-1) of std_logic_vector(WIDTH-1 downto 0);
 	signal memory : ROM := (others => (others => '0'));
 begin
-
-	-- Instruction ROM behavioral description
-	ROM_PROC: process (CS, OE, ADDR)
-		file mem_fp        : text;
+  
+  WRITE: process
+  		file mem_fp        : text;
 		variable fline     : line;
 		variable index     : natural range 0 to ENTRIES:= 0;
 		variable tmp_data  : std_logic_vector(WIDTH-1 downto 0);
+  begin
+ 		file_open(mem_fp, file_path, READ_MODE);
+	  -- Read content
+    while (not endfile(mem_fp)) loop
+		  readline(mem_fp,fline);
+		  hread(fline,tmp_data);
+		  memory(index) <= tmp_data;
+		  index := index + 1;
+	  end loop;
+	  -- Close file
+    file_close(mem_fp);
+    wait;
+  end process;
+  
+	-- Instruction ROM behavioral description
+	ROM_PROC: process (CS, OE, ADDR)
 	begin
 		  if (CS = '0') then
-		    -- Write content from hex file into ROM memory if reset enable
-			  -- Open file
-			  file_open(mem_fp, file_path, READ_MODE);
-			  DATA <= (others => '0');
-			  -- Read content
-        while (not endfile(mem_fp)) loop
-				  readline(mem_fp,fline);
-				  hread(fline,tmp_data);
-				  memory(index) <= tmp_data;
-				  index := index + 1;
-			  end loop;
-			  -- Close file
-        file_close(mem_fp);    
+			  DATA <= (others => '0');   
 		  else
-		    -- Read content from memory if enable
 			  if (OE = '1' ) then
 					 DATA <= memory(to_integer(unsigned(ADDR)));
 			  end if;

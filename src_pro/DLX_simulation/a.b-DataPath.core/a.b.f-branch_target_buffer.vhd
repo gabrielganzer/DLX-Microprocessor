@@ -21,6 +21,7 @@ entity BTB is
 	port (CLK           : in std_logic;
 	      RST           : in std_logic;   -- Synchronous, active-low
 	      EN            : in std_logic;
+	      JUMP          : in std_logic;
 	      OUTCOME       : in std_logic;   -- Outcome of branch prediction (0 -> NT, 1 -> T)
         PC_READ       : in std_logic_vector(WIDTH-1 downto 0);  -- PC to be compared with CAM
         PC_WRITE      : in std_logic_vector(WIDTH-1 downto 0);  -- PC to be compared with CAM
@@ -51,12 +52,12 @@ architecture BEHAVIORAL of BTB is
   signal HIT2       : std_logic;
   signal PREDICTION : std_logic;
   signal PC_BTB     : std_logic_vector(WIDTH-1 downto 0);
-    
+   
 begin
   
   PC_BTB  <= CAM(to_integer(unsigned(PC_READ(LENGTH-1 downto 0))))(pc_up downto pc_down);
   COUNTER <= CAM(to_integer(unsigned(PC_READ(LENGTH-1 downto 0))))(counter_up downto counter_down);
-  HIT     <= '1' when (PC_BTB = PC_READ) else '0';
+  HIT     <= '1' when ((PC_BTB = PC_READ) and JUMP = '1') else '0';
   
   TARG_OUT <= CAM(to_integer(unsigned(PC_READ(LENGTH-1 downto 0))))(target_up downto target_down);
   
@@ -121,6 +122,8 @@ begin
         else
           COUNTERnext <= STRONG_NT;
         end if;
+      when others =>
+        COUNTERnext <= STRONG_NT;
     end case;
   end process;
 

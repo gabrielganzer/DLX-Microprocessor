@@ -86,26 +86,26 @@ begin
   -- IRAM (Read-Only)
   --------------------------------------------------------------------   
   IRAM: ROM
-    generic map("C:/Users/gabrielganzer/Desktop/DLX/test_bench/test.asm.mem", 2**iram_addr_size, word_size)
+    generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/LoadStore.asm.mem", 2**iram_addr_size, word_size)
     port map (s_RST, s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA);
   
   --------------------------------------------------------------------
   -- DRAM
   --------------------------------------------------------------------
   DRAM: SDRAM
-	 generic map("C:/Users/gabrielganzer/Desktop/DLX/test_bench/hex_dram.txt", 2**dram_addr_size, word_size)
+	 generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/hex_sdram.txt", 2**dram_addr_size, word_size)
 	 port map (s_CLK, s_RST, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DATA_IN, s_DRAM_DATA_OUT);
 
   -- Clock Process
 	CLOCK: process
 	begin
 		s_CLK<='0';
-		wait for 5 ns;
+		wait for 0.5 ns;
 		s_CLK<='1';
-		wait for 5 ns;
+		wait for 0.5 ns;
 	end process;
 
   -- Reset
-  s_RST <= '0', '1' after 6 ns;
+  s_RST <= '0', '1' after 0.6 ns;
 
 end architecture;

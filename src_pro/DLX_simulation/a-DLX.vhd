@@ -42,10 +42,10 @@ architecture STRUCTURAL of DLX is
     port (
       CLK              : in  std_logic;
       RST              : in  std_logic;
-      STALL            : in  std_logic;
       FLUSH            : in  std_logic;
       IR_IN            : in std_logic_vector(WIDTH-1 downto 0);
       IF_EN            : out std_logic;
+      JUMP             : out std_logic;
       ID_EN            : out std_logic;
       RF_LATCH_EN      : out std_logic;
       RF_RD1           : out std_logic;
@@ -94,6 +94,7 @@ architecture STRUCTURAL of DLX is
     port (CLK              : in  std_logic;
           RST              : in  std_logic;
           IF_EN            : in std_logic;
+          JUMP             : in std_logic;
           ID_EN            : in std_logic;
           RF_LATCH_EN      : in std_logic;
           RF_RD1           : in std_logic;
@@ -116,7 +117,6 @@ architecture STRUCTURAL of DLX is
           RF_WE_EX         : in std_logic;
           MEM_EN           : in std_logic;
           JUMP_REG         : in std_logic;
-          DATA_WE          : in std_logic;
           STORE_SIZE       : in std_logic_vector(2 downto 0);
           SIGN_LD          : in std_logic;
           LOAD_SIZE        : in std_logic_vector(2 downto 0);
@@ -131,9 +131,7 @@ architecture STRUCTURAL of DLX is
           JUMP_LINK        : in std_logic;
           IROM_DATA        : in std_logic_vector(WIDTH-1 downto 0);
           DRAM_OUT         : in std_logic_vector(WIDTH-1 downto 0);
-          STALL            : out std_logic;
           FLUSH            : out std_logic;
-          DRAM_WE          : out std_logic;
           IR               : out std_logic_vector(WIDTH-1 downto 0);
           IROM_ADDR        : out std_logic_vector(iram_addr_size-1 downto 0);
           DRAM_ADDR        : out std_logic_vector(dram_addr_size-1 downto 0);
@@ -145,6 +143,7 @@ architecture STRUCTURAL of DLX is
   -- Signal Declaration
   ----------------------------------------------------------------
     signal w_IF_EN            : std_logic;
+    signal w_JUMP             : std_logic;
     signal w_ID_EN            : std_logic;
     signal w_RF_LATCH_EN      : std_logic;
     signal w_RF_RD1           : std_logic;
@@ -167,7 +166,6 @@ architecture STRUCTURAL of DLX is
     signal w_RF_WE_EX         : std_logic;
     signal w_MEM_EN           : std_logic;
     signal w_JUMP_REG         : std_logic;
-    signal w_DATA_WE          : std_logic;
     signal w_STORE_SIZE       : std_logic_vector(2 downto 0);
     signal w_SIGN_LD          : std_logic;
     signal w_LOAD_SIZE        : std_logic_vector(2 downto 0);
@@ -180,7 +178,6 @@ architecture STRUCTURAL of DLX is
     signal w_MuxWB_SEL        : std_logic;
     signal w_RF_WE            : std_logic;
     signal w_JUMP_LINK        : std_logic;
-    signal w_STALL            : std_logic;
     signal w_FLUSH            : std_logic;
     signal w_IR               : std_logic_vector(WIDTH-1 downto 0);
     
@@ -204,10 +201,10 @@ begin
     port map(
       CLK              => CLK,
       RST              => RST,
-      STALL            => w_STALL,
       FLUSH            => w_FLUSH,
       IR_IN            => w_IR,
       IF_EN            => w_IF_EN,
+      JUMP             => w_JUMP,
       ID_EN            => w_ID_EN,
       RF_LATCH_EN      => w_RF_LATCH_EN,
       RF_RD1           => w_RF_RD1,
@@ -230,7 +227,7 @@ begin
       RF_WE_EX         => w_RF_WE_EX,
       MEM_EN           => w_MEM_EN,
       JUMP_REG         => w_JUMP_REG,
-      DATA_WE          => w_DATA_WE,
+      DATA_WE          => DRAM_RW,
       STORE_SIZE       => w_STORE_SIZE,
       SIGN_LD          => w_SIGN_LD,
       LOAD_SIZE        => w_LOAD_SIZE,
@@ -254,6 +251,7 @@ begin
       CLK              => CLK,
       RST              => RST,
       IF_EN            => w_IF_EN,
+      JUMP             => w_JUMP,
       ID_EN            => w_ID_EN,
       RF_LATCH_EN      => w_RF_LATCH_EN,
       RF_RD1           => w_RF_RD1,
@@ -276,7 +274,6 @@ begin
       RF_WE_EX         => w_RF_WE_EX,
       MEM_EN           => w_MEM_EN,
       JUMP_REG         => w_JUMP_REG,
-      DATA_WE          => w_DATA_WE,
       STORE_SIZE       => w_STORE_SIZE,
       SIGN_LD          => w_SIGN_LD,
       LOAD_SIZE        => w_LOAD_SIZE,
@@ -291,9 +288,7 @@ begin
       JUMP_LINK        => w_JUMP_LINK,
       IROM_DATA        => IROM_DATA,
       DRAM_OUT         => DRAM_DATA_IN,
-      STALL            => w_STALL,
       FLUSH            => w_FLUSH,
-      DRAM_WE          => DRAM_RW,
       IR               => w_IR,
       IROM_ADDR        => IROM_ADDR,
       DRAM_ADDR        => DRAM_ADDR,

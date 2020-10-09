@@ -21,11 +21,11 @@ entity DLX_CU is
   port (
     CLK              : in  std_logic;  -- Clock
     RST              : in  std_logic;  -- Synchronous reset, active-low
-    STALL            : in  std_logic;  -- Synchronous reset, active-low
     FLUSH            : in  std_logic;  -- Synchronous reset, active-low
     IR_IN            : in std_logic_vector(WIDTH-1 downto 0);
     -- Stage 1: Instruction Fetch (IF)
     IF_EN            : out std_logic;
+    JUMP             : out std_logic;
     -- Stage 2: Instruction Decode (ID)
     ID_EN            : out std_logic;
     RF_LATCH_EN      : out std_logic;  -- (1 -> RF Access     0 -> otherwise)
@@ -98,6 +98,7 @@ begin
   
   -- Stage 1: Instruction Fetch (IF)
   IF_EN            <= cw1(control_word_size-1);
+  JUMP             <= cw1(control_word_size-15);        
   -- Stage 2: Instruction Decode (ID)
   ID_EN            <= cw2(control_word_size-2);
   RF_LATCH_EN      <= cw2(control_word_size-3);
@@ -152,38 +153,40 @@ begin
         aluOpcode3 <= nopOp;
         STAGE      <= 0;
       elsif (CLK = '1' and CLK'event) then
-        if (STALL = '0') then
-          cw1 <= cwi;
-          aluOpcode1 <= aluOpcodei;
-          if (FLUSH = '1') then
-            cw2 <= (others => '0');
-            cw3 <= (others => '0');
-            cw4 <= (others => '0');
-            cw5 <= (others => '0');
-            aluOpcode2 <= nopOp; 
-            aluOpcode3 <= nopOp;
-            STAGE      <= 1;
+        cw1  <= cwi;
+        aluOpcode1 <= aluOpcodei;
+        if (FLUSH = '1') then
+          cw2 <= (others => '0');
+          cw3 <= (others => '0');
+          cw4 <= (others => '0');
+          cw5 <= (others => '0');
+          aluOpcode2 <= nopOp; 
+          aluOpcode3 <= nopOp;
+          STAGE      <= 1;
+        else
+          cw2 <= cw1(control_word_size-2 downto 0);
+          cw3 <= cw2(control_word_size-11 downto 0);
+          cw4 <= cw3(control_word_size-20 downto 0);
+          cw5 <= cw4(control_word_size-34 downto 0);
+          aluOpcode2 <= aluOpcode1; 
+          aluOpcode3 <= aluOpcode2;
+          if (STAGE < 5) then
+            STAGE      <= STAGE + 1;
           else
-            cw2 <= cw1(control_word_size-2 downto 0);
-            cw3 <= cw2(control_word_size-11 downto 0);
-            cw4 <= cw3(control_word_size-20 downto 0);
-            cw5 <= cw4(control_word_size-34 downto 0);
-            aluOpcode2 <= aluOpcode1; 
-            aluOpcode3 <= aluOpcode2;
-            if (STAGE < 5) then
-              STAGE      <= STAGE + 1;
-            else
-              STAGE      <= 1;
-            end if;
+            STAGE      <= 1;
           end if;
         end if;
       end if;
   end process;
 
-  CW_LUT: process(IR_opcode)
+  CW_LUT: process(IR_opcode, IR_func)
   begin
  	  case IR_opcode is
- 	    when RTYPE      => cwi <= '1'&"111100010"&"110000100"&"00000000000101"&"1010";
+ 	    when RTYPE      => if (IR_func /= (func_up downto func_down => '0')) then
+ 	                          cwi <= '1'&"111100010"&"110000100"&"00000000000101"&"1010";
+ 	                       else
+ 	                          cwi <= '1'&"000000000"&"000000000"&"00000000000000"&"0000";
+ 	                       end if;
   		  when NOP        => cwi <= '1'&"000000000"&"000000000"&"00000000000000"&"0000";
       when J          => cwi <= '1'&"100001101"&"101010001"&"00000000000000"&"0000";
       when J_JAL      => cwi <= '1'&"100001101"&"101010001"&"00000000001000"&"1011";

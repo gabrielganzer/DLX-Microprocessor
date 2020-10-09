@@ -29,10 +29,6 @@ vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.core/a.b.a.e-zero_detector.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.core/a.b.a.f-booth_multiplier_v1.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.core/a.b.a.f-wallace_tree.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.f-data_cache.core/a.b.f.a-cache_controler.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.f-data_cache.core/a.b.f.b-cache_memory.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.g-instruction_cache.core/a.b.g.a-cache_controler.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.g-instruction_cache.core/a.b.g.b-cache_memory.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU_v1.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.a-ALU_v2.vhd}
@@ -40,9 +36,7 @@ vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.c-sign_extend.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.d-branch_unit.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.e-forwarding_unit.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.f-data_cache.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.g-instruction_cache.vhd}
-vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.h-branch_target_buffer.vhd}
+vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.core/a.b.f-branch_target_buffer.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.a-CU_HW.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a.b-DataPath.vhd}
 vcom {Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/a-DLX.vhd}

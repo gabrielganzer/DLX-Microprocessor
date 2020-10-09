@@ -20,10 +20,6 @@ package GLOBALS is
   constant word_size         : integer := 32;
   constant addr_size         : integer := 5;
   constant radix_size        : integer := 4;
-  constant stack_size        : integer := 5;
-  constant tag_size          : integer := 6;
-  constant line_size         : integer := 4;
-  constant word_offset       : integer := 2;
   constant dram_addr_size    : integer := 12;
   constant iram_addr_size    : integer := 12;
   constant btb_size          : integer := 5;

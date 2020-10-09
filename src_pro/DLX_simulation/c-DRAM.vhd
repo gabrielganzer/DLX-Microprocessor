@@ -40,7 +40,6 @@ architecture BEHAVIORAL of SDRAM is
 	signal memory: RAM := (others => (others => '0'));
 	signal tmp_data: std_logic_vector(WIDTH-1 downto 0);
   
-  -- TBD
   -- Refresh memory content
 	procedure refresh(data: in RAM; path_file: string) is
 		file mem_fp     : text;
