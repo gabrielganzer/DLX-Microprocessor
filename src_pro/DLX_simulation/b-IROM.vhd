@@ -26,10 +26,9 @@ entity ROM is
 	generic (FILE_PATH   : string;
 		       ENTRIES		   : integer := 128;
 		       WIDTH       : integer := 32);
-	port (CS					  : in std_logic; -- Active-high
-		    OE				    : in std_logic; -- Active-high
-		    ADDR   				 : in std_logic_vector((log2(ENTRIES))-1 downto 0);
-		    DATA				    : out std_logic_vector(WIDTH-1 downto 0));
+	port (CS			: in std_logic; -- Active-high
+		    ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
+		    DATA	: out std_logic_vector(WIDTH-1 downto 0));
 end entity;
 
 architecture BEHAVIORAL of ROM is
@@ -43,7 +42,7 @@ begin
 		variable index     : natural range 0 to ENTRIES:= 0;
 		variable tmp_data  : std_logic_vector(WIDTH-1 downto 0);
   begin
- 		file_open(mem_fp, file_path, READ_MODE);
+ 		file_open(mem_fp, FILE_PATH, READ_MODE);
 	  -- Read content
     while (not endfile(mem_fp)) loop
 		  readline(mem_fp,fline);
@@ -57,14 +56,12 @@ begin
   end process;
   
 	-- Instruction ROM behavioral description
-	ROM_PROC: process (CS, OE, ADDR)
+	ROM_PROC: process (CS, ADDR)
 	begin
 		  if (CS = '0') then
-			  DATA <= (others => '0');   
+			  DATA <= (others => 'Z');   
 		  else
-			  if (OE = '1' ) then
-					 DATA <= memory(to_integer(unsigned(ADDR)));
-			  end if;
+				DATA <= memory(to_integer(unsigned(ADDR)));
 			end if;
   end process;
   

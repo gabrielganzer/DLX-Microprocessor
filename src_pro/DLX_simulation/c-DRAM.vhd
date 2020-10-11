@@ -19,11 +19,10 @@ use std.textio.all;
 use work.globals.all;
 
 entity SDRAM is
-	generic (
-		FILE_PATH       : string;
-		ENTRIES         : integer := 128;
-		WIDTH           : integer := 32
-	);
+	generic (FILE_READ   : string;
+	         FILE_PATH   : string;
+		       ENTRIES     : integer := 128;
+		       WIDTH       : integer := 32);
 	port (
 			CLK  : in std_logic;
 			RST		: in std_logic;  -- Synchronous, active-low
@@ -62,11 +61,25 @@ begin
   
   -- Data RAM behavioral description
 	RAM_PROC: process (CLK)
+	  file mem_fp        : text;
+		variable fline     : line;
+		variable index     : natural range 0 to ENTRIES:= 0;
+		variable tmp_data_u: std_logic_vector(WIDTH-1 downto 0);
 	begin
-    --if (CLK = '1' and CLK'event) then
+    if (CLK = '1' and CLK'event) then
       if RST = '0' then
+        file_open(mem_fp, FILE_READ, READ_MODE);
+	  -- Read content
+    while (not endfile(mem_fp)) loop
+		  readline(mem_fp,fline);
+		  hread(fline,tmp_data_u);
+		  memory(index) <= tmp_data_u;
+		  index := index + 1;
+	  end loop;
+	  -- Close file
+    file_close(mem_fp);
         tmp_data <= (others => '0');
-      elsif (CLK = '1' and CLK'event) then
+      else
         if (EN = '1') then
           if (RW = '1') then
             memory(to_integer(unsigned(ADDR))) <= DIN;
@@ -75,10 +88,10 @@ begin
           end if;
         end if;
       end if;
-    --end if;
+    end if;
   end process;
 
 	refresh(memory, FILE_PATH);
-	DOUT <= tmp_data;
-
+  DOUT <= tmp_data;
+  
 end architecture;

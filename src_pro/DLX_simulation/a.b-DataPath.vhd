@@ -23,10 +23,8 @@ entity DLX_DP is
   );
   port (CLK              : in  std_logic;  -- Clock
         RST              : in  std_logic;  -- Synchronous reset, active-low
-        -- INPUTS
         -- Control signals
         IF_EN            : in std_logic;
-        JUMP             : in std_logic;
         ID_EN            : in std_logic;
         RF_LATCH_EN      : in std_logic;
         RF_RD1           : in std_logic;
@@ -35,20 +33,18 @@ entity DLX_DP is
         IMM_SEL          : in std_logic;
         RegImm_LATCH_EN  : in std_logic;
         RegRD1_LATCH_EN  : in std_logic;
-        RegPC1_LATCH_EN  : in std_logic;
         EX_EN            : in std_logic;
         MuxA_SEL         : in std_logic;
         MuxB_SEL         : in std_logic;
         ALU_OPCODE       : in aluOp;
-        EQ_COND          : in std_logic;
         JUMP_EN          : in std_logic;
-        RegA1_LATCH_EN   : in std_logic;
+        JUMP_EQ          : in std_logic;
+        JUMP_REG         : in std_logic;
+        JUMP_LINK        : in std_logic;
         RegME_LATCH_EN   : in std_logic;
         RegRD2_LATCH_EN  : in std_logic;
-        RegPC2_LATCH_EN  : in std_logic;
         RF_WE_EX         : in std_logic;
         MEM_EN           : in std_logic;
-        JUMP_REG         : in std_logic;
         STORE_SIZE       : in std_logic_vector(2 downto 0);
         SIGN_LD          : in std_logic;
         LOAD_SIZE        : in std_logic_vector(2 downto 0);
@@ -60,19 +56,14 @@ entity DLX_DP is
         WB_EN            : in std_logic;
         MuxWB_SEL        : in std_logic;
         RF_WE            : in std_logic;
-        JUMP_LINK        : in std_logic;
         -- Data bus
-        IROM_DATA        : in std_logic_vector(WIDTH-1 downto 0);
+        PC_OUT           : in std_logic_vector(WIDTH-1 downto 0);
+        IR_OUT           : in std_logic_vector(WIDTH-1 downto 0);
         DRAM_OUT         : in std_logic_vector(WIDTH-1 downto 0);
-        -- OUTPUTS
-        -- Control signals
-        FLUSH            : out std_logic;
-        -- Data bus
-        IR               : out std_logic_vector(WIDTH-1 downto 0);
-        IROM_ADDR        : out std_logic_vector(iram_addr_size-1 downto 0);
+        PC_IN            : out std_logic_vector(WIDTH-1 downto 0);
         DRAM_ADDR        : out std_logic_vector(dram_addr_size-1 downto 0);
         DRAM_IN          : out std_logic_vector(WIDTH-1 downto 0)
-  ); 
+  );
 end entity;
 
 architecture STRUCTURAL of DLX_DP is
@@ -166,69 +157,47 @@ architecture STRUCTURAL of DLX_DP is
   
   -- Branch Condition
   component BRANCH_UNIT
-    generic(WIDTH : integer := word_size);
-    port(Z       : in std_logic;
-         EQ_COND : in std_logic;
-         JUMP_EN : in std_logic;
-         BRANCH  : out std_logic);
+    port(Z         : in std_logic;
+         JUMP_EN   : in std_logic;
+         JUMP_EQ   : in std_logic;
+         JUMP_REG  : in std_logic;
+         JUMP_LINK : in std_logic;
+         BRANCH    : out std_logic);
   end component;
   
   -- Forwarding Control Unit
   component FORWARDING_UNIT
-    generic (WIDTH : integer := 32;
-             LENGTH : integer := 5);
-    port (CLK : in std_logic;
-          RST : in std_logic;
-          RS1 : in std_logic_vector(LENGTH - 1 downto 0);
-          RS2 : in std_logic_vector(LENGTH - 1 downto 0);
-          RD3  : in std_logic_vector(LENGTH - 1 downto 0);
-          RD4  : in std_logic_vector(LENGTH - 1 downto 0);
-          RF_WE3 : in std_logic;
-          RF_WE4 : in std_logic;
-          ForwardA : out std_logic_vector (2 downto 0);
-          ForwardB : out std_logic_vector (2 downto 0);
-          ForwardC : out std_logic_vector (2 downto 0);
-          ForwardD : out std_logic);
-  end component;
-  
-  -- Branch Target Buffer
-  component BTB
-    generic (WIDTH: integer := word_size;
-             LENGTH: integer := btb_size);
-     port (CLK           : in std_logic;
-          RST           : in std_logic;
-          EN            : in std_logic;
-          JUMP          : in std_logic;
-          OUTCOME       : in std_logic;
-          PC_READ       : in std_logic_vector(WIDTH-1 downto 0);
-          PC_WRITE      : in std_logic_vector(WIDTH-1 downto 0);
-          TARG_IN       : in std_logic_vector(WIDTH-1 downto 0);
-          TARG_OUT      : out std_logic_vector(WIDTH-1 downto 0);
-          FLUSH         : out std_logic;
-          PREDICT       : out std_logic);
+    generic (LENGTH : integer := 5);
+    port (RS1       : in std_logic_vector(LENGTH - 1 downto 0);
+          RS2       : in std_logic_vector(LENGTH - 1 downto 0);
+          RD_EX     : in std_logic_vector(LENGTH - 1 downto 0);
+          RD_MEM    : in std_logic_vector(LENGTH - 1 downto 0);
+          RF_WE_EX  : in std_logic;
+          RF_WE_MEM : in std_logic;
+          ForwardA  : out std_logic_vector (2 downto 0);
+          ForwardB  : out std_logic_vector (2 downto 0);
+          ForwardC  : out std_logic_vector (2 downto 0);
+          ForwardD  : out std_logic);
   end component;
   
   --------------------------------------------------------------------
   -- Signals
   --------------------------------------------------------------------
-  signal PC_SEL      : std_logic;
   signal OUTCOME     : std_logic;
-  signal PREDICT     : std_logic;
+  signal COND        : std_logic;
+  signal JL1         : std_logic;
+  signal JL2         : std_logic;
   signal RF_EN       : std_logic;
   signal FwdD        : std_logic;
+  signal RegFwdD     : std_logic;
   signal Z_out       : std_logic;
-  signal COND_out    : std_logic;
   signal WORD        : std_logic_vector(1 downto 0);
   signal FwdA        : std_logic_vector(2 downto 0);
   signal FwdB        : std_logic_vector(2 downto 0);
   signal FwdC        : std_logic_vector(2 downto 0);
-  signal PC_write    : std_logic_vector(WIDTH-1 downto 0);
-  signal PC_in       : std_logic_vector(WIDTH-1 downto 0);
-  signal PC_out      : std_logic_vector(WIDTH-1 downto 0);
-  signal IR_in       : std_logic_vector(WIDTH-1 downto 0);
-  signal IR_out      : std_logic_vector(WIDTH-1 downto 0);
-  signal TARG_in     : std_logic_vector(WIDTH-1 downto 0);
-  signal TARG_out    : std_logic_vector(WIDTH-1 downto 0);
+  signal RegFWDA     : std_logic_vector(2 downto 0);
+  signal RegFWDB     : std_logic_vector(2 downto 0);
+  signal RegFWDC     : std_logic_vector(2 downto 0);
   signal NPC         : std_logic_vector(WIDTH-1 downto 0);
   signal MuxNPC_out  : std_logic_vector(WIDTH-1 downto 0);
   signal NPC1        : std_logic_vector(WIDTH-1 downto 0);
@@ -246,7 +215,6 @@ architecture STRUCTURAL of DLX_DP is
   signal IMM26ext    : std_logic_vector(WIDTH-1 downto 0);
   signal RegIMM_in   : std_logic_vector(WIDTH-1 downto 0);
   signal RegIMM_out  : std_logic_vector(WIDTH-1 downto 0);
-  signal PC1         : std_logic_vector(WIDTH-1 downto 0);
   signal MuxA_out    : std_logic_vector(WIDTH-1 downto 0);
   signal MuxB_out    : std_logic_vector(WIDTH-1 downto 0);
   signal A           : std_logic_vector(WIDTH-1 downto 0);
@@ -274,10 +242,10 @@ architecture STRUCTURAL of DLX_DP is
   signal RS1         : std_logic_vector(LENGTH-1 downto 0);
   signal RS2         : std_logic_vector(LENGTH-1 downto 0);
   signal IMM16       : std_logic_vector((WIDTH/2)-1 downto 0);
-  signal DATAST16      : std_logic_vector((WIDTH/2)-1 downto 0);
-  signal DATAST8       : std_logic_vector((WIDTH/4)-1 downto 0);
-  signal DATALD16      : std_logic_vector((WIDTH/2)-1 downto 0);
-  signal DATALD8       : std_logic_vector((WIDTH/4)-1 downto 0);
+  signal DATAST16    : std_logic_vector((WIDTH/2)-1 downto 0);
+  signal DATAST8     : std_logic_vector((WIDTH/4)-1 downto 0);
+  signal DATALD16    : std_logic_vector((WIDTH/2)-1 downto 0);
+  signal DATALD8     : std_logic_vector((WIDTH/4)-1 downto 0);
   signal IMM26       : std_logic_vector(WIDTH-OPCODE-1 downto 0);
   
 begin
@@ -285,39 +253,16 @@ begin
   -------------------------------------------------------------------------------
   --                                  Stage 1                                  --
   -------------------------------------------------------------------------------
-  FLUSH  <= PC_SEL;
-  
-  -- Mux PC
-  MuxPC: MUX21_GENERIC
-    generic map(WIDTH)
-    port map(TARG_in, PC_write, PC_SEL, PC_in);
-  
-  -- Program Counter
-  RegPC: REGISTER_GENERIC
-    generic map(WIDTH)
-    port map(CLK, RST, IF_EN, PC_in, PC_out);   
-  
-  IROM_ADDR <= PC_out(iram_addr_size-1 downto 0);
-  
-  -- Instruction Register
-  RegIR: REGISTER_GENERIC
-    generic map(WIDTH)
-    port map(CLK, RST, IF_EN, IROM_DATA, IR_out);
-  
-  IR <= IR_out;
-  
-  -- Branch target buffer
-  BTB0: BTB
-    generic map(WIDTH, LENGTH)
-    port map (CLK, RST, IF_EN, JUMP, OUTCOME, PC_out, PC_write, TARG_in, TARG_out, PC_SEL, PREDICT);
   
   -- Nex Program Counter Increment
-  NPC <= std_logic_vector(unsigned(PC_IN) + 1);
+  NPC <= std_logic_vector(unsigned(PC_OUT) + 1);
   
   -- Mux NPC
   MuxNPC: MUX21_GENERIC
     generic map(WIDTH)
-    port map(NPC, TARG_out, PREDICT, MuxNPC_out);
+    port map(NPC, MuxJR_out, OUTCOME, MuxNPC_out);
+  
+  PC_IN <= MuxNPC_out;
   
   -- Next Program Counter
   RegNPC: REGISTER_GENERIC
@@ -328,18 +273,12 @@ begin
   --                                  Stage 2                                  --
   -------------------------------------------------------------------------------
   
-  RD      <= IR_out(r3_up downto r3_down) when (IR_out(opcode_up downto opcode_down) = RTYPE)   else
-             (others => '1')              when (IR_out(opcode_up downto opcode_down) = J_JAL)   else
-             (others => '1')              when (IR_out(opcode_up downto opcode_down) = J_JALR)  else
-             IR_out(r2_up downto r2_down);            
-  RS1     <= IR_out(r1_up downto r1_down); 
-  RS2     <= IR_out(r2_up downto r2_down) when (IR_out(opcode_up downto opcode_down) = RTYPE)   else
-             IR_out(r2_up downto r2_down) when (IR_out(opcode_up downto opcode_down) = I_SW)    else
-             (others => '0');
-  IMM16   <= (others => '0')              when (IR_out(opcode_up downto opcode_down) = J_JALR)  else 
-             (others => '0')              when (IR_out(opcode_up downto opcode_down) = J_JAL)   else
-             IR_out(inp2_up downto inp2_down);
-  IMM26   <= IR_out(opcode_down-1 downto 0);
+  RD      <= IR_OUT(r3_up downto r3_down) when (IR_OUT(opcode_up downto opcode_down) = RTYPE)   else
+             IR_OUT(r2_up downto r2_down);            
+  RS1     <= IR_OUT(r1_up downto r1_down); 
+  RS2     <= IR_OUT(r2_up downto r2_down);
+  IMM16   <= IR_OUT(inp2_up downto inp2_down);
+  IMM26   <= IR_OUT(opcode_down-1 downto 0);
   
   RF_EN   <= RF_LATCH_EN or WB_EN;
   
@@ -348,12 +287,12 @@ begin
   -- Mux Register File Data-in
   MuxRFDATA: MUX21_GENERIC
     generic map(WIDTH)
-    port map(RetADDR, MuxWB_out, JUMP_LINK, RF_DATA);
+    port map(MuxWB_out, RetADDR, JL2, RF_DATA);
   
   -- Mux Register File Address-write
   MuxRFADDR: MUX21_GENERIC
     generic map(LENGTH)
-    port map((others => '1'), RD3, JUMP_LINK, RF_ADDR);
+    port map(RD3, (others => '1'), JL2, RF_ADDR);
   
   -- Register file
   RF0: REGISTER_FILE
@@ -374,11 +313,6 @@ begin
   MuxIMM: MUX21_GENERIC
     generic map(WIDTH)
     port map(IMM16ext, IMM26ext, IMM_SEL, RegIMM_in);
-  
-  -- Pipeline Register PC
-  RegPC1: REGISTER_GENERIC
-    generic map(WIDTH)
-    port map(CLK, RST, RegPC1_LATCH_EN, PC_out, PC1);
   
   -- Pipeline Register NPC
   RegNPC1: REGISTER_GENERIC
@@ -405,7 +339,6 @@ begin
     generic map(LENGTH)
     port map(CLK, RST, RegRD1_LATCH_EN, RD, RD1);
   
-  
   -------------------------------------------------------------------------------
   --                                  Stage 3                                  --
   ------------------------------------------------------------------------------- 
@@ -423,17 +356,17 @@ begin
   -- Mux Forwarding A
   MuxFWDA: MUX31_GENERIC
     generic map(WIDTH)
-    port map(MuxWB_out, RegALU1_out, MuxA_out, FwdA, A);
+    port map(MuxA_out, MuxWB_out, RegALU1_out, FwdA, A);
   
   -- Mux Forwarding B
   MuxFWDB: MUX31_GENERIC
     generic map(WIDTH)
-    port map(MuxWB_out, RegALU1_out, MuxB_out, FwdB, B);
+    port map(MuxB_out, MuxWB_out, RegALU1_out, FwdB, B);
       
   -- Mux Forwarding C
   MuxFWDC: MUX31_GENERIC
     generic map(WIDTH)
-    port map(MuxWB_out, RegALU1_out, RegA_out, FwdC, Z_in);
+    port map(RegA_out, MuxWB_out, RegALU1_out, FwdC, Z_in);
       
   -- Arithmetic Logic Unit
   ALU0: ALU
@@ -446,19 +379,26 @@ begin
     port map(Z_in, Z_out);
   
   -- Branch Condition
-  COND: BRANCH_UNIT
-    generic map(WIDTH)
-    port map(Z_out, EQ_COND, JUMP_EN, COND_out);
+  BU0: BRANCH_UNIT
+    port map(Z_out, JUMP_EN, JUMP_EQ, JUMP_REG, JUMP_LINK, COND);
       
-  -- Pipeline Register PC
-  RegPC2: REGISTER_GENERIC
+  -- Pipeline Register Operand A
+  RegA1: REGISTER_GENERIC
     generic map(WIDTH)
-    port map(CLK, RST, RegPC2_LATCH_EN, PC1, PC_write);
+    port map(CLK, RST, JUMP_REG, Z_in, RegA1_out);
+  
+  -- Pipeline Outcome
+  FFDBRANCH: FFD
+    port map(CLK, RST, IF_EN, COND, OUTCOME);
+      
+  -- Pipeline Jump&Link
+  FFDJL1: FFD
+    port map(CLK, RST, IF_EN, JUMP_LINK, JL1);
       
   -- Pipeline Register NPC
   RegNPC2: REGISTER_GENERIC
     generic map(WIDTH)
-    port map(CLK, RST, EX_EN, NPC2, NPC3);
+    port map(CLK, RST, JUMP_LINK, NPC2, NPC3);
       
   -- Pipeline Register ALU1
   RegALU1: REGISTER_GENERIC
@@ -474,33 +414,20 @@ begin
   RegRD2: REGISTER_GENERIC
     generic map(LENGTH)
     port map(CLK, RST, RegRD2_LATCH_EN, RD1, RD2);
-      
-  -- Pipeline Register Operand A
-  RegA1: REGISTER_GENERIC
-    generic map(WIDTH)
-    port map(CLK, RST, RegA1_LATCH_EN, RegA_out, RegA1_out);
-      
-  RegOUTCOME: FFD
-    port map(CLK, RST, JUMP_EN, COND_out, OUTCOME);
-  
-  -------------------------------------------------------------------------------
-  --                                  Stage 4                                  --
-  -------------------------------------------------------------------------------
   
   -- Mux Jump Register
   MuxJR: MUX21_GENERIC
     generic map(WIDTH)
     port map(RegALU1_out, RegA1_out, JUMP_REG, MuxJR_out);
       
-  -- Mux Jump
-  MuxJUMP: MUX21_GENERIC
-    generic map(WIDTH)
-    port map(NPC3, MuxJR_out, OUTCOME, TARG_in);
+  -------------------------------------------------------------------------------
+  --                                  Stage 4                                  --
+  -------------------------------------------------------------------------------
       
   -- Mux Cache Source
   MuxMEM: MUX21_GENERIC
     generic map(WIDTH)
-    port map(MuxWB_out, RegME_out, FwdD, STORE32);
+    port map(RegME_out, MuxWB_out, FwdD, STORE32);
       
   DATAST16 <= STORE32((word_size/2)-1 downto 0);
   
@@ -555,11 +482,15 @@ begin
   RegRD3: REGISTER_GENERIC
     generic map(LENGTH)
     port map(CLK, RST, RegRD3_LATCH_EN, RD2, RD3);
+      
+  -- Pipeline Jump&Link
+  FFDJL2: FFD
+    port map(CLK, RST, IF_EN, JL1, JL2);
   
   -- Pipeline Register NPC
   RegNPC3: REGISTER_GENERIC
     generic map(WIDTH)
-    port map(CLK, RST, EX_EN, NPC3, NPC_out);
+    port map(CLK, RST, RegNPC3_LATCH_EN, NPC3, NPC_out);
       
   -------------------------------------------------------------------------------
   --                                  Stage 5                                  --
@@ -569,11 +500,31 @@ begin
   MuxWB: MUX21_GENERIC
     generic map(WIDTH)
     port map(RegALU2_out, RegLMD_out, MuxWB_SEL, MuxWB_out);
-      
+  
   -- Forwarding Control Unit
   FU0: FORWARDING_UNIT
-    generic map(WIDTH, LENGTH)
-    port map(CLK, RST, RS1, RS2, RD1, RD2, RF_WE_EX, RF_WE_MEM, FwdA, FwdB, FwdC, FwdD);
+    generic map(LENGTH)
+    port map(RS1, RS2, RD1, RD2, RF_WE_EX, RF_WE_MEM, regFWDA, regFWDB, regFWDC, regFWDD);  
+      
+  -- Pipeline Register NPC
+  RegFA: REGISTER_GENERIC
+    generic map(3)
+    port map(CLK, RST, IF_EN, RegFWDA, FwdA);
+      
+  -- Pipeline Register NPC
+  RegFB: REGISTER_GENERIC
+    generic map(3)
+    port map(CLK, RST, IF_EN, RegFWDB, FwdB);
+      
+  -- Pipeline Register NPC
+  RegFC: REGISTER_GENERIC
+    generic map(3)
+    port map(CLK, RST, IF_EN, RegFWDC, FwdC);
   
+  -- Pipeline Jump&Link
+  FFDFD: FFD
+    port map(CLK, RST, IF_EN, RegFWDD, FwdD);
+
 end architecture;
+
 

@@ -22,19 +22,11 @@ package GLOBALS is
   constant radix_size        : integer := 4;
   constant dram_addr_size    : integer := 12;
   constant iram_addr_size    : integer := 12;
-  constant btb_size          : integer := 5;
-  constant btb_field         : integer := 66; -- (PC+TARGET+COUNTER)
-  constant pc_up             : integer := 65;
-  constant pc_down           : integer := 34;
-  constant target_up         : integer := 33;
-  constant target_down       : integer := 2;
-  constant counter_up        : integer := 1;
-  constant counter_down      : integer := 0;
   
   -- Control Unit constants
   constant op_size           : integer := 6;
   constant function_size     : integer := 11;
-  constant control_word_size : integer := 37;
+  constant control_word_size : integer := 33;
   constant opcode_up         : integer := 31;
   constant opcode_down       : integer := 26;
   constant r1_up             : integer := 25;
@@ -48,18 +40,12 @@ package GLOBALS is
   constant func_up           : integer := 10;
   constant func_down         : integer := 0;
   
-  -- NOP instruction -> OPCODE field
-  constant	NOP	    : std_logic_vector(op_size - 1 downto 0) :=  "010101";		-- (0x15)
-  -- J-Type instruction -> OPCODE field
+  -- Instruction set
+  constant RTYPE   : std_logic_vector(op_size - 1 downto 0) :=  "000000";  -- (0x00)
   constant	J	      : std_logic_vector(op_size - 1 downto 0) :=  "000010";		-- (0x02)
   constant	J_JAL	  : std_logic_vector(op_size - 1 downto 0) :=  "000011";		-- (0x03)
   constant	J_BEQZ	 : std_logic_vector(op_size - 1 downto 0) :=  "000100";		-- (0x04)
-  constant	J_BNEZ	 : std_logic_vector(op_size - 1 downto 0) :=  "000101";		-- (0x05)
-  constant	J_JR    : std_logic_vector(op_size - 1 downto 0) :=  "010010";		-- (0x12)
-  constant	J_JALR	 : std_logic_vector(op_size - 1 downto 0) :=  "010011";		-- (0x13)
-  -- R-Type instruction -> OPCODE field
-  constant RTYPE   : std_logic_vector(op_size - 1 downto 0) :=  "000000";  -- Register-to-register operation
-  -- I-Type instruction -> OPCODE field
+  constant	J_BNEZ	 : std_logic_vector(op_size - 1 downto 0) :=  "000101";		-- (0x05) 
   constant	I_ADDI		: std_logic_vector(op_size - 1 downto 0) :=  "001000";		-- (0x08)
   constant	I_ADDUI : std_logic_vector(op_size - 1 downto 0) :=  "001001";		-- (0x09)
   constant	I_SUBI		: std_logic_vector(op_size - 1 downto 0) :=  "001010";		-- (0x0A)
@@ -68,9 +54,10 @@ package GLOBALS is
   constant	I_ORI		 : std_logic_vector(op_size - 1 downto 0) :=  "001101";		-- (0x0D)
   constant	I_XORI		: std_logic_vector(op_size - 1 downto 0) :=  "001110";		-- (0x0E)
   constant	I_LHI	 	: std_logic_vector(op_size - 1 downto 0) :=  "001111";		-- (0x0F)
-  constant	I_RFE   : std_logic_vector(op_size - 1 downto 0) :=  "010000";		-- (0x10)
-  constant	I_TRAP	 : std_logic_vector(op_size - 1 downto 0) :=  "010001";		-- (0x11)
+  constant	J_JR    : std_logic_vector(op_size - 1 downto 0) :=  "010010";		-- (0x12)
+  constant	J_JALR	 : std_logic_vector(op_size - 1 downto 0) :=  "010011";		-- (0x13)
   constant	I_SLLI		: std_logic_vector(op_size - 1 downto 0) :=  "010100";		-- (0x14)
+  constant	NOP	    : std_logic_vector(op_size - 1 downto 0) :=  "010101";		-- (0x15)
   constant	I_SRLI		: std_logic_vector(op_size - 1 downto 0) :=  "010110";		-- (0x16)
   constant	I_SRAI		: std_logic_vector(op_size - 1 downto 0) :=  "010111";		-- (0x17)
   constant	I_SEQI		: std_logic_vector(op_size - 1 downto 0) :=  "011000";		-- (0x18)

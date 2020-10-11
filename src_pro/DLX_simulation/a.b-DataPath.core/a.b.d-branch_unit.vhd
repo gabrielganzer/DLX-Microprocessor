@@ -15,16 +15,21 @@ use ieee.std_logic_1164.all;
 use work.globals.all;
 
 entity BRANCH_UNIT is
-  generic(WIDTH : integer := word_size);
-  port( Z       : in std_logic;	-- Zero? Block Result
-        EQ_COND : in std_logic; -- 1 for BEQZ, 0 for BNEZ
-        JUMP_EN : in std_logic;
-        BRANCH  : out std_logic);
+  port(Z         : in std_logic; -- Zero? Block Result
+       JUMP_EN   : in std_logic; -- 1 J, 0 otherwise
+       JUMP_EQ   : in std_logic; -- 1 BEQZ, 0 BNEZ
+       JUMP_REG  : in std_logic; -- 1 JR and JALR, 0 otherwise
+       JUMP_LINK : in std_logic; -- 1 JAL and JALR, 0 otherwise
+       BRANCH    : out std_logic);
 end entity;
 
 architecture RTL of BRANCH_UNIT is
+  signal BEQ   : std_logic;
+  signal JUMP  : std_logic;
 begin
- 
-  BRANCH <= (Z xnor EQ_COND) and JUMP_EN;
+  
+  BEQ    <= (Z xnor JUMP_EQ);
+  JUMP   <= BEQ or JUMP_REG or JUMP_LINK;
+  BRANCH <= JUMP_EN and JUMP;
 
 end architecture;

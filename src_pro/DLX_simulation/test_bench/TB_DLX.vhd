@@ -23,7 +23,6 @@ architecture TESTBENCH of DLX_TB is
     generic (WIDTH     : integer := word_size);
     port (CLK               : in std_logic;
           RST               : in std_logic;
-          IROM_EN				       : out std_logic;
 		      IROM_ADDR   	     : out std_logic_vector(iram_addr_size-1 downto 0);
 		      IROM_DATA				     : in std_logic_vector(WIDTH-1 downto 0);
 		      DRAM_EN		         : out std_logic;
@@ -38,15 +37,15 @@ architecture TESTBENCH of DLX_TB is
   	 generic (FILE_PATH   : string;
 		         ENTRIES		   : integer := 128;
 		         WIDTH       : integer := 32);
-  	 port (CS					  : in std_logic;
-  	       OE				    : in std_logic;
-  		      ADDR   				 : in std_logic_vector((log2(ENTRIES))-1 downto 0);
-  		      DATA				    : out std_logic_vector(WIDTH-1 downto 0));
+  	 port (CS			: in std_logic;
+  		      ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
+  		      DATA	: out std_logic_vector(WIDTH-1 downto 0));
   end component;
   
   -- DRAM
   component SDRAM
-	  generic (FILE_PATH       : string;
+	  generic (FILE_READ       : string;
+	           FILE_PATH       : string;
 		         ENTRIES         : integer := 128;
 		         WIDTH           : integer := 32);
 	  port (CLK  : in std_logic;
@@ -80,20 +79,22 @@ begin
   ----------------------------------------------------------------
   UUT: DLX
     generic map (word_size)
-    port map (s_CLK, s_RST, s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DATA_OUT, s_DRAM_DATA_IN);
+    port map (s_CLK, s_RST, s_IRAM_ADDR, s_IRAM_DATA, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DATA_OUT, s_DRAM_DATA_IN);
       
   --------------------------------------------------------------------
   -- IRAM (Read-Only)
   --------------------------------------------------------------------   
   IRAM: ROM
-    generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/LoadStore.asm.mem", 2**iram_addr_size, word_size)
-    port map (s_RST, s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA);
+    generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/JumpAndLink.asm.mem", 2**iram_addr_size, word_size)
+    port map (s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA);
   
   --------------------------------------------------------------------
   -- DRAM
   --------------------------------------------------------------------
   DRAM: SDRAM
-	 generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/hex_sdram.txt", 2**dram_addr_size, word_size)
+	 generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/hex_load.txt", 
+	             "Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/hex_sdram.txt",
+	             2**dram_addr_size, word_size)
 	 port map (s_CLK, s_RST, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DATA_IN, s_DRAM_DATA_OUT);
 
   -- Clock Process
@@ -106,6 +107,6 @@ begin
 	end process;
 
   -- Reset
-  s_RST <= '0', '1' after 0.6 ns;
+  s_RST <= '0', '1' after 1.4 ns;
 
 end architecture;
