@@ -202,7 +202,7 @@ begin
     generic map(WIDTH)
     port map(CLK, RST, w_IF_EN, IROM_DATA, IR_OUT);
   
-  w_IR <= IR_OUT when w_FLUSH = '0' else (others => '0');   
+  w_IR <= IR when w_FLUSH = '0' else (others => '0');   
   --------------------------------------------------------------------
   -- DRAM
   --------------------------------------------------------------------

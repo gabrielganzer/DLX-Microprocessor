@@ -535,7 +535,7 @@ begin
   
   -- Pipeline Jump&Link
   FFDFD: FFD
-    port map(CLK, RST, ID_EN, RegFWDD, FwdD);
+    port map(CLK, RST, IDD_EN, RegFWDD, FwdD);
 
 end architecture;
 

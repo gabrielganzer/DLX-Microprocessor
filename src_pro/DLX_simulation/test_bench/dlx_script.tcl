@@ -51,7 +51,7 @@ add wave -group ControlUnit sim:/dlx_tb/uut/cu/*
 ################################## DataPath ##################################
 add wave -group DataPath -group PC sim:/dlx_tb/uut/pc/*
 add wave -group DataPath -group IR sim:/dlx_tb/uut/ir/*
-add wave -group DataPath -group MudNPC sim:/dlx_tb/uut/dp/muxnpc/*
+add wave -group DataPath -group MuxNPC sim:/dlx_tb/uut/dp/muxnpc/*
 add wave -group DataPath -group RegNPC sim:/dlx_tb/uut/dp/regnpc/*
 add wave -group DataPath -group MuxRFDATA sim:/dlx_tb/uut/dp/muxrfdata/*
 add wave -group DataPath -group MuxRADDR sim:/dlx_tb/uut/dp/muxrfaddr/*
@@ -63,6 +63,7 @@ add wave -group DataPath -group RegA sim:/dlx_tb/uut/dp/rega/*
 add wave -group DataPath -group RegB sim:/dlx_tb/uut/dp/regb/*
 add wave -group DataPath -group RegIMM sim:/dlx_tb/uut/dp/regimm/*
 add wave -group DataPath -group RegRD1 sim:/dlx_tb/uut/dp/regrd1/*
+add wave -group DataPath -group RegNPC1 sim:/dlx_tb/uut/dp/regnpc1/*
 add wave -group DataPath -group MuxA sim:/dlx_tb/uut/dp/muxa/*
 add wave -group DataPath -group MuxB sim:/dlx_tb/uut/dp/muxb/*
 add wave -group DataPath -group FwdA sim:/dlx_tb/uut/dp/muxfwda/*
@@ -74,6 +75,7 @@ add wave -group DataPath -group BU0 sim:/dlx_tb/uut/dp/bu0/*
 add wave -group DataPath -group RegA1 sim:/dlx_tb/uut/dp/rega1/*
 add wave -group DataPath -group FFBranch sim:/dlx_tb/uut/dp/ffdbranch/*
 add wave -group DataPath -group FFJL1 sim:/dlx_tb/uut/dp/ffdjl1/*
+add wave -group DataPath -group FFJREG sim:/dlx_tb/uut/dp/ffdjreg/*
 add wave -group DataPath -group RegNPC2 sim:/dlx_tb/uut/dp/regnpc2/*
 add wave -group DataPath -group RegALU1 sim:/dlx_tb/uut/dp/regalu1/*
 add wave -group DataPath -group RegME sim:/dlx_tb/uut/dp/regme/*
@@ -100,6 +102,6 @@ add wave -group DRAM sim:/dlx_tb/dram/*
 # Set unsigned as DEFAULT radix
 radix -hex
 # Run simulation
-run 45 ns
+run 58 ns
 # Print postscript waveform
 #write wave p4adder.ps -start 0 -end 230000 -perpage 230000

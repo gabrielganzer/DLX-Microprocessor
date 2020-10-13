@@ -88,6 +88,7 @@ begin
   IR_opcode <= IR_IN(opcode_up downto opcode_down);
   IR_func   <= IR_IN(func_up downto func_down);
   -- FLush Logic
+  JUMP1     <= JUMP;
   FLUSH     <= JUMP1 or JUMP2 or JUMP3;
   -- Stage 1: Instruction Fetch (IF)
   IF_EN     <= RST when (CLK = '1' and CLK'event);
@@ -136,7 +137,6 @@ begin
         cw1 <= (others => '0');
         cw2 <= (others => '0');
         cw3 <= (others => '0');
-        JUMP1   <= '0';
         JUMP2   <= '0';
         JUMP3   <= '0';
         aluOpcode1 <= nopOp; 
@@ -144,7 +144,6 @@ begin
         cw1 <= cw(control_word_size-9 downto 0);
         cw2 <= cw1(control_word_size-18 downto 0);
         cw3 <= cw2(control_word_size-31 downto 0);
-        JUMP1   <= JUMP;
         JUMP2   <= JUMP1;
         JUMP3   <= JUMP2;
         aluOpcode1 <= aluOpcode;

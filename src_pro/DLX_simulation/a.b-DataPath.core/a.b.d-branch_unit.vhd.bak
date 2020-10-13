@@ -25,6 +25,7 @@ end entity;
 
 architecture RTL of BRANCH_UNIT is
   signal BEQ   : std_logic;
+  signal JUMP  : std_logic;
 begin
   
   BEQ    <= (Z xnor JUMP_EQ);

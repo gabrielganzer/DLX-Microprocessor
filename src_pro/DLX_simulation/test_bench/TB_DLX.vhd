@@ -85,7 +85,7 @@ begin
   -- IRAM (Read-Only)
   --------------------------------------------------------------------   
   IRAM: ROM
-    generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/JumpAndLink.asm.mem", 2**iram_addr_size, word_size)
+    generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/all_general_test.asm.mem", 2**iram_addr_size, word_size)
     port map (s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA);
   
   --------------------------------------------------------------------
