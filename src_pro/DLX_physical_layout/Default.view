@@ -6,7 +6,7 @@ create_rc_corner -name low -cap_table $MycapTable -T {240} -preRoute_res {1.0} -
 create_library_set -name libsTYP -timing $MyTimingLibNom
 create_library_set -name libsWC -timing $MyTimingLibSlow
 create_library_set -name libsBC -timing $MyTimingLibFast
-create_constraint_mode -name coherent-synthesis -sdc_files {dlx_gated.sdc}
+create_constraint_mode -name coherent-synthesis -sdc_files {dlx.sdc}
 create_delay_corner -name std-typ -library_set {libsTYP} -rc_corner {standard}
 create_delay_corner -name ht-wc -library_set {libsWC} -rc_corner {high}
 create_delay_corner -name lt-bc -library_set {libsBC} -rc_corner {low}
@@ -14,3 +14,4 @@ create_analysis_view -name default -constraint_mode {coherent-synthesis} -delay_
 create_analysis_view -name worst -constraint_mode {coherent-synthesis} -delay_corner {ht-wc}
 create_analysis_view -name best -constraint_mode {coherent-synthesis} -delay_corner {lt-bc}
 set_analysis_view -setup {default} -hold {default}
+

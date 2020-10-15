@@ -1,0 +1,4 @@
+Gate area 0.7980 um^2
+Level 0 Module DLX_WIDTH32                              Gates=     19117 Cells=    8155 Area=   15255.4 um^2
+Level 1 Module DP/ALU0                                  Gates=3432       Cells=1884     Area=    2738.7 um^2
+Level 1 Module DP/RF0                                   Gates=10495      Cells=4087     Area=    8375.0 um^2

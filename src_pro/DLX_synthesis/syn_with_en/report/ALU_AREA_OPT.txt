@@ -1,0 +1,29 @@
+ 
+****************************************
+Report : area
+Design : ALU_WIDTH32_RADIX4_OPCODE6
+Version: F-2011.09-SP3
+Date   : Thu Oct 15 17:25:57 2020
+****************************************
+
+Information: Updating design information... (UID-85)
+Library(s) Used:
+
+    NangateOpenCellLibrary (File: /home/mariagrazia.graziano/do/libnangate/NangateOpenCellLibrary_typical_ecsm.db)
+
+Number of ports:                          101
+Number of nets:                          1975
+Number of cells:                         1797
+Number of combinational cells:           1578
+Number of sequential cells:               219
+Number of macros:                           0
+Number of buf/inv:                        282
+Number of references:                      36
+
+Combinational area:       2057.510017
+Noncombinational area:     582.540019
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:          2640.050036
+Total area:                 undefined
+1

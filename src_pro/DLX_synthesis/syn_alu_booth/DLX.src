@@ -1,0 +1,68 @@
+##############################################################
+exec mkdir -p work
+exec mkdir -p report
+analyze -library WORK -format vhdl {000-globals.vhd}
+analyze -library WORK -format vhdl {01-fa.vhd}
+analyze -library WORK -format vhdl {01-generic_mux21.vhd}
+analyze -library WORK -format vhdl {01-generic_mux31.vhd}
+analyze -library WORK -format vhdl {01-generic_rca.vhd}
+analyze -library WORK -format vhdl {01-generic_csa.vhd}
+analyze -library WORK -format vhdl {01-generic_register.vhd}
+analyze -library WORK -format vhdl {01-ffd.vhd}
+analyze -library WORK -format vhdl {01-ivx.vhd}
+analyze -library WORK -format vhdl {01-nand2.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.core/a.b.a.a.a-pg_network.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.core/a.b.a.a.b-g_block.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.core/a.b.a.a.c-pg_block.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.core/a.b.a.a.d-carry_select_block.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.core/a.b.a.a.e-sum_generator.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.core/a.b.a.a.f-sparse_tree.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.b-shifter.core/a.b.a.b.a-mask_generator.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.b-shifter.core/a.b.a.b.b-coarse_shift.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.b-shifter.core/a.b.a.b.c-fine_shift.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.c-logic.core/a.b.a.c.a-nand3.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.c-logic.core/a.b.a.c.b-nand4.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.f-multiplier.core/a.b.a.f.a-shifter_mult.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.f-multiplier.core/a.b.a.f.b-mux58_mult.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.a-adder.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.b-shifter.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.c-logic.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.d-comparator.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.e-zero_detector.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU.core/a.b.a.f-booth_multiplier_v1.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.a-ALU_v1.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.b-register_file.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.c-sign_extend.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.d-branch_unit.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.core/a.b.e-forwarding_unit.vhd}
+analyze -library WORK -format vhdl {a.a-CU_HW.vhd}
+analyze -library WORK -format vhdl {a.b-DataPath.vhd}
+analyze -library WORK -format vhdl {a-DLX.vhd}
+
+# Elaborate
+set_wire_load_model -name 5K_hvratio_1_4
+elaborate DLX -architecture STRUCTURAL -library WORK -parameters "WIDTH = 32"
+
+# Characterize ALU
+characterize  {DP/ALU0}
+current_design ALU_WIDTH32_RADIX4_OPCODE6
+compile_ultra
+report_area > report/ALU_AREA.txt
+report_timing > report/ALU_TIMING.txt
+report_power > report/ALU_POWER.txt
+set_max_delay 1.25 -from [all_inputs] -to [all_outputs]
+compile_ultra
+report_area > report/ALU_AREA_OPT.txt
+report_timing > report/ALU_TIMING_OPT.txt
+report_power > report/ALU_POWER_OPT.txt
+current_design DLX_WIDTH32
+
+# Clock gating
+set_clock_gating_style -minimum_bitwidth 1 -max_fanout 1024 -positive_edge_logic {latch and} -control_point before
+compile_ultra -gate_clock
+current_design DLX_WIDTH32
+report_clock_gating > report/REGS_GATED.txt
+report_area > report/DLX_AREA.txt
+report_timing > report/DLX_TIMING.txt
+report_power > report/DLX_POWER.txt
+

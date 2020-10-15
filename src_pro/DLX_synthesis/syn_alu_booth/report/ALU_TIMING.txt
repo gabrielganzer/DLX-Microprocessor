@@ -1,0 +1,102 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : ALU_WIDTH32_RADIX4_OPCODE6
+Version: F-2011.09-SP3
+Date   : Thu Oct 15 17:57:43 2020
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: s_A_MULT_reg[0]
+              (positive level-sensitive latch)
+  Endpoint: Y[31] (output port)
+  Path Group: (none)
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  ALU_WIDTH32_RADIX4_OPCODE6
+                     5K_hvratio_1_1        NangateOpenCellLibrary
+  Y[31]              5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  s_A_MULT_reg[0]/G (DLH_X1)               0.00       0.00 r
+  s_A_MULT_reg[0]/Q (DLH_X1)               0.12       0.12 f
+  U2196/ZN (NOR3_X1)                       0.13       0.25 r
+  U2198/ZN (NAND2_X1)                      0.06       0.31 f
+  U2199/ZN (NOR2_X1)                       0.09       0.40 r
+  U2201/ZN (NAND2_X1)                      0.06       0.46 f
+  U2202/ZN (NOR2_X1)                       0.09       0.55 r
+  U2204/ZN (NAND2_X1)                      0.06       0.61 f
+  U2205/ZN (NOR2_X1)                       0.09       0.69 r
+  U2207/ZN (NAND2_X1)                      0.06       0.75 f
+  U2208/ZN (NOR2_X1)                       0.09       0.84 r
+  U2210/ZN (NAND2_X1)                      0.06       0.90 f
+  U2211/ZN (NOR2_X1)                       0.08       0.98 r
+  U2213/ZN (NAND2_X1)                      0.04       1.02 f
+  U2214/ZN (INV_X1)                        0.04       1.06 r
+  U2215/ZN (NAND2_X1)                      0.04       1.10 f
+  U2216/ZN (NOR2_X1)                       0.12       1.22 r
+  U1893/ZN (INV_X1)                        0.09       1.31 f
+  U2217/ZN (NAND3_X1)                      0.08       1.38 r
+  U1890/ZN (INV_X1)                        0.07       1.45 f
+  U2328/ZN (AOI222_X1)                     0.12       1.57 r
+  U2330/ZN (NOR2_X1)                       0.04       1.62 f
+  U2337/ZN (AOI222_X1)                     0.11       1.72 r
+  U2365/CO (FA_X1)                         0.08       1.81 r
+  U2372/S (FA_X1)                          0.12       1.92 f
+  U2373/ZN (INV_X1)                        0.04       1.96 r
+  U2374/ZN (AOI222_X1)                     0.05       2.01 f
+  U2401/CO (FA_X1)                         0.10       2.11 f
+  U2406/CO (FA_X1)                         0.09       2.20 f
+  U2400/CO (FA_X1)                         0.09       2.29 f
+  U2390/CO (FA_X1)                         0.09       2.38 f
+  U2438/CO (FA_X1)                         0.11       2.49 f
+  U2477/CO (FA_X1)                         0.09       2.58 f
+  U2536/CO (FA_X1)                         0.10       2.69 f
+  U2555/CO (FA_X1)                         0.09       2.78 f
+  U2623/CO (FA_X1)                         0.11       2.89 f
+  U2668/CO (FA_X1)                         0.09       2.98 f
+  U2728/CO (FA_X1)                         0.09       3.07 f
+  U2775/CO (FA_X1)                         0.09       3.16 f
+  U2824/CO (FA_X1)                         0.11       3.27 f
+  U2879/CO (FA_X1)                         0.11       3.37 f
+  U2920/CO (FA_X1)                         0.09       3.46 f
+  U2923/ZN (XNOR2_X1)                      0.07       3.54 r
+  U1871/Z (XOR2_X2)                        0.19       3.72 r
+  U2968/S (FA_X1)                          0.16       3.88 f
+  U2969/S (FA_X1)                          0.13       4.01 f
+  U2970/S (FA_X1)                          0.14       4.16 r
+  U2937/ZN (INV_X1)                        0.02       4.18 f
+  U2958/CO (FA_X1)                         0.10       4.28 f
+  U2994/CO (FA_X1)                         0.11       4.39 f
+  U3032/CO (FA_X1)                         0.11       4.50 f
+  U3077/CO (FA_X1)                         0.10       4.60 f
+  U3112/CO (FA_X1)                         0.09       4.70 f
+  U3140/CO (FA_X1)                         0.10       4.80 f
+  U3172/CO (FA_X1)                         0.09       4.89 f
+  U3204/CO (FA_X1)                         0.10       5.00 f
+  U3234/CO (FA_X1)                         0.09       5.09 f
+  U3258/CO (FA_X1)                         0.09       5.18 f
+  U3260/ZN (XNOR2_X1)                      0.06       5.24 f
+  U3261/ZN (XNOR2_X1)                      0.06       5.30 f
+  U1834/Z (XOR2_X1)                        0.07       5.37 f
+  U1836/ZN (XNOR2_X1)                      0.06       5.42 f
+  U1837/Z (XOR2_X1)                        0.07       5.49 f
+  U1839/ZN (XNOR2_X1)                      0.06       5.55 f
+  U1841/ZN (XNOR2_X1)                      0.06       5.61 f
+  U1842/ZN (AOI22_X1)                      0.05       5.66 r
+  U1843/ZN (OAI211_X1)                     0.04       5.70 f
+  Y[31] (out)                              0.00       5.70 f
+  data arrival time                                   5.70
+  -----------------------------------------------------------
+  (Path is unconstrained)
+
+
+1

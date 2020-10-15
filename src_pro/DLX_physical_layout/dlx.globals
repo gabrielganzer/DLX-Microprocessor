@@ -19,7 +19,7 @@ set init_gnd_net {gnd}
 set init_mmmc_file {Default.view}
 set init_oa_search_lib {}
 set init_pwr_net {vdd}
-set init_verilog {dlx_gated.v}
+set init_verilog {dlx.v}
 set lsgOCPGainMult 1.000000
 
 set LEF_DIR /software/dk/nangate45/lef
@@ -33,6 +33,7 @@ set MyTimingLibSlow ${LIB_DIR}/NangateOpenCellLibrary_slow_ecsm.lib
 set MyTimingLibFast ${LIB_DIR}/NangateOpenCellLibrary_fast_ecsm.lib
 
 set MycapTable $LEF_DIR/captables/NCSU_FreePDK_45nm.capTbl
+
 
 
 

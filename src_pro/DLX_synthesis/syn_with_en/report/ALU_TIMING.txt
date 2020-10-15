@@ -1,0 +1,80 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : ALU_WIDTH32_RADIX4_OPCODE6
+Version: F-2011.09-SP3
+Date   : Thu Oct 15 17:25:35 2020
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: s_ADD_SUB_reg
+              (positive level-sensitive latch)
+  Endpoint: Y[0] (output port)
+  Path Group: (none)
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  ALU_WIDTH32_RADIX4_OPCODE6
+                     5K_hvratio_1_1        NangateOpenCellLibrary
+  Y[0]               5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  s_ADD_SUB_reg/G (DLH_X1)                 0.00       0.00 r
+  s_ADD_SUB_reg/Q (DLH_X1)                 0.11       0.11 r
+  U1862/ZN (INV_X1)                        0.09       0.20 f
+  U1861/Z (BUF_X1)                         0.11       0.30 f
+  U2541/ZN (AOI22_X1)                      0.11       0.41 r
+  U2542/ZN (OAI22_X1)                      0.05       0.46 f
+  U2543/ZN (INV_X1)                        0.03       0.49 r
+  U2545/ZN (AOI22_X1)                      0.03       0.52 f
+  U2639/CO (FA_X1)                         0.09       0.61 f
+  U2638/CO (FA_X1)                         0.11       0.72 f
+  U2546/ZN (AND2_X1)                       0.05       0.78 f
+  U2550/ZN (OAI221_X1)                     0.05       0.82 r
+  U2552/ZN (OAI221_X1)                     0.06       0.88 f
+  U2553/ZN (AOI222_X1)                     0.16       1.04 r
+  U2641/CO (FA_X1)                         0.09       1.13 r
+  U2555/ZN (INV_X1)                        0.02       1.15 f
+  U2557/ZN (AOI21_X1)                      0.04       1.20 r
+  U2561/ZN (OAI21_X1)                      0.04       1.23 f
+  U2562/ZN (AOI222_X1)                     0.14       1.37 r
+  U2642/CO (FA_X1)                         0.08       1.45 r
+  U2566/ZN (OAI21_X1)                      0.03       1.48 f
+  U2571/ZN (AOI21_X1)                      0.04       1.52 r
+  U2575/ZN (OAI21_X1)                      0.04       1.56 f
+  U2576/ZN (NAND4_X1)                      0.04       1.60 r
+  U2577/ZN (NOR2_X1)                       0.03       1.63 f
+  U1760/ZN (NAND3_X1)                      0.03       1.66 r
+  U1763/ZN (OAI211_X1)                     0.04       1.70 f
+  U1764/ZN (AOI22_X1)                      0.09       1.79 r
+  U2637/CO (FA_X1)                         0.08       1.87 r
+  U2578/ZN (INV_X1)                        0.02       1.89 f
+  U2580/ZN (AOI21_X1)                      0.04       1.93 r
+  U2582/ZN (OAI21_X1)                      0.04       1.97 f
+  U2583/ZN (AOI222_X1)                     0.16       2.13 r
+  U2636/S (FA_X1)                          0.11       2.24 r
+  U2646/ZN (NAND4_X1)                      0.04       2.27 f
+  U2647/ZN (NOR4_X1)                       0.10       2.37 r
+  U2651/ZN (NAND4_X1)                      0.05       2.42 f
+  U2652/ZN (NOR4_X1)                       0.10       2.52 r
+  U2659/ZN (NAND4_X1)                      0.05       2.57 f
+  U2686/ZN (NOR4_X1)                       0.14       2.71 r
+  U2687/ZN (INV_X1)                        0.03       2.73 f
+  U2688/ZN (NAND2_X1)                      0.03       2.77 r
+  U2689/ZN (AOI21_X1)                      0.03       2.79 f
+  U2690/ZN (AOI21_X1)                      0.05       2.84 r
+  U2735/ZN (OAI211_X1)                     0.03       2.87 f
+  Y[0] (out)                               0.00       2.87 f
+  data arrival time                                   2.87
+  -----------------------------------------------------------
+  (Path is unconstrained)
+
+
+1

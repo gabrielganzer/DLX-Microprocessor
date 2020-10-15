@@ -1,0 +1,71 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Thu Oct 15 17:52:51 2020
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: CU/JUMP1_reg
+              (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: DP/RegA/clk_gate_DOUT_reg/latch
+            (negative level-sensitive latch clocked by CLK)
+  Path Group: CLK
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  DLX_WIDTH32        5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  CU/JUMP1_reg/CK (DFF_X1)                                0.00       0.00 r
+  CU/JUMP1_reg/Q (DFF_X1)                                 0.09       0.09 r
+  U5548/ZN (NOR2_X1)                                      0.02       0.11 f
+  U3260/ZN (NAND2_X1)                                     0.04       0.16 r
+  U4634/ZN (NOR2_X1)                                      0.04       0.20 f
+  U3459/ZN (NAND2_X1)                                     0.04       0.24 r
+  U3447/ZN (AOI21_X1)                                     0.03       0.27 f
+  U3332/ZN (AOI211_X1)                                    0.10       0.37 r
+  U6026/ZN (NAND2_X1)                                     0.04       0.41 f
+  U3382/ZN (NOR2_X1)                                      0.04       0.45 r
+  U3238/ZN (AND3_X1)                                      0.06       0.51 r
+  U4681/ZN (NAND2_X1)                                     0.03       0.54 f
+  U3423/ZN (INV_X1)                                       0.03       0.57 r
+  U3427/ZN (NAND2_X1)                                     0.02       0.59 f
+  DP/RegA/clk_gate_DOUT_reg/EN (SNPS_CLOCK_GATE_HIGH_REGISTER_GENERIC_WIDTH32_10)
+                                                          0.00       0.59 f
+  DP/RegA/clk_gate_DOUT_reg/test_or/ZN (OR2_X1)           0.05       0.64 f
+  DP/RegA/clk_gate_DOUT_reg/latch/D (DLL_X1)              0.01       0.65 f
+  data arrival time                                                  0.65
+
+  clock CLK (fall edge)                                   0.36       0.36
+  clock network delay (ideal)                             0.00       0.36
+  DP/RegA/clk_gate_DOUT_reg/latch/GN (DLL_X1)             0.00       0.36 f
+  time borrowed from endpoint                             0.29       0.65
+  data required time                                                 0.65
+  --------------------------------------------------------------------------
+  data required time                                                 0.65
+  data arrival time                                                 -0.65
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+  Time Borrowing Information
+  --------------------------------------------------------------
+  CLK pulse width                                         0.36   
+  library setup time                                     -0.05   
+  --------------------------------------------------------------
+  max time borrow                                         0.31   
+  actual time borrow                                      0.29   
+  --------------------------------------------------------------
+
+
+1

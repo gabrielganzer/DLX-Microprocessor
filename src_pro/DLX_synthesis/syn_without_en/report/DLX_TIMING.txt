@@ -1,0 +1,47 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Thu Oct 15 17:52:15 2020
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: CU/cw3_reg[1]
+              (rising edge-triggered flip-flop)
+  Endpoint: DRAM_DATA_OUT[31]
+            (output port)
+  Path Group: (none)
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  DLX_WIDTH32        5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  CU/cw3_reg[1]/CK (DFF_X1)                0.00       0.00 r
+  CU/cw3_reg[1]/QN (DFF_X1)                0.15       0.15 r
+  U3300/ZN (INV_X1)                        0.11       0.25 f
+  U3629/ZN (AOI22_X1)                      0.13       0.38 r
+  U4665/ZN (INV_X1)                        0.03       0.42 f
+  U5734/ZN (AOI22_X1)                      0.07       0.48 r
+  U5736/ZN (NOR2_X1)                       0.05       0.54 f
+  U5747/ZN (AOI21_X1)                      0.07       0.61 r
+  U5748/ZN (OAI21_X1)                      0.04       0.64 f
+  U3299/ZN (NAND2_X1)                      0.12       0.76 r
+  U5780/ZN (OAI211_X1)                     0.06       0.82 f
+  DRAM_DATA_OUT[31] (out)                  0.00       0.82 f
+  data arrival time                                   0.82
+  -----------------------------------------------------------
+  (Path is unconstrained)
+
+
+1
