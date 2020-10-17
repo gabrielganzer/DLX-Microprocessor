@@ -1,0 +1,72 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Fri Oct 16 16:23:38 2020
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: CU/JUMP3_reg
+              (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: DP/RF0/clk_gate_REGISTERS_reg[6]/latch
+            (negative level-sensitive latch clocked by CLK)
+  Path Group: CLK
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  DLX_WIDTH32        5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  CU/JUMP3_reg/CK (DFF_X1)                                0.00       0.00 r
+  CU/JUMP3_reg/Q (DFF_X1)                                 0.09       0.09 r
+  U2686/ZN (NOR2_X1)                                      0.02       0.11 f
+  U2791/ZN (AND2_X2)                                      0.05       0.16 f
+  U2504/ZN (AND2_X2)                                      0.05       0.22 f
+  U1426/Z (BUF_X1)                                        0.04       0.26 f
+  U1401/ZN (NAND3_X1)                                     0.03       0.30 r
+  U2577/ZN (AND2_X1)                                      0.04       0.34 r
+  U2845/ZN (NAND2_X1)                                     0.02       0.36 f
+  U2625/ZN (NOR2_X1)                                      0.04       0.40 r
+  U2624/ZN (NAND2_X1)                                     0.04       0.44 f
+  DP/RF0/EN (REGISTER_FILE_WIDTH32_LENGTH5)               0.00       0.44 f
+  DP/RF0/U35/ZN (NAND2_X1)                                0.07       0.52 r
+  DP/RF0/U204/ZN (OAI21_X1)                               0.04       0.56 f
+  DP/RF0/clk_gate_REGISTERS_reg[6]/EN (SNPS_CLOCK_GATE_HIGH_REGISTER_FILE_WIDTH32_LENGTH5_26)
+                                                          0.00       0.56 f
+  DP/RF0/clk_gate_REGISTERS_reg[6]/test_or/ZN (OR2_X1)
+                                                          0.05       0.62 f
+  DP/RF0/clk_gate_REGISTERS_reg[6]/latch/D (DLL_X1)       0.01       0.62 f
+  data arrival time                                                  0.62
+
+  clock CLK (fall edge)                                   0.29       0.29
+  clock network delay (ideal)                             0.00       0.29
+  DP/RF0/clk_gate_REGISTERS_reg[6]/latch/GN (DLL_X1)      0.00       0.29 f
+  time borrowed from endpoint                             0.25       0.54
+  data required time                                                 0.54
+  --------------------------------------------------------------------------
+  data required time                                                 0.54
+  data arrival time                                                 -0.62
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.08
+
+  Time Borrowing Information
+  --------------------------------------------------------------
+  CLK pulse width                                         0.29   
+  library setup time                                     -0.05   
+  --------------------------------------------------------------
+  max time borrow                                         0.25   
+  actual time borrow                                      0.25   
+  --------------------------------------------------------------
+
+
+1

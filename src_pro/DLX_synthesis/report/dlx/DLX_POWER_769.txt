@@ -1,0 +1,56 @@
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+ 
+****************************************
+Report : power
+        -analysis_effort low
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Fri Oct 16 16:25:01 2020
+****************************************
+
+
+Library(s) Used:
+
+    NangateOpenCellLibrary (File: /home/mariagrazia.graziano/do/libnangate/NangateOpenCellLibrary_typical_ecsm.db)
+
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+Design        Wire Load Model            Library
+------------------------------------------------
+DLX_WIDTH32            5K_hvratio_1_1    NangateOpenCellLibrary
+
+
+Global Operating Voltage = 1.1  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000ff
+    Time Units = 1ns
+    Dynamic Power Units = 1uW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+  Cell Internal Power  =   8.5179 mW   (75%)
+  Net Switching Power  =   2.7798 mW   (25%)
+                         ---------
+Total Dynamic Power    =  11.2976 mW  (100%)
+
+Cell Leakage Power     = 294.5289 uW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network    424.5506        2.1305e+03        3.3050e+03        2.5583e+03  (  22.07%)
+register       7.6290e+03           50.6776        1.1547e+05        7.7951e+03  (  67.24%)
+sequential        73.5967            5.7240        1.0949e+04           90.2699  (   0.78%)
+combinational    390.7138          592.8774        1.6481e+05        1.1484e+03  (   9.91%)
+--------------------------------------------------------------------------------------------------
+Total          8.5179e+03 uW     2.7798e+03 uW     2.9453e+05 nW     1.1592e+04 uW
+1

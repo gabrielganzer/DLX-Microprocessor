@@ -1,0 +1,20 @@
+ 
+****************************************
+Report : clocks
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Fri Oct 16 16:30:14 2020
+****************************************
+
+Attributes:
+    d - dont_touch_network
+    f - fix_hold
+    p - propagated_clock
+    G - generated_clock
+    g - lib_generated_clock
+
+Clock          Period   Waveform            Attrs     Sources
+--------------------------------------------------------------------------------
+CLK              0.71   {0 0.357}                     {CLK}
+--------------------------------------------------------------------------------
+1

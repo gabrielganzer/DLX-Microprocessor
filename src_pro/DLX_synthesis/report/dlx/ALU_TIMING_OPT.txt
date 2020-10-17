@@ -1,0 +1,55 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : ALU_WIDTH32_RADIX4_OPCODE6
+Version: F-2011.09-SP3
+Date   : Fri Oct 16 16:19:25 2020
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: OP[1] (input port)
+  Endpoint: Y[17] (output port)
+  Path Group: default
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  OP[1]              5K_hvratio_1_1        NangateOpenCellLibrary
+  ALU_WIDTH32_RADIX4_OPCODE6
+                     5K_hvratio_1_1        NangateOpenCellLibrary
+  Y[17]              5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  input external delay                     0.00       0.00 f
+  OP[1] (in)                               0.00       0.00 f
+  U3647/ZN (INV_X2)                        0.06       0.06 r
+  U3637/ZN (NAND2_X1)                      0.05       0.11 f
+  U3636/ZN (INV_X1)                        0.05       0.15 r
+  U3634/ZN (AND2_X1)                       0.05       0.20 r
+  U3630/ZN (NOR2_X1)                       0.04       0.24 f
+  U3618/ZN (INV_X4)                        0.11       0.35 r
+  U3695/ZN (AND2_X2)                       0.13       0.48 r
+  U4320/ZN (NAND2_X1)                      0.08       0.56 f
+  U3620/ZN (INV_X1)                        0.09       0.65 r
+  U4393/ZN (AOI22_X1)                      0.05       0.70 f
+  U4399/ZN (NAND4_X1)                      0.03       0.73 r
+  Y[17] (out)                              0.00       0.73 r
+  data arrival time                                   0.73
+
+  max_delay                                0.74       0.74
+  output external delay                    0.00       0.74
+  data required time                                  0.74
+  -----------------------------------------------------------
+  data required time                                  0.74
+  data arrival time                                  -0.73
+  -----------------------------------------------------------
+  slack (MET)                                         0.01
+
+
+1

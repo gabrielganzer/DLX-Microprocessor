@@ -1,0 +1,50 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : DLX_WIDTH32
+Version: F-2011.09-SP3
+Date   : Fri Oct 16 16:24:33 2020
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: DP/RF0/clk_gate_REGISTERS_reg[19]/latch
+              (negative level-sensitive latch clocked by CLK)
+  Endpoint: DP/RF0/clk_gate_REGISTERS_reg[19]/main_gate
+            (gating element for clock CLK)
+  Path Group: CLK
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  DLX_WIDTH32        5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock CLK (fall edge)                                   0.33       0.33
+  clock network delay (ideal)                             0.00       0.33
+  time given to startpoint                                0.28       0.61
+  DP/RF0/clk_gate_REGISTERS_reg[19]/latch/D (DLL_X1)      0.00       0.61 f
+  DP/RF0/clk_gate_REGISTERS_reg[19]/latch/Q (DLL_X1)      0.06       0.67 f
+  DP/RF0/clk_gate_REGISTERS_reg[19]/main_gate/A1 (AND2_X1)
+                                                          0.01       0.68 f
+  data arrival time                                                  0.68
+
+  clock CLK (rise edge)                                   0.67       0.67
+  clock network delay (ideal)                             0.00       0.67
+  DP/RF0/clk_gate_REGISTERS_reg[19]/main_gate/A2 (AND2_X1)
+                                                          0.00       0.67 r
+  clock gating setup time                                 0.00       0.67
+  data required time                                                 0.67
+  --------------------------------------------------------------------------
+  data required time                                                 0.67
+  data arrival time                                                 -0.68
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.01
+
+
+1
