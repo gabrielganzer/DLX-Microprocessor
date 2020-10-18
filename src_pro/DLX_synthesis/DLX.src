@@ -67,7 +67,6 @@ report_area > report/DLX_AREA.txt
 report_timing > report/DLX_TIMING.txt
 report_power > report/DLX_POWER.txt
 
-for {set i 0} {$i < 2} {incr i} {
 # Static Timing Analysis
 #0.588 cycle constraint
 create_clock -name "CLK" -period 0.588 CLK
@@ -104,7 +103,6 @@ compile_ultra -incremental
 report_area > report/DLX_AREA_0769.txt
 report_timing > report/DLX_TIMING_769.txt
 report_power > report/DLX_POWER_769.txt
-}
 
 create_clock -name "CLK" -period 0.714 CLK
 set_max_delay 0.714 -from [all_inputs] -to [all_outputs]
