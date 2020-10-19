@@ -3,8 +3,8 @@
 -- Company: Politecnico di Torino
 -- Design units: DLX
 -- Function: DLX processor
--- Input:
--- Output:
+-- Input: CLK, RST (1-bit); IROM_DATA, DRAM_DATA_IN (32-bit)
+-- Output: DRAM_RW DRAM_EN (1-bit); DRAM_DATA_OUT (32-bit); IROM_ADDR, DRAM_ADDR (N-bit)
 -- Architecture: structural
 -- Library/package: ieee.std_logic_ll64, work.globals
 -- Date: 12/08/2020

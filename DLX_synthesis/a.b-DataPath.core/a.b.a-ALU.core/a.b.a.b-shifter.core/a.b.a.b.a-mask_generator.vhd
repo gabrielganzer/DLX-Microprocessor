@@ -17,10 +17,8 @@ use ieee.std_logic_1164.all;
 
 entity MASK_GENERATOR is
   port (
-    -- Inputs
     op     : in std_logic_vector(31 downto 0);  -- Operand to be shifted
     sel    : in std_logic_vector(1 downto 0);   -- Right, Left, Logic, Arithmetic
-    -- Outputs
     mask00 : out std_logic_vector(38 downto 0); -- Mask shifted by 8 positions
     mask08 : out std_logic_vector(38 downto 0); -- Mask shifted by 16 positions
     mask16 : out std_logic_vector(38 downto 0)  -- Mask shifted by 32 positions

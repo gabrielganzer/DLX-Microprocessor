@@ -3,13 +3,11 @@
 -- Company: Politecnico di Torino
 -- Design units: REGISTER_FILE
 -- Function: implementation of a simple register file without windowing
--- Inputs: CLK, RST, EN, RD1, RD2, WR: (1-bit) control signals
---         DATAIN: (64-bit) data in
---         ADD_RD1, ADD_RD2, ADD_WR: (5-bit) addresses
--- Outputs: OUT1, OUT2: (64-bit) data out
+-- Inputs: CLK, RST, EN, RD1, RD2, WR (1-bit); DATAIN (32-bit)
+--         ADD_RD1, ADD_RD2, ADD_WR: (5-bit)
+-- Outputs: OUT1, OUT2 (32-bit)
 -- Architecture: behavioral
--- Library/package: ieee.std_logic_ll64, ieee.numeric_std
---                  work.constants, work.functions
+-- Library/package: ieee.std_logic_ll64, ieee.numeric_std, work.globals
 -- Date: 05/05/2020
 ----------------------------------------------------------------------------------
 library ieee;
@@ -74,8 +72,10 @@ begin
     if (EN = '1') then
       if (RD1 = '1') then
         if (WR = '1' and ADD_RD1 = ADD_WR) then
+          -- Bypass from input if same address and write enable
           OUT1 <= DATAIN;
         else
+          -- Read from registers otherwise
           OUT1 <= REGISTERS(to_integer(unsigned(ADD_RD1)));
         end if;
       end if;

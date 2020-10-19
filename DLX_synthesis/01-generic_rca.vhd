@@ -2,7 +2,7 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: RCA
--- Function: ripple-carry adder circuit
+-- Function: Ripple-carry adder circuit
 -- Input: A,B (4-bit), Ci (1-bit)
 -- Output: S (4-bit), Co (1-bit)
 -- Architecture: structural

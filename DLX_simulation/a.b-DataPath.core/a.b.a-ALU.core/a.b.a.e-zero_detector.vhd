@@ -6,7 +6,7 @@
 -- Input:  A (32-bit)
 -- Output: Y (1-bit)
 -- Architecture: rtl
--- Library/package: ieee.std_logic_ll64
+-- Library/package: ieee.std_logic_ll64, ieee.numeric_std, work.globals
 -- Date: 05/08/2020
 ----------------------------------------------------------------------------------
 library ieee;

@@ -2,10 +2,10 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: IVX
--- Function: inverter gate
+-- Function: Inverter logic gate, for accurate placement
 -- Input: A (1-bit)
 -- Output: Y (1-bit)
--- Architecture: rtl
+-- Architecture: RTL
 -- Library/package: ieee.std_logic_ll64
 -- Date: 02/08/2020
 ----------------------------------------------------------------------------------

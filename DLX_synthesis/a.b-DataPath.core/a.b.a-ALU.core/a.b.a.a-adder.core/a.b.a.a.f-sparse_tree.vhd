@@ -2,14 +2,12 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: SPARSE_TREE
--- Function: PG Network structure
--- Input: A, B (N-bit), Ci_array (1-bit)
--- Output: Co (1-bit)
+-- Function: Sparse Tree network, used by Adder/Subtractor
+-- Input: A, B (N-bit), Ci (1-bit)
+-- Output: Co (N/4-bit)
 -- Architecture: structural
--- Library/package: ieee.std_logic_ll6RADIX, 
---		    work.CONSTANTS
---		    work.FUNCTIONS
--- Date: 1RADIX/0RADIX/2020
+-- Library/package: ieee.std_logic_1164, work.globals
+-- Date: 14/04/2020
 ----------------------------------------------------------------------------------
 library ieee;
 library work; 

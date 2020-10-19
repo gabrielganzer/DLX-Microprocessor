@@ -22,6 +22,7 @@ end entity;
 
 architecture RTL of FA is
 begin
+  -- Signal assigment
   S <= A xor B xor Ci;
   Co <= (A and B) or (B and Ci) or (A and Ci);  
 end architecture;

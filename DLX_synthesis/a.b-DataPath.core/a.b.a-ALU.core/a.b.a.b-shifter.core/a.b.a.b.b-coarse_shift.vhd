@@ -28,8 +28,7 @@ end entity;
 architecture BEHAVIORAL of COARSE_SHIFT is
 begin 
 
-  -- Select appropriate mask according to select signal, extracted
-  -- from the operand R2
+  -- Select appropriate mask according to select signal, extracted from the operand R2
   MASK_SELECTION: process(SEL, MASK00, MASK08, MASK16)
 	begin		
 		case SEL is

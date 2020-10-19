@@ -3,9 +3,9 @@
 -- Company: Politecnico di Torino
 -- Design units: DLX_CU
 -- Function: DLX control unit
--- Input:
--- Output:
--- Architecture: structural
+-- Input: CLK, RST (1-bit), IR_IN (32-bit)
+-- Output: Control Word Signals (32), ALU_OPCODE (N-bit), FLUSH (1-bit)
+-- Architecture: hard-wired
 -- Library/package: ieee.std_logic_ll64, work.globals
 -- Date: 12/08/2020
 ----------------------------------------------------------------------------------
@@ -70,9 +70,9 @@ architecture HARDWIRED of DLX_CU is
   signal IR_func   : std_logic_vector(function_size -1 downto 0);       -- Func part of IR when Rtype
   -- Shifted Control Word
   signal cw : std_logic_vector(control_word_size-1 downto 0);    -- Full Control Word
-  signal cw1 : std_logic_vector(control_word_size-9 downto 0);    -- 1st stage
-  signal cw2 : std_logic_vector(control_word_size-18 downto 0);    -- 2nd stage
-  signal cw3 : std_logic_vector(control_word_size-30 downto 0);   -- 3rd stage
+  signal cw1 : std_logic_vector(control_word_size-9 downto 0);   -- 1st stage
+  signal cw2 : std_logic_vector(control_word_size-18 downto 0);  -- 2nd stage
+  signal cw3 : std_logic_vector(control_word_size-30 downto 0);  -- 3rd stage
   -- Shifted ALU Opcode
   signal aluOpcode  : aluOp := nopOp; -- ALUOP defined in package
   signal aluOpcode1 : aluOp := nopOp; -- 1st stage
@@ -150,7 +150,8 @@ begin
       end if;
     end if;
   end process;
-
+  
+  -- Control Word Look-up-table
   CW_LUT: process(IR_opcode, IR_FUNC)
   begin
  	  case IR_opcode is
@@ -199,6 +200,7 @@ begin
 	 end case;
   end process;
 
+  -- Opcode Look-up-table and JUMP signal assigment
   OPCODE_LUT: process (IR_opcode, IR_func)
   begin
 	  case IR_opcode is

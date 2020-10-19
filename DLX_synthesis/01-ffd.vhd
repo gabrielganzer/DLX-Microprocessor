@@ -1,11 +1,10 @@
 ----------------------------------------------------------------------------------
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
--- Design units: REGISTER_GENERIC
--- Function: Generic Register (Synchronous reset, active-high enable)
--- Input: CLK, RST, EN (1-bit)
---        DIN (N-bit)
--- Output: DOUT (N-bit)
+-- Design units: FFD
+-- Function: D-Type Flip-Flop (Synchronous reset, active-high enable)
+-- Input: CLK, RST, EN, D (1-bit)
+-- Output: Q (1-bit)
 -- Architecture: behavioral
 -- Library/package: ieee.std_logic_ll64
 -- Date: 05/08/2020

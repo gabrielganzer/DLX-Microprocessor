@@ -2,8 +2,8 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: MUX21_GENERIC
--- Function: multiplexer 2x1 
--- Input: A, B (N-bit), SEL (1-bit)
+-- Function: Multiplexer 2x1 
+-- Input: S0, S1 (N-bit), SEL (1-bit)
 -- Output: Y (N-bit)
 -- Architecture: behavioral
 -- Library/package: ieee.std_logic_ll64

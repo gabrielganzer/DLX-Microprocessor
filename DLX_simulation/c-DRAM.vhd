@@ -1,12 +1,13 @@
 ----------------------------------------------------------------------------------
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
--- Design units: RWMEM
--- Function: Single-port RAM memory
--- Input:
--- Output:
+-- Design units: SDRAM
+-- Function: Dual-port SDRAM memory
+-- Input: CLK, RST, EN, RW (1-bit); ADDR, DIN (N-bit)
+-- Output: DOUT (N-bit)
 -- Architecture: behavioral
--- Library/package: ieee.std_logic_ll64, work.globals
+-- Library/package: ieee.std_logic_ll64, ieee.numeric_std, ieee.std_logic_textio
+--                  std.textio, work.globals
 -- Date: 12/08/2020
 ----------------------------------------------------------------------------------
 library ieee;

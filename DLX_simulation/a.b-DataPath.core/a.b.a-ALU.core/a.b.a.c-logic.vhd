@@ -15,10 +15,8 @@ use ieee.std_logic_1164.all;
 entity LOGIC is
   generic (WIDTH: integer := 32);
   port (
-    -- Inputs
     R1, R2         : in  std_logic_vector(WIDTH-1 downto 0); -- Operands
-    S0, S1, S2, S3 : in  std_logic; -- Operation select signal
-    -- Output
+    S0, S1, S2, S3 : in  std_logic;                          -- Operation select signal
     Y              : out std_logic_vector(WIDTH-1 downto 0)
   );
 end entity;

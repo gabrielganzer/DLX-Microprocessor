@@ -2,11 +2,11 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: CARRY_SELECT_BLOCK
--- Function: carry select block
+-- Function: Carry select block, used by Adder/Subtractor
 -- Input: A,B (4-bit), Ci (1-bit)
 -- Output: S (4-bit)
 -- Architecture: structural
--- Library/package: ieee.std_logic_ll64
+-- Library/package: ieee.std_logic_ll64, work.globals
 -- Date: 14/04/2020
 ----------------------------------------------------------------------------------
 library IEEE;

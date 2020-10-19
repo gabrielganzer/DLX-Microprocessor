@@ -18,10 +18,8 @@ use ieee.std_logic_1164.all;
 entity SHIFTER is
   generic (WIDTH: integer := 32);
   port (
-    -- Inputs
     R1, R2         : in  std_logic_vector(WIDTH-1 downto 0);
     SEL            : in std_logic_vector(1 downto 0);
-    -- Output
     Y              : out std_logic_vector(WIDTH-1 downto 0)
   );
 end entity;
@@ -59,7 +57,8 @@ architecture STRUCTURAL of SHIFTER is
   signal s3: std_logic_vector(2 downto 0);
 
 begin
-
+  
+  -- Select signal assigment from R2 operand
 	SEL_3: process(SEL, s3, R2, R1)
 	begin
 		case SEL is
@@ -69,7 +68,8 @@ begin
 		  when others => s3 <= "XXX";
 		end case;
 	end process;
-
+  
+  -- 3-level components instantion
   level_1 : MASK_GENERATOR port map(R1, SEL, m0, m8, m16);
   level_2 : COARSE_SHIFT   port map(R2(4 downto 3), m0, m8, m16, y2);
   level_3 : FINE_SHIFT     port map(y2, s3, Y);

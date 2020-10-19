@@ -2,7 +2,7 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: NAND2
--- Function: 2-input nand gate
+-- Function: 2-input nand logic gate, for accurate placement
 -- Input: A,B (1-bit)
 -- Output: Y (1-bit)
 -- Architecture: rtl
@@ -14,7 +14,7 @@ use ieee.std_logic_1164.all;
 
 entity NAND2 is
   port(
-    A,B : in  std_logic;
+    A, B : in  std_logic;
     Y 	: out std_logic
   );
 end entity;

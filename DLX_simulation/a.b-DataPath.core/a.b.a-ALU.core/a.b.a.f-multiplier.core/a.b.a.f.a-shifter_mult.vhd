@@ -2,9 +2,9 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: SHIFTER_MULT
--- Function: multiplexer 2x1 
--- Input: A, B (N-bit), SEL (1-bit)
--- Output: Y (N-bit)
+-- Function: Shift operand A by N positions, used by multiplier
+-- Input: A, (N-bit)
+-- Output: S1, S2, S3, S4 (N-bit)
 -- Architecture: RTL
 -- Library/package: ieee.std_logic_ll64
 -- Date: 14/04/2020

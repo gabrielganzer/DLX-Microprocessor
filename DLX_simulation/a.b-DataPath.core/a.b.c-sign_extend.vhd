@@ -3,9 +3,9 @@
 -- Company: Politecnico di Torino
 -- Design units: SIGN_EXTEND
 -- Function: N to M sign-entend combinational logic
--- Input:
--- Output:
--- Architecture: behavioral
+-- Input: A (N-bit), S (1-bit)
+-- Output: Y (M-bit)
+-- Architecture: RTL
 -- Library/package: ieee.std_logic_ll64, work.globals
 -- Date: 12/08/2020
 ----------------------------------------------------------------------------------

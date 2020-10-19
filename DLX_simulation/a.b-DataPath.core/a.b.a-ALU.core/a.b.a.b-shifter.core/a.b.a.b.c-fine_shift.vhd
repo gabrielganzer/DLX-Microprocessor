@@ -3,9 +3,9 @@
 -- Company: Politecnico di Torino
 -- Design units: FINE_SHIFT
 -- Function: T2 shifter 3rd level fine grain shift, bitwise
--- Input: op (39-bit), sel (3-bit)
--- Output: shifted (32-bit)
--- Architecture: structural
+-- Input: OP (39-bit), SEL (3-bit)
+-- Output: SHIFTED (32-bit)
+-- Architecture: behavioral
 -- Library/package: ieee.std_logic_ll64
 -- Date: 14/04/2020
 ----------------------------------------------------------------------------------
@@ -14,19 +14,16 @@ use ieee.std_logic_1164.all;
 
 entity FINE_SHIFT is
   port (
-    -- Inputs
-    op      : in std_logic_vector(38 downto 0); -- Operand to be shifted R1
-    sel     : in std_logic_vector(2 downto 0);  -- Number of bits to shift R2
-    -- Output
-    shifted : out std_logic_vector(31 downto 0) -- Result
+    OP      : in std_logic_vector(38 downto 0); -- Operand to be shifted R1
+    SEL     : in std_logic_vector(2 downto 0);  -- Number of bits to shift R2
+    SHIFTED : out std_logic_vector(31 downto 0) -- Result
   );
 end entity;
 
 architecture BEHAVIORAL of FINE_SHIFT is
 begin 
 
-  -- Shift bit by bit according to select signal, extracted
-  -- from the operand R2
+  -- Shift bit by bit according to select signal, extracted from the operand R2
   BITWISE_SHIFT: process(sel, op)
 	begin
 		case sel is

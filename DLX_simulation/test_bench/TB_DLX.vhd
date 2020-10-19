@@ -2,7 +2,7 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Function: DLX testbench
--- Library/package: ieee.std_logic_ll64, work.globals
+-- Library/package: ieee.std_logic_ll64, ieee.numeric_std, work.globals
 -- Date: 12/08/2020
 ----------------------------------------------------------------------------------
 library ieee;
@@ -85,15 +85,15 @@ begin
   -- IRAM (Read-Only)
   --------------------------------------------------------------------   
   IRAM: ROM
-    generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/jalr.asm.mem", 2**iram_addr_size, word_size)
+    generic map("Y:/Microelectronic_Systems/DLX-Project/DLX_simulation/test_bench/all_general_test.asm.mem", 2**iram_addr_size, word_size)
     port map (s_IRAM_EN, s_IRAM_ADDR, s_IRAM_DATA);
   
   --------------------------------------------------------------------
   -- DRAM
   --------------------------------------------------------------------
   DRAM: SDRAM
-	 generic map("Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/hex_load.txt", 
-	             "Y:/Microelectronic_Systems/DLX-Project/src_pro/DLX_simulation/test_bench/hex_sdram.txt",
+	 generic map("Y:/Microelectronic_Systems/DLX-Project/DLX_simulation/test_bench/hex_load.txt", 
+	             "Y:/Microelectronic_Systems/DLX-Project/DLX_simulation/test_bench/hex_sdram.txt",
 	             2**dram_addr_size, word_size)
 	 port map (s_CLK, s_RST, s_DRAM_EN, s_DRAM_RW, s_DRAM_ADDR, s_DRAM_DATA_IN, s_DRAM_DATA_OUT);
 

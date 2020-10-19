@@ -2,7 +2,7 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: NAND3
--- Function: 3-input nand gate
+-- Function: 3-input nand logic gate, used by Logic Unit
 -- Input: A,B,C (1-bit)
 -- Output: Y (1-bit)
 -- Architecture: structural

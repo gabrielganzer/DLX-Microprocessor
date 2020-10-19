@@ -2,8 +2,8 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: MUX58_MULT
--- Function: multiplexer 2x1 
--- Input: A, B (N-bit), SEL (1-bit)
+-- Function: Multiplexer 5x8, used by multiplier 
+-- Input: S0, S1, S2, S3, S4 (N-bit), SEL (3-bit)
 -- Output: Y (N-bit)
 -- Architecture: RTL
 -- Library/package: ieee.std_logic_ll64

@@ -3,17 +3,15 @@
 -- Company: Politecnico di Torino
 -- Design units: ALU
 -- Function: DLX arithmetic logic unit
--- Input: A, B (32-bit)
---        OP (6-bit)
+-- Input: A, B (32-bit), OP (6-bit)
 -- Output: Y (32-bit)
---         Co (1-bit)
 -- Architecture: structural
 -- Library/package: ieee.std_logic_ll64, work.globals
 -- Date: 12/08/2020
 ----------------------------------------------------------------------------------
-library IEEE;
+library ieee;
 library work;
-use IEEE.std_logic_1164.all;
+use ieee.std_logic_1164.all;
 use work.globals.all;
 
 entity ALU is

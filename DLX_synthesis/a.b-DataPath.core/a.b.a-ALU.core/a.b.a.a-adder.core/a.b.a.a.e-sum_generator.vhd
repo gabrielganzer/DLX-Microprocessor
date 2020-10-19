@@ -2,11 +2,11 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: SUM_GENERATOR
--- Function: Carry select-like sum generator circuit
--- Input: A, B (M-bit), Ci_array (M-bit)
+-- Function: Carry select-like sum generator, used by Adder/Subtractor
+-- Input: A, B (N-bit), Ci (N/4-bit)
 -- Output: S (N-bit)
 -- Architecture: structural
--- Library/package: ieee.std_logic_ll64
+-- Library/package: ieee.std_logic_ll64, work.globals
 -- Date: 14/04/2020
 ----------------------------------------------------------------------------------
 library IEEE;

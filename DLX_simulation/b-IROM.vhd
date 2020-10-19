@@ -3,13 +3,13 @@
 -- Company: Politecnico di Torino
 -- Design units: ROMEM
 -- Function: Single-port ROM memory
--- Input:
--- Output:
+-- Input: CS (1-bit); ADDR (N-bit)
+-- Output: DATA (N-bit)
 -- Architecture: behavioral
--- Library/package: ieee.std_logic_ll64, work.globals
+-- Library/package: ieee.std_logic_ll64, ieee.numeric_std, ieee.std_logic_textio
+--                  std.textio, work.globals
 -- Date: 12/08/2020
 ----------------------------------------------------------------------------------
-
 library ieee;
 library std;
 library work;
@@ -19,16 +19,13 @@ use ieee.std_logic_textio.all;
 use std.textio.all;
 use work.globals.all;
 
--- Instruction memory for DLX
--- Memory filled by a process which reads from a file
--- file name is "test.asm.mem"
 entity ROM is
 	generic (FILE_PATH   : string;
 		       ENTRIES		   : integer := 128;
 		       WIDTH       : integer := 32);
-	port (CS			: in std_logic; -- Active-high
-		    ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);
-		    DATA	: out std_logic_vector(WIDTH-1 downto 0));
+	port (CS			: in std_logic;                                     -- Chip-select, active-low
+		    ADDR : in std_logic_vector((log2(ENTRIES))-1 downto 0);  -- Address
+		    DATA	: out std_logic_vector(WIDTH-1 downto 0));          -- Data
 end entity;
 
 architecture BEHAVIORAL of ROM is
@@ -36,6 +33,7 @@ architecture BEHAVIORAL of ROM is
 	signal memory : ROM := (others => (others => '0'));
 begin
   
+  -- Write to memory content from input file
   WRITE: process
   		file mem_fp        : text;
 		variable fline     : line;

@@ -2,7 +2,7 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: PG_NETWORK
--- Function: PG Network structure
+-- Function: PG Network structure, used by Adder/Subtractor
 -- Input: A, B (N-bit), Ci_array (N-bit)
 -- Output: P, G (N-bit)
 -- Architecture: behavioral

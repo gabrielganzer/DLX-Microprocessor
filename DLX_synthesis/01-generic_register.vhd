@@ -3,8 +3,7 @@
 -- Company: Politecnico di Torino
 -- Design units: REGISTER_GENERIC
 -- Function: Generic Register (Synchronous reset, active-high enable)
--- Input: CLK, RST, EN (1-bit)
---        DIN (N-bit)
+-- Input: CLK, RST, EN (1-bit); DIN (N-bit)
 -- Output: DOUT (N-bit)
 -- Architecture: behavioral
 -- Library/package: ieee.std_logic_ll64
@@ -16,12 +15,10 @@ use ieee.std_logic_1164.all;
 entity REGISTER_GENERIC is
   generic (WIDTH: integer := 32);
   port (
-    -- Inputs
     CLK  : in std_logic;
     RST  : in std_logic;  -- Synchronous reset, active-low
     EN   : in std_logic;  -- Active-high enable
     DIN  : in std_logic_vector(WIDTH-1 downto 0);    
-    -- Output
     DOUT : out std_logic_vector(WIDTH-1 downto 0)
   );
 end entity;

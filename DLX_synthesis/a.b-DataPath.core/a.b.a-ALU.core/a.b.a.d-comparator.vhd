@@ -5,7 +5,7 @@
 -- Function: ALU-based comparator
 -- Input: Z, C (1-bit)
 -- Output: LE, LT, GE, GT, EQ (1-bit)
--- Architecture: rtl
+-- Architecture: RTL
 -- Library/package: ieee.std_logic_ll64
 -- Date: 05/08/2020
 ----------------------------------------------------------------------------------
@@ -14,8 +14,14 @@ use ieee.std_logic_1164.all;
 
 entity COMPARATOR is
   port (
-    Z, C                   : in  std_logic;
-    LE, LT, GE, GT, EQ, NE : out std_logic
+    Z  : in  std_logic; -- Zero detector input
+    C  : in  std_logic; -- Carry outgoing from adder
+    LE : out std_logic; -- A <= B
+    LT : out std_logic; -- A < B
+    GE : out std_logic; -- A >= B
+    GT : out std_logic; -- A > B
+    EQ : out std_logic; -- A == B
+    NE : out std_logic  -- A /= B
   );
 end entity;
 

@@ -2,7 +2,7 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: NAND4
--- Function: 4-input nand gate
+-- Function: 4-input nand logic gate, used by Logic Unit
 -- Input: A,B,C,D (1-bit)
 -- Output: Y (1-bit)
 -- Architecture: structural

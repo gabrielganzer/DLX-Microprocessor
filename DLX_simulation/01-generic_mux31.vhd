@@ -2,7 +2,7 @@
 -- Engineer: GANZER Gabriel
 -- Company: Politecnico di Torino
 -- Design units: MUX31_GENERIC
--- Function: multiplexer 2x1 
+-- Function: Multiplexer 3x1 
 -- Input: S2, S1, S0 (N-bit), SEL (3-bit one-hot encoding)
 -- Output: Y (N-bit)
 -- Architecture: behavioral
