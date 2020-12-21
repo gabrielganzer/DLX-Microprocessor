@@ -3,7 +3,7 @@
 
 ## PROJECT DESCRIPTION
 
-This project consisted on developing a small DLX(DELUXE) processor from RTL design using ModelSim, synthesis and optimization with Synopsys Design Vision, down to the physical design using Cadence. The DLX is a fully pipelined RISC processor based on the Harvard Architecture, i.e., it
+This project consisted of developing a small DLX(DELUXE) processor from RTL design using ModelSim, synthesis&optimization with Synopsys Design Vision, down to the physical design using Cadence. The DLX is a fully pipelined RISC processor based on the Harvard Architecture, i.e., it
 relies on two different memories for instructions and data, allowing simultaneous instruction-fetching and data transactions.
 
 The features implemented are listed bellow:
@@ -21,7 +21,7 @@ achieved by reducing switching activity through state assignment of all blocks;
 
 The folders are organized according to the design flow:
 
-* **DLX_simulation**: the VHDL files were organized in a hierarchical way, refer to the *test_bech* for compiling scripts, testing, and behavioral results.
+* **DLX_simulation**: the VHDL files were organized hierarchically, refer to the *test_bech* for compiling scripts, testing, and behavioral results.
 * **DLX_synthesis**: the folder *report* provides the results obtained with the *DLX.src* script.
 * **DLX_physical_layout**: this folder contains the source files for the physical design, refer to the folder *timingReports* for results.
 
