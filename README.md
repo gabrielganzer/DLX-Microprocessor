@@ -1,4 +1,4 @@
-# DLX-Project 
+# DLX-Processor
 [![SHIELDS](https://img.shields.io/badge/development-completed-green)](https://shields.io/)
 
 ## PROJECT DESCRIPTION
