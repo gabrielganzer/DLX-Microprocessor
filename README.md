@@ -26,7 +26,3 @@ The folders are organized according to the design flow:
 * **DLX_physical_layout**: this folder contains the source files for the physical design, refer to the folder *timingReports* for results.
 
 Further information about the project can be found at *Report.pdf*.
-
-## LICENSE
-
-The source code of the project is licensed under the GPLv3 license, unless otherwise stated.
