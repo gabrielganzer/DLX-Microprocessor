@@ -3,7 +3,7 @@
 
 ## PROJECT DESCRIPTION
 
-This project consisted of developing a small DLX(DELUXE) processor using Intel® ModelSim™ for simulation, Synopsys® DC Ultra™ RTL for synthesis, and Cadence® Innovus™ Implementation System for the physical layout. The DLX is a fully pipelined RISC processor based on the Harvard Architecture, i.e., it relies on two different memories for instructions and data, allowing simultaneous instruction-fetching and data transactions.
+This project consisted of developing a small DLX(DELUXE) processor using Intel® ModelSim® for simulation, Synopsys® DC Ultra™ for synthesis, and Cadence® Innovus™ Implementation System for the physical layout. The DLX is a fully pipelined RISC processor based on the Harvard Architecture, i.e., it relies on two different memories for instructions and data, allowing simultaneous instruction-fetching and data transactions.
 
 The features implemented are listed bellow:
 
